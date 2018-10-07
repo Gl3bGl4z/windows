@@ -1,0 +1,4 @@
+choco install vcredist-all firefox filezilla github win32diskimager wnetwatcher gpmdp geekuninstaller putty qbittorrent windirstat steam rufus bleachbit megasync recuva --ignore-checksums
+
+
+choco install notepadplusplus --x86 --ignore-checksums
