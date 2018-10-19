@@ -205,7 +205,7 @@ Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\PushNoti
 # Delete all desktop icons
 ##########################################################################
 
-Remove-Item C:\Users\*\Desktop\*lnk –Force
+Remove-Item C:\Users\*\Desktop\*lnk -Force
 
 ###########################################################################
 # Turn Off All Windows 10 Telemetry
