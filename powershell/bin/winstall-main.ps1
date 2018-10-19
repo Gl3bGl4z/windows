@@ -40,8 +40,8 @@ Invoke-Expression "taskkill /f /im explorer.exe"
 # Remove all Windows store apps expect WindowsStore, Calculator and Photos
 ##########################################################################
 
-Get-AppxPackage -AllUsers | where-object {$_.name -notlike "*Microsoft.WindowsStore*"} | where-object {$_.name -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.name -notlike "*Microsoft.Windows.Photos*"} | Remove-AppxPackage
-Get-AppxProvisionedPackage -online | where-object {$_.packagename -notlike "*Microsoft.WindowsStore*"} | where-object {$_.packagename -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.packagename -notlike "*Microsoft.Windows.Photos*"} |Remove-AppxProvisionedPackage -online
+Get-AppxPackage -AllUsers | where-object {$_.name -notlike "*Microsoft.WindowsStore*"} | where-object {$_.name -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.name -notlike "*Microsoft.Windows.Photos*"} | Remove-AppxPackage 
+Get-AppxProvisionedPackage -online | where-object {$_.packagename -notlike "*Microsoft.WindowsStore*"} | where-object {$_.packagename -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.packagename -notlike "*Microsoft.Windows.Photos*"} | Remove-AppxProvisionedPackage -online
 
 ###########################################################################
 # Taskbar pinapp function
@@ -205,7 +205,7 @@ Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\PushNoti
 # Delete all desktop icons
 ##########################################################################
 
-Remove-Item C:\Users\*\Desktop\*lnk -Force
+Remove-Item C:\Users\*\Desktop\*lnk -force
 
 ###########################################################################
 # Turn Off All Windows 10 Telemetry
