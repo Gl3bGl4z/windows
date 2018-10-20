@@ -49,16 +49,12 @@ else
 }
 ##############
 
-Copy-Item "$($dir)\PSWindowsUpdate" -Destination "$($env:USERPROFILE)\Documents\WindowsPowerShell\Modules\PSWindowsUpdate\" -Recurse
+Copy-Item "$($dir)\PSWindowsUpdate" -Destination "$($env:USERPROFILE)\Documents\WindowsPowerShell\Modules\PSWindowsUpdate\" -Recurse -Force
 
 Import-Module PSWindowsUpdate
-
-#Read-Host "install"
 
 Get-WUInstall -AcceptAll
 
 Write-Host "Finished looking for updates."
 
 Get-WURebootStatus
-
-Read-Host "Press ENTER to exit."
