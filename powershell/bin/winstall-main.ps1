@@ -255,6 +255,21 @@ Remove-PSDrive "HKCR"
 echo "Removing run option for new users"
 reg load "hku\Default" "C:\Users\Default\NTUSER.DAT"
 
+
+###########################################################################
+# Choco install
+##########################################################################
+
+Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+
+choco feature enable -n=allowGlobalConfirmation
+
+###########################################################################
+# Choco programs to install
+##########################################################################
+
+choco install googlechrome adobereader bleachbit windirstat geekuninstaller vcredist-all dotnet3.5 dotnet4.0 dotnet4.5 dotnet4.5.2 dotnet4.6 dotnet4.6.1 dotnet4.6.2 dotnet4.7 dotnet4.7.1 dotnet4.7.2 --ignore-checksums
+
 ###########################################################################
 # Start explorer.exe
 ##########################################################################
