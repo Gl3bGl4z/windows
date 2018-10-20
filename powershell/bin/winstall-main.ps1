@@ -21,17 +21,21 @@ else
 	exit
 }
 ##############
-
-
-
-
 Set-NetConnectionProfile -NetworkCategory Public
 
+
+$confirmationrename = Read-Host "Rename this PC? [y/n]"
+if ($confirmationrename -eq "y")
+{
 $pcname = Read-Host "Type the new name of this PC"
-
 Rename-Computer -NewName $pcname
+}
 
-$confirmationmain = Read-Host "Join PC to domain?. [y/n]"
+
+
+
+
+$confirmationmain = Read-Host "Join PC to domain? [y/n]"
 
 if ($confirmationmain -eq "y")
 {
@@ -49,7 +53,14 @@ if ($confirmationmain -eq "y")
 	}
 }
 
-Read-Host "Windows 10 app store cleaning and dependency install will now run. Explorer.exe will taskkill while running. Press ENTER to continue"
+Write-Host "Windows 10 app store cleaning and dependency install will now run"
+Write-Host "Explorer.exe will taskkill while running"
+$confirmationfull = Read-Host "Continue? [y/n]"
+if ($confirmationfull -ne "y")
+{
+	exit
+}
+
 
 ###########################################################################
 # Disable Windows Store automatic install service
@@ -296,14 +307,39 @@ choco feature enable -n=allowGlobalConfirmation
 # Choco programs to install
 ##########################################################################
 
-choco install googlechrome adobereader bleachbit windirstat malwarebytes geekuninstaller vcredist-all dotnet3.5 dotnet4.0 dotnet4.5 dotnet4.5.2 dotnet4.6 dotnet4.6.1 dotnet4.6.2 dotnet4.7 dotnet4.7.1 dotnet4.7.2 --ignore-checksums
+choco install googlechrome adobereader bleachbit windirstat malwarebytes geekuninstaller vcredist-all dotnet4.0 dotnet4.5 dotnet4.5.2 dotnet4.6 dotnet4.6.1 dotnet4.6.2 dotnet4.7 dotnet4.7.1 dotnet4.7.2 --ignore-checksums
+
+
+###########################################################################
+# File assoc
+##########################################################################
+
+
+
+#cmd /c ftype AdobeReader="C:\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe" "%*"
+
+#cmd /c assoc .pdf=AcroExch.Document.DC
+
 
 ###########################################################################
 # Start explorer.exe
 ##########################################################################
 
+Install-Module -Name PendingReboot -Force
+
 Invoke-Expression "start explorer.exe"
 
-Read-Host "Complete. Press ENTER to finish"
 
-Get-WURebootStatus
+$rebootpending = Test-PendingReboot | Select-Object -Property IsRebootPending | Format-Wide
+if ($rebootpending = "True")
+{
+	Write-Host
+	Write-Host
+	Write-Warning "Reboot required"
+	Write-Host
+	Restart-Computer -Confirm:$true
+}
+else
+{
+	Read-Host "Complete. No reboot required. Press ENTER to finish"
+}
