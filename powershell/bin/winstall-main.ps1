@@ -23,6 +23,34 @@ else
 ##############
 
 
+
+
+Set-NetConnectionProfile -NetworkCategory Public
+
+$pcname = Read-Host "Type the new name of this PC"
+
+Rename-Computer -NewName $pcname
+
+$confirmationmain = Read-Host "Join PC to domain?. [y/n]"
+
+if ($confirmationmain -eq "y")
+{
+	while($confirmation -ne "n")
+	{
+		try
+		{
+			Add-Computer
+		}
+		catch
+		{
+			$confirmation = Read-Host "Domain join failed. Retry domain join? Answering no will skip domain join. [y/n]"
+			#$confirmation = Read-Host "Retry? [y/n]"
+		}
+	}
+}
+
+Read-Host "Windows 10 app store cleaning and dependency install will now run. Explorer.exe will taskkill while running. Press ENTER to continue"
+
 ###########################################################################
 # Disable Windows Store automatic install service
 ##########################################################################
@@ -40,8 +68,8 @@ Invoke-Expression "taskkill /f /im explorer.exe"
 # Remove all Windows store apps expect WindowsStore, Calculator and Photos
 ##########################################################################
 
-Get-AppxPackage -AllUsers | where-object {$_.name -notlike "*Microsoft.WindowsStore*"} | where-object {$_.name -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.name -notlike "*Microsoft.Windows.Photos*"} | Remove-AppxPackage 
-Get-AppxProvisionedPackage -online | where-object {$_.packagename -notlike "*Microsoft.WindowsStore*"} | where-object {$_.packagename -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.packagename -notlike "*Microsoft.Windows.Photos*"} | Remove-AppxProvisionedPackage -online
+Get-AppxPackage -AllUsers | where-object {$_.name -notlike "*Microsoft.WindowsStore*"} | where-object {$_.name -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.name -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxPackage 
+Get-AppxProvisionedPackage -online | where-object {$_.packagename -notlike "*Microsoft.WindowsStore*"} | where-object {$_.packagename -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.packagename -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxProvisionedPackage -online
 
 ###########################################################################
 # Taskbar pinapp function
@@ -50,108 +78,108 @@ Get-AppxProvisionedPackage -online | where-object {$_.packagename -notlike "*Mic
 
 function findTheNeedle ($needle, $haystack, $startIndexInHaystack=0, $needlePartsThatDontMatter=@())
 {
-    $haystackLastIndex = ($haystack.Length - 1)
-    $needleLastIndex = ($needle.Length - 1)
-    $needleCurrentIndex = 0
-    $haystackCurrentIndex = $startIndexInHaystack
-    while ($haystackCurrentIndex -lt $haystackLastIndex)
-    {
-        if ($haystack[$haystackCurrentIndex] -eq $needle[$needleCurrentIndex]  -or ($needleCurrentIndex -in $needlePartsThatDontMatter))
-        {
-            $startIndex = $haystackCurrentIndex
-            while ($haystack[$haystackCurrentIndex] -eq $needle[$needleCurrentIndex] -or ($needleCurrentIndex -in $needlePartsThatDontMatter))
-            {
-                $needleCurrentIndex += 1
-                $haystackCurrentIndex += 1
-            }
-            if (($needleCurrentIndex - 1) -eq $needleLastIndex)
-            {
-                return ($startIndex + 1)
-            }
-            $needleCurrentIndex = 0
-            $haystackCurrentIndex = $startIndex
-        }
-        $haystackCurrentIndex += 1
-    }
-    return -1
+	$haystackLastIndex = ($haystack.Length - 1)
+	$needleLastIndex = ($needle.Length - 1)
+	$needleCurrentIndex = 0
+	$haystackCurrentIndex = $startIndexInHaystack
+	while ($haystackCurrentIndex -lt $haystackLastIndex)
+	{
+		if ($haystack[$haystackCurrentIndex] -eq $needle[$needleCurrentIndex]  -or ($needleCurrentIndex -in $needlePartsThatDontMatter))
+		{
+			$startIndex = $haystackCurrentIndex
+			while ($haystack[$haystackCurrentIndex] -eq $needle[$needleCurrentIndex] -or ($needleCurrentIndex -in $needlePartsThatDontMatter))
+			{
+				$needleCurrentIndex += 1
+				$haystackCurrentIndex += 1
+			}
+			if (($needleCurrentIndex - 1) -eq $needleLastIndex)
+			{
+				return ($startIndex + 1)
+			}
+			$needleCurrentIndex = 0
+			$haystackCurrentIndex = $startIndex
+		}
+		$haystackCurrentIndex += 1
+	}
+	return -1
 }
 
 function findTheNeedleReverse ($needle, $haystack, $startIndexInHaystack=0, $needlePartsThatDontMatter=@())
 {
-    $needleLastIndex = ($needle.Length - 1)
-    $needleCurrentIndex = $needleLastIndex
-    $haystackCurrentIndex = $startIndexInHaystack
-    while ($haystackCurrentIndex -gt 0)
-    {
+	$needleLastIndex = ($needle.Length - 1)
+	$needleCurrentIndex = $needleLastIndex
+	$haystackCurrentIndex = $startIndexInHaystack
+	while ($haystackCurrentIndex -gt 0)
+	{
 
-        if ($haystack[$haystackCurrentIndex] -eq $needle[$needleCurrentIndex]  -or ($needleCurrentIndex -in $needlePartsThatDontMatter))
-        {
-            $startIndex = $haystackCurrentIndex
-            while ($haystack[$haystackCurrentIndex] -eq $needle[$needleCurrentIndex] -or ($needleCurrentIndex -in $needlePartsThatDontMatter))
-            {
-                $needleCurrentIndex -= 1
-                $haystackCurrentIndex -= 1
-            }
-            if (($needleCurrentIndex + 1) -eq 0)
-            {
-                return ($haystackCurrentIndex + 1)
-            }
-            $needleCurrentIndex = $needleLastIndex
-            $haystackCurrentIndex = $startIndex
-        }
-        $haystackCurrentIndex -= 1
-    }
-    return -1
+		if ($haystack[$haystackCurrentIndex] -eq $needle[$needleCurrentIndex]  -or ($needleCurrentIndex -in $needlePartsThatDontMatter))
+		{
+			$startIndex = $haystackCurrentIndex
+			while ($haystack[$haystackCurrentIndex] -eq $needle[$needleCurrentIndex] -or ($needleCurrentIndex -in $needlePartsThatDontMatter))
+			{
+				$needleCurrentIndex -= 1
+				$haystackCurrentIndex -= 1
+			}
+			if (($needleCurrentIndex + 1) -eq 0)
+			{
+				return ($haystackCurrentIndex + 1)
+			}
+			$needleCurrentIndex = $needleLastIndex
+			$haystackCurrentIndex = $startIndex
+		}
+		$haystackCurrentIndex -= 1
+	}
+	return -1
 }
 $taskbarEntryHeaderBytes = @(0,51,6,0,0,20,0,31,128,155,212,52);
 $taskbarEntryHeaderBytesThatDontMatter = @(0,1,2,5,9,10);
 $taskbarEntryTrailerBytes = @(34,0,0,0,30,0,239,190,2,0,85,0,115,0,101,0,114,0,80,0,105,0,110,0,110,0,101,0,100,0,0,0,59,5,0,0);
 $taskbarEntryTrailerBytesThatDontMatter = @(32,33);
 $apps = @(
-    @{
-        "appName" = "Microsoft Edge"
-        "appThumbprint" = @(38,0,0,0,77,0,105,0,99,0,114,0,111,0,115,0,111,0,102,0,116,0,46,0,77,0,105,0,99,0,114,0,111,0,115,0,111,0,102,0,116,0,69,0,100,0,103,0,101);
-        "taskbarEntryHeaderBytes" = $taskbarEntryHeaderBytes
-        "taskbarEntryHeaderBytesThatDontMatter" = $taskbarEntryHeaderBytesThatDontMatter
-        "taskbarEntryTrailerBytes" = $taskbarEntryTrailerBytes
-        "taskbarEntryTrailerBytesThatDontMatter" = $taskbarEntryTrailerBytesThatDontMatter
-    }
-    @{
-        "appName" = "Microsoft Windows Store"
-        "appThumbprint" = @(37,0,0,0,77,0,105,0,99,0,114,0,111,0,115,0,111,0,102,0,116,0,46,0,87,0,105,0,110,0,100,0,111,0,119,0,115,0,83,0,116,0,111,0,114,0,101);
-        "taskbarEntryHeaderBytes" = $taskbarEntryHeaderBytes
-        "taskbarEntryHeaderBytesThatDontMatter" = $taskbarEntryHeaderBytesThatDontMatter
-        "taskbarEntryTrailerBytes" = $taskbarEntryTrailerBytes
-        "taskbarEntryTrailerBytesThatDontMatter" = $taskbarEntryTrailerBytesThatDontMatter
-    }
+@{
+	"appName" = "Microsoft Edge"
+	"appThumbprint" = @(38,0,0,0,77,0,105,0,99,0,114,0,111,0,115,0,111,0,102,0,116,0,46,0,77,0,105,0,99,0,114,0,111,0,115,0,111,0,102,0,116,0,69,0,100,0,103,0,101);
+	"taskbarEntryHeaderBytes" = $taskbarEntryHeaderBytes
+	"taskbarEntryHeaderBytesThatDontMatter" = $taskbarEntryHeaderBytesThatDontMatter
+	"taskbarEntryTrailerBytes" = $taskbarEntryTrailerBytes
+	"taskbarEntryTrailerBytesThatDontMatter" = $taskbarEntryTrailerBytesThatDontMatter
+}
+@{
+	"appName" = "Microsoft Windows Store"
+	"appThumbprint" = @(37,0,0,0,77,0,105,0,99,0,114,0,111,0,115,0,111,0,102,0,116,0,46,0,87,0,105,0,110,0,100,0,111,0,119,0,115,0,83,0,116,0,111,0,114,0,101);
+	"taskbarEntryHeaderBytes" = $taskbarEntryHeaderBytes
+	"taskbarEntryHeaderBytesThatDontMatter" = $taskbarEntryHeaderBytesThatDontMatter
+	"taskbarEntryTrailerBytes" = $taskbarEntryTrailerBytes
+	"taskbarEntryTrailerBytesThatDontMatter" = $taskbarEntryTrailerBytesThatDontMatter
+}
 )
 $atLeastOneAppIsPinned = $false
 foreach ($app in $apps)
 {
-    $haystack = (Get-ItemProperty -Path "hkcu:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Taskband" -Name "Favorites").Favorites
-    $needleStart = findTheNeedle $app["appThumbprint"] $haystack
-    if ($needleStart -ne -1)
-    {
-        $firstIndexAfterNeedle = $needleStart + $app["appThumbprint"].Length
-        $lastIndexOfEntry = (findTheNeedle $app["taskbarEntryTrailerBytes"] $haystack $firstIndexAfterNeedle $app["taskbarEntryTrailerBytesThatDontMatter"]) + ($app["taskbarEntryTrailerBytes"].Length - 1)
-        if (($lastIndexOfEntry) -ne -1)
-        {
-            $firstIndexOfEntry = findTheNeedleReverse $app["taskbarEntryHeaderBytes"] $haystack $needleStart $app["taskbarEntryHeaderBytesThatDontMatter"]
-            if (($firstIndexOfEntry) -ne -1)
-            {
-                $atLeastOneAppIsPinned = $true
-                if ($firstIndexOfEntry -eq 0) 
-                {
-                    $newArray = $haystack[$lastIndexOfEntry..($haystack.Length)]
-                }
-                else
-                {
-                    $newArray = $haystack[0..($firstIndexOfEntry - 1)] + $haystack[$lastIndexOfEntry..($haystack.Length)]
-                }
-                New-ItemProperty -Path "hkcu:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Taskband" -Name "Favorites" -Value $newArray -PropertyType Binary -Force | Out-Null
-            }
-        }
-    }
+	$haystack = (Get-ItemProperty -Path "hkcu:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Taskband" -Name "Favorites").Favorites
+	$needleStart = findTheNeedle $app["appThumbprint"] $haystack
+	if ($needleStart -ne -1)
+	{
+		$firstIndexAfterNeedle = $needleStart + $app["appThumbprint"].Length
+		$lastIndexOfEntry = (findTheNeedle $app["taskbarEntryTrailerBytes"] $haystack $firstIndexAfterNeedle $app["taskbarEntryTrailerBytesThatDontMatter"]) + ($app["taskbarEntryTrailerBytes"].Length - 1)
+		if (($lastIndexOfEntry) -ne -1)
+		{
+			$firstIndexOfEntry = findTheNeedleReverse $app["taskbarEntryHeaderBytes"] $haystack $needleStart $app["taskbarEntryHeaderBytesThatDontMatter"]
+			if (($firstIndexOfEntry) -ne -1)
+			{
+				$atLeastOneAppIsPinned = $true
+				if ($firstIndexOfEntry -eq 0) 
+				{
+					$newArray = $haystack[$lastIndexOfEntry..($haystack.Length)]
+				}
+				else
+				{
+					$newArray = $haystack[0..($firstIndexOfEntry - 1)] + $haystack[$lastIndexOfEntry..($haystack.Length)]
+				}
+				New-ItemProperty -Path "hkcu:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Taskband" -Name "Favorites" -Value $newArray -PropertyType Binary -Force | Out-Null
+			}
+		}
+	}
 }
 
 ###########################################################################
@@ -159,20 +187,20 @@ foreach ($app in $apps)
 ##########################################################################
 
 function Pin-App {    param(
-        [string]$appname,
-        [switch]$unpin
-    )
-    try{
-        if ($unpin.IsPresent){
-            ((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.replace('&','') -match 'Von "Start" lösen|Unpin from Start'} | %{$_.DoIt()}
-            return "App '$appname' unpinned from Start"
-        }else{
-            ((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.replace('&','') -match 'An "Start" anheften|Pin to Start'} | %{$_.DoIt()}
-            return "App '$appname' pinned to Start"
-        }
-    }catch{
-        Write-Error "Error Pinning/Unpinning App! (App-Name correct?)"
-    }
+	[string]$appname,
+	[switch]$unpin
+	)
+	try{
+		if ($unpin.IsPresent){
+			((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.replace('&','') -match 'Von "Start" lösen|Unpin from Start'} | %{$_.DoIt()}
+			return "App '$appname' unpinned from Start"
+		}else{
+			((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.replace('&','') -match 'An "Start" anheften|Pin to Start'} | %{$_.DoIt()}
+			return "App '$appname' pinned to Start"
+		}
+	}catch{
+		Write-Error "Error Pinning/Unpinning App! (App-Name correct?)"
+	}
 }
 
 ###########################################################################
@@ -229,10 +257,10 @@ taskkill.exe /F /IM "explorer.exe"
 
 echo "Remove OneDrive"
 if (Test-Path "$env:systemroot\System32\OneDriveSetup.exe") {
-    & "$env:systemroot\System32\OneDriveSetup.exe" /uninstall
+	& "$env:systemroot\System32\OneDriveSetup.exe" /uninstall
 }
 if (Test-Path "$env:systemroot\SysWOW64\OneDriveSetup.exe") {
-    & "$env:systemroot\SysWOW64\OneDriveSetup.exe" /uninstall
+	& "$env:systemroot\SysWOW64\OneDriveSetup.exe" /uninstall
 }
 
 echo "Disable OneDrive via Group Policies"
@@ -268,10 +296,14 @@ choco feature enable -n=allowGlobalConfirmation
 # Choco programs to install
 ##########################################################################
 
-choco install googlechrome adobereader bleachbit windirstat geekuninstaller vcredist-all dotnet3.5 dotnet4.0 dotnet4.5 dotnet4.5.2 dotnet4.6 dotnet4.6.1 dotnet4.6.2 dotnet4.7 dotnet4.7.1 dotnet4.7.2 --ignore-checksums
+choco install googlechrome adobereader bleachbit windirstat malwarebytes geekuninstaller vcredist-all dotnet3.5 dotnet4.0 dotnet4.5 dotnet4.5.2 dotnet4.6 dotnet4.6.1 dotnet4.6.2 dotnet4.7 dotnet4.7.1 dotnet4.7.2 --ignore-checksums
 
 ###########################################################################
 # Start explorer.exe
 ##########################################################################
 
 Invoke-Expression "start explorer.exe"
+
+Read-Host "Complete. Press ENTER to finish"
+
+Get-WURebootStatus
