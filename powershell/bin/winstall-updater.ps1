@@ -49,7 +49,7 @@ else
 }
 ##############
 
-Copy-Item "C:\Users\Win10\Desktop\powershell\bin\PSWindowsUpdate" -Destination "$($env:USERPROFILE)\Documents\WindowsPowerShell\Modules\PSWindowsUpdate\" -Recurse
+Copy-Item "$($dir)\PSWindowsUpdate" -Destination "$($env:USERPROFILE)\Documents\WindowsPowerShell\Modules\PSWindowsUpdate\" -Recurse
 
 Import-Module PSWindowsUpdate
 
