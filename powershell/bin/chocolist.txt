@@ -1,1 +1,1 @@
-googlechrome adobereader bleachbit windirstat geekuninstaller vcredist-all dotnet4.0 dotnet4.5 dotnet4.5.2 dotnet4.6 dotnet4.6.1 dotnet4.6.2 dotnet4.7 dotnet4.7.1 dotnet4.7.2
+googlechrome adobereader bleachbit windirstat geekuninstaller

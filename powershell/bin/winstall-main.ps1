@@ -94,7 +94,7 @@ Write-Host
 Write-Host "Rename PC: [$($confirmationrename)]"
 Write-Host "Domain Join: [$($confirmationdomainjoin)]"
 Write-Host "OneDrive Removal: [$($confirmationonedrive)]"
-Write-Host "Icon Removal: [$($confirmationchocoinstall)]"
+Write-Host "Icon Removal: [$($confirmationstartmenu)]"
 Write-Host "Choco install: [$($confirmationchocoinstall)]"
 Write-Host
 Write-Host "Windows 10 Setup Script will now run"
@@ -370,7 +370,7 @@ if ($confirmationchocoinstall -eq "y")
 {
 	Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 	choco feature enable -n=allowGlobalconfirmation
-	choco install $chocolist --ignore-checksums
+	choco install $chocolist vcredist-all dotnet4.0 dotnet4.5 dotnet4.5.2 dotnet4.6 dotnet4.6.1 dotnet4.6.2 dotnet4.7 dotnet4.7.1 dotnet4.7.2 --ignore-checksums
 }
 
 ###########################################################################
