@@ -146,7 +146,7 @@ if ($confirmationstartmenu -eq "y")
 # Taskbar pinapp function
 ##########################################################################
 
-
+	
 	function findTheNeedle ($needle, $haystack, $startIndexInHaystack=0, $needlePartsThatDontMatter=@())
 	{
 		$haystackLastIndex = ($haystack.Length - 1)
@@ -252,7 +252,8 @@ if ($confirmationstartmenu -eq "y")
 			}
 		}
 	}
-
+	
+	
 ###########################################################################
 # Pinapp function
 ##########################################################################
@@ -293,14 +294,16 @@ if ($confirmationstartmenu -eq "y")
 	Pin-App "Remote Desktop Connection" -pin
 
 ###########################################################################
-# Disable Taskview and People icons from the taskbar
+# Disable Taskview and People icons from the taskbar and game overlay
 ##########################################################################
 
 	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People" -Name "PeopleBand" -value 0
 	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowTaskViewButton" -value 0
-	Set-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" -Name "DisableNotificationCenter" -Type DWord -Value 1
-	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -Type DWord -Value 0
-
+	Set-ItemProperty -Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "DisableNotificationCenter" -Type DWord -Value 1
+	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -Type DWord -Value 0
+	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\GameDVR" -Name "AppCaptureEnabled" -Type DWord -Value 0
+	Set-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_Enabled" -Type DWord -Value 0
+	
 ###########################################################################
 # Delete all desktop icons
 ##########################################################################
@@ -374,14 +377,24 @@ if ($confirmationchocoinstall -eq "y")
 }
 
 ###########################################################################
-# File assoc
+# Pin apps
 ##########################################################################
 
+if ($chocolist -contains '*firefox*')
+{
+$WshShell = New-Object -comObject WScript.Shell
+$Shortcut = $WshShell.CreateShortcut("$($env:APPDATA)\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\Firefox.lnk")
+$Shortcut.TargetPath = "$($env:ProgramFiles)\Mozilla Firefox\firefox.exe"
+$Shortcut.Save()
+}
+
+$WshShell = New-Object -comObject WScript.Shell
+$Shortcut = $WshShell.CreateShortcut("$($env:APPDATA)\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\File Explorer.lnk")
+$Shortcut.TargetPath = "$($env:SystemRoot)\explorer.exe"
+$Shortcut.Save()
 
 
-#cmd /c ftype AdobeReader="C:\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe" "%*"
-
-#cmd /c assoc .pdf=AcroExch.Document.DC
+%AppData%\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar
 
 
 ###########################################################################
