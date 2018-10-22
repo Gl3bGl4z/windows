@@ -33,11 +33,11 @@ Write-Host "#############################"
 Write-Host
 
 
-New-Item -Path $env:TEMP -Name "winstall-core" -ItemType "directory" -Force 
+New-Item -Path $env:TEMP -Name "winstall-core" -ItemType "directory" -Force >$null 2>&1
 
 Set-Location "$($env:TEMP)\winstall-core"
 
-if(Test-Path .\chocolist.txt)
+if(!Test-Path .\chocolist.txt)
 {
 Write-Host "chocolist.txt found"
 }
