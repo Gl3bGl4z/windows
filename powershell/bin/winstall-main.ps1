@@ -1,6 +1,6 @@
 ###########################################################################
 # 
-# Windows 10 Fresh Install Cleaner
+# Windows 10 Setup Script
 #
 ##########################################################################
 $myWindowsID=[System.Security.Principal.WindowsIdentity]::GetCurrent()
@@ -24,6 +24,14 @@ else
 $scriptpath = $MyInvocation.MyCommand.Path
 $dir = Split-Path $scriptpath
 Set-Location $dir
+
+Write-Host "#############################"
+Write-Host "#                           #"
+Write-Host "#  Windows 10 Setup Script  #"
+Write-Host "#                           #"
+Write-Host "#############################"
+Write-Host
+
 
 Set-NetConnectionProfile -NetworkCategory Public
 
@@ -80,14 +88,13 @@ if($confirmationchocoinstall -eq "y")
 {
 	Write-Host 
 	Write-Host "A .txt file containing the Choco packages to be installed will now open"
-	Write-Host "edit, save and close the file separating each package name with a space"
+	Write-Host "edit, save and close the file separating each package name with a semicolon"
 	Write-Host 
 	Read-Host "Press ENTER to open the chocolist.txt file"
 	notepad.exe "$($dir)\chocolist.txt"
-	Read-Host "Press ENTER to continue after the chocolist.txt file has been saved"
-	$chocolist = [IO.File]::ReadAllText("$($dir)\chocolist.txt")
+	Read-Host "Press ENTER to continue after the chocolist.txt file has been saved"	
 }
-
+$chocolist = [IO.File]::ReadAllText("$($dir)\chocolist.txt")
 
 
 Write-Host
@@ -134,8 +141,33 @@ Invoke-Expression "taskkill /f /im explorer.exe"
 # Remove all Windows store apps expect WindowsStore, Calculator and Photos
 ##########################################################################
 
-Get-AppxPackage -AllUsers | where-object {$_.name -notlike "*Microsoft.WindowsStore*"} | where-object {$_.name -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.name -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxPackage 
-Get-AppxProvisionedPackage -online | where-object {$_.packagename -notlike "*Microsoft.WindowsStore*"} | where-object {$_.packagename -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.packagename -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxProvisionedPackage -online
+Get-AppxPackage -AllUsers | where-object {$_.name -notlike "*Microsoft.WindowsStore*"} | where-object {$_.name -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.name -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxPackage -erroraction 'silentlycontinue'
+Get-AppxProvisionedPackage -online | where-object {$_.packagename -notlike "*Microsoft.WindowsStore*"} | where-object {$_.packagename -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.packagename -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxProvisionedPackage -online -erroraction 'silentlycontinue'
+
+
+
+
+
+
+###########################################################################
+# Choco install
+##########################################################################
+
+
+
+if ($confirmationchocoinstall -eq "y")
+{
+	Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+	choco feature enable -n=allowGlobalconfirmation
+	choco install "$($chocolist);vcredist-all;dotnet4.0;dotnet4.5;dotnet4.5.2;dotnet4.6;dotnet4.6.1;dotnet4.6.2;dotnet4.7;dotnet4.7.1 --ignore-checksums"
+}
+
+
+
+
+
+
+
 
 
 
@@ -227,7 +259,7 @@ if ($confirmationstartmenu -eq "y")
 	$atLeastOneAppIsPinned = $false
 	foreach ($app in $apps)
 	{
-		$haystack = (Get-ItemProperty -Path "hkcu:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Taskband" -Name "Favorites").Favorites
+		$haystack = (Get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Taskband" -Name "Favorites").Favorites
 		$needleStart = findTheNeedle $app["appThumbprint"] $haystack
 		if ($needleStart -ne -1)
 		{
@@ -247,7 +279,7 @@ if ($confirmationstartmenu -eq "y")
 					{
 						$newArray = $haystack[0..($firstIndexOfEntry - 1)] + $haystack[$lastIndexOfEntry..($haystack.Length)]
 					}
-					New-ItemProperty -Path "hkcu:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Taskband" -Name "Favorites" -Value $newArray -PropertyType Binary -Force | Out-Null
+					New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Taskband" -Name "Favorites" -Value $newArray -PropertyType Binary -Force | Out-Null
 				}
 			}
 		}
@@ -271,7 +303,7 @@ if ($confirmationstartmenu -eq "y")
 				return "App '$appname' pinned to Start"
 			}
 		}catch{
-			Write-Error "Error Pinning/Unpinning App! (App-Name correct?)"
+			#Write-Error "Error Pinning/Unpinning App! (App-Name correct?)"
 		}
 	}
 
@@ -290,19 +322,29 @@ if ($confirmationstartmenu -eq "y")
 	Pin-App "Photos" -pin
 	Pin-App "File Explorer" -pin
 	Pin-App "Control Panel" -pin
+	Pin-App "Task Manager" -pin
 	Pin-App "Notepad" -pin
 	Pin-App "Remote Desktop Connection" -pin
+	Pin-App "Thunderbird" -pin
+	Pin-App "Outlook 2016" -pin
+	Pin-App "Word 2016" -pin
+	Pin-App "Excel 2016" -pin
+	Pin-App "Publisher 2016" -pin
+	Pin-App "PowerPoint 2016" -pin
+	Pin-App "Malwarebytes" -pin
+	Pin-App "BleachBit" -pin
+	Pin-App "WinDirStat" -pin
 
 ###########################################################################
 # Disable Taskview and People icons from the taskbar and game overlay
 ##########################################################################
 
-	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People" -Name "PeopleBand" -value 0
-	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowTaskViewButton" -value 0
-	Set-ItemProperty -Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "DisableNotificationCenter" -Type DWord -Value 1
-	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -Type DWord -Value 0
-	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\GameDVR" -Name "AppCaptureEnabled" -Type DWord -Value 0
-	Set-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_Enabled" -Type DWord -Value 0
+	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People" -Name "PeopleBand" -value 0 -erroraction 'silentlycontinue'
+	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowTaskViewButton" -value 0 -erroraction 'silentlycontinue'
+	Set-ItemProperty -Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "DisableNotificationCenter" -Type DWord -Value 1 -erroraction 'silentlycontinue'
+	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\GameDVR" -Name "AppCaptureEnabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+	Set-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_Enabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
 	
 ###########################################################################
 # Delete all desktop icons
@@ -316,9 +358,9 @@ if ($confirmationstartmenu -eq "y")
 # Turn Off All Windows 10 Telemetry
 ##########################################################################
 
-(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/hahndorf/Set-Privacy/master/Set-Privacy.ps1') | out-file .\Set-Privacy.ps1 -force
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
-.\Set-Privacy.ps1 -Strong -admin
+(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/hahndorf/Set-Privacy/master/Set-Privacy.ps1') | out-file .\set-privacy.ps1 -force
+#Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+.\set-privacy.ps1 -Strong -admin
 
 ###########################################################################
 # Remove OneDrive
@@ -327,12 +369,13 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
 if ($confirmationonedrive -eq "y")
 {
 
-	Import-Module -DisableNameChecking $PSScriptRoot\..\lib\force-mkdir.psm1
-	Import-Module -DisableNameChecking $PSScriptRoot\..\lib\take-own.psm1
+	#Import-Module -DisableNameChecking $PSScriptRoot\..\lib\force-mkdir.psm1
+	#Import-Module -DisableNameChecking $PSScriptRoot\..\lib\take-own.psm1
 
 	echo "73 OneDrive process and explorer"
 	taskkill.exe /F /IM "OneDrive.exe"
-	taskkill.exe /F /IM "explorer.exe"
+	
+	
 
 	echo "Remove OneDrive"
 	if (Test-Path "$env:systemroot\System32\OneDriveSetup.exe") {
@@ -343,8 +386,8 @@ if ($confirmationonedrive -eq "y")
 	}
 
 	echo "Disable OneDrive via Group Policies"
-	force-mkdir "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\OneDrive"
-	sp "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\OneDrive" "DisableFileSyncNGSC" 1
+	#force-mkdir "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\OneDrive"
+	sp "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\OneDrive" "DisableFileSyncNGSC" 1 -erroraction 'silentlycontinue'
 
 	echo "Removing OneDrive leftovers trash"
 	rm -Recurse -Force -ErrorAction SilentlyContinue "$env:localappdata\Microsoft\OneDrive"
@@ -354,27 +397,16 @@ if ($confirmationonedrive -eq "y")
 	echo "Remove Onedrive from explorer sidebar"
 	New-PSDrive -PSProvider "Registry" -Root "HKEY_CLASSES_ROOT" -Name "HKCR"
 	mkdir -Force "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}"
-	sp "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" "System.IsPinnedToNameSpaceTree" 0
+	sp "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" "System.IsPinnedToNameSpaceTree" 0 -erroraction 'silentlycontinue'
 	mkdir -Force "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}"
-	sp "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" "System.IsPinnedToNameSpaceTree" 0
+	sp "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" "System.IsPinnedToNameSpaceTree" 0 -erroraction 'silentlycontinue'
 	Remove-PSDrive "HKCR"
 
 	echo "Removing run option for new users"
 	reg load "hku\Default" "C:\Users\Default\NTUSER.DAT"
 
 }
-###########################################################################
-# Choco install
-##########################################################################
 
-
-
-if ($confirmationchocoinstall -eq "y")
-{
-	Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-	choco feature enable -n=allowGlobalconfirmation
-	choco install $chocolist vcredist-all dotnet4.0 dotnet4.5 dotnet4.5.2 dotnet4.6 dotnet4.6.1 dotnet4.6.2 dotnet4.7 dotnet4.7.1 dotnet4.7.2 --ignore-checksums
-}
 
 ###########################################################################
 # Pin apps
@@ -382,26 +414,27 @@ if ($confirmationchocoinstall -eq "y")
 
 if ($chocolist -like '*firefox*')
 {
-$WshShell = New-Object -comObject WScript.Shell
-$Shortcut = $WshShell.CreateShortcut("$($env:APPDATA)\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\Firefox.lnk")
-$Shortcut.TargetPath = "$($env:ProgramFiles)\Mozilla Firefox\firefox.exe"
-$Shortcut.Save()
+Copy-Item "$($dir)\icons\Firefox.lnk" -Destination "$($env:APPDATA)\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\Firefox.lnk" -Force
+
+#$WshShell = New-Object -comObject WScript.Shell
+#$Shortcut = $WshShell.CreateShortcut("$($env:APPDATA)\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\Firefox.lnk")
+#$Shortcut.TargetPath = "$($env:ProgramFiles)\Mozilla Firefox\firefox.exe"
+#$Shortcut.Save()
 }
 
-$WshShell = New-Object -comObject WScript.Shell
-$Shortcut = $WshShell.CreateShortcut("$($env:APPDATA)\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\File Explorer.lnk")
-$Shortcut.TargetPath = "$($env:SystemRoot)\explorer.exe"
-$Shortcut.Save()
+if ($chocolist -like '*chrome*')
+{
+Copy-Item "$($dir)\icons\Google Chrome.lnk" -Destination "$($env:APPDATA)\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\Google Chrome.lnk" -Force
+}
 
-
-%AppData%\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar
+Copy-Item "$($dir)\icons\File Explorer.lnk" -Destination "$($env:APPDATA)\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\File Explorer.lnk" -Force
 
 
 ###########################################################################
 # Start explorer.exe
 ##########################################################################
 
-Install-Module -Name PendingReboot -Force
+Install-Module -Name PendingReboot -Force -Confirm:$false
 
 Invoke-Expression "start explorer.exe"
 
@@ -412,14 +445,23 @@ if ($rebootpending = "True")
 
 	Write-Host
 	Write-Host
-	Write-Warning "Reboot required"
+	Write-Warning "REBOOT REQUIRED"
 	Write-Host
-	Restart-Computer -Confirm:$true
-	
+	while($confirmationreboot -ne "n" -and $confirmationreboot -ne "y")
+	{
+		$confirmationreboot = Read-Host "Reboot is pending reboot this PC now? [y/n]"
+	}
+	if ($confirmationreboot -eq "y")
+	{	
+		Restart-Computer
+	}
 }
 else
 {
-
-	Read-Host "Complete. No reboot required. Press ENTER to finish"
+	Write-Host
+	Write-Host
+	Write-Host "No reboot required"
+	Read-Host "Complete, press ENTER to close and finish"
+	Write-Host
 	
 }
