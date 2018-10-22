@@ -1,1 +1,0 @@
-PowerShell.exe -Command "& {Start-Process PowerShell.exe -ArgumentList '-ExecutionPolicy Bypass -File ""%~dp0bin\fullget.ps1""' -Verb RunAs}"
