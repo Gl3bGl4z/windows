@@ -21,9 +21,9 @@ else
 	exit
 }
 ##############
-$scriptpath = $MyInvocation.MyCommand.Path
-$dir = Split-Path $scriptpath
-Set-Location $dir
+
+
+
 
 Write-Host "#############################"
 Write-Host "#                           #"
@@ -33,7 +33,22 @@ Write-Host "#############################"
 Write-Host
 
 
-Set-NetConnectionProfile -NetworkCategory Public
+New-Item -Path $env:TEMP -Name "winstall-core" -ItemType "directory" -Force 
+
+Set-Location "$($env:TEMP)\winstall-core"
+
+if(Test-Path .\chocolist.txt)
+{
+Write-Host "chocolist.txt found"
+}
+else
+{
+Write-Host "chocolist.txt not found"
+}
+
+
+
+
 
 while($confirmationrename -ne "n" -and $confirmationrename -ne "y")
 {
@@ -63,7 +78,6 @@ if ($confirmationdomainjoin -eq "y")
 		catch
 		{
 			$confirmationdomainjoin2 = Read-Host "Domain join failed. Retry domain join? Answering no will skip domain join. [y/n]"
-			#$confirmation = Read-Host "Retry? [y/n]"
 		}
 	}
 }
@@ -91,10 +105,10 @@ if($confirmationchocoinstall -eq "y")
 	Write-Host "edit, save and close the file separating each package name with a semicolon"
 	Write-Host 
 	Read-Host "Press ENTER to open the chocolist.txt file"
-	notepad.exe "$($dir)\chocolist.txt"
+	notepad.exe ".\chocolist.txt"
 	Read-Host "Press ENTER to continue after the chocolist.txt file has been saved"	
 }
-$chocolist = [IO.File]::ReadAllText("$($dir)\chocolist.txt")
+$chocolist = [IO.File]::ReadAllText(".\chocolist.txt")
 
 
 Write-Host
@@ -409,25 +423,25 @@ if ($confirmationonedrive -eq "y")
 
 
 ###########################################################################
-# Pin apps
+# Pin taskbar apps
 ##########################################################################
 
-if ($chocolist -like '*firefox*')
-{
-Copy-Item "$($dir)\icons\Firefox.lnk" -Destination "$($env:APPDATA)\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\Firefox.lnk" -Force
+#if ($chocolist -like '*firefox*')
+#{
+#Copy-Item "$($env:TEMP)\icons\Firefox.lnk" -Destination "$($env:APPDATA)\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\Firefox.lnk" -Force
 
 #$WshShell = New-Object -comObject WScript.Shell
 #$Shortcut = $WshShell.CreateShortcut("$($env:APPDATA)\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\Firefox.lnk")
 #$Shortcut.TargetPath = "$($env:ProgramFiles)\Mozilla Firefox\firefox.exe"
 #$Shortcut.Save()
-}
+#}
 
-if ($chocolist -like '*chrome*')
-{
-Copy-Item "$($dir)\icons\Google Chrome.lnk" -Destination "$($env:APPDATA)\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\Google Chrome.lnk" -Force
-}
+#if ($chocolist -like '*chrome*')
+#{
+#Copy-Item "$($env:TEMP)\icons\Google Chrome.lnk" -Destination "$($env:APPDATA)\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\Google Chrome.lnk" -Force
+#}
 
-Copy-Item "$($dir)\icons\File Explorer.lnk" -Destination "$($env:APPDATA)\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\File Explorer.lnk" -Force
+#Copy-Item "$($env:TEMP)\icons\File Explorer.lnk" -Destination "$($env:APPDATA)\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\File Explorer.lnk" -Force
 
 
 ###########################################################################
