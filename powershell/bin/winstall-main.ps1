@@ -380,7 +380,7 @@ if ($confirmationchocoinstall -eq "y")
 # Pin apps
 ##########################################################################
 
-if ($chocolist -contains '*firefox*')
+if ($chocolist -like '*firefox*')
 {
 $WshShell = New-Object -comObject WScript.Shell
 $Shortcut = $WshShell.CreateShortcut("$($env:APPDATA)\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\Firefox.lnk")
