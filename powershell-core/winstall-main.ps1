@@ -126,6 +126,7 @@ while($confirmationfull -ne "n" -and $confirmationfull -ne "y")
 }
 if ($confirmationfull -ne "y")
 {
+	Clear-Host
 	exit
 }
 
