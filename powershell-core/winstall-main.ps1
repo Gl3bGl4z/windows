@@ -43,13 +43,12 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/chocolist.txt') | out-file "$($env:TEMP)\winstall-core\chocolist.txt" -force
 }
 
-while ($confirmationrename -ne "n")
+while ($confirmationrename -ne "n" -and $confirmationrename -ne "y")
 {
 	$confirmationrename = Read-Host "Rename this PC? [y/n]"
-	while($confirmationrename -ne "y" -or (![string]::IsNullOrEmpty($pcname)) -ne $true)
+	if($confirmationrename -eq "y")
 	{
-		
-		if($confirmationrename -eq "y")
+		while((![string]::IsNullOrEmpty($pcname)) -ne $true)
 		{
 			$pcname = Read-Host "Type the new name for this PC"
 		}
