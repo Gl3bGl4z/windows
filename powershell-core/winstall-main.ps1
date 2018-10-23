@@ -51,7 +51,7 @@ while($confirmationrename -ne "n" -and $confirmationrename -ne "y")
 
 if($confirmationrename -eq "y")
 {
-	while($pcname -ne "")
+	while($pcname -eq "")
 	{
 		$pcname = Read-Host "Type the new name for this PC"
 	}
@@ -93,19 +93,19 @@ while($confirmationstartmenu -ne "n" -and $confirmationstartmenu -ne "y")
 
 while($confirmationchocoinstall -ne "n" -and $confirmationchocoinstall -ne "y")
 {
-	$confirmationchocoinstall = Read-Host "Install Choco and choose packages? [y/n]"
+	$confirmationchocoinstall = Read-Host "Install Chocolatey and choose packages? [y/n]"
 }
 if($confirmationchocoinstall -eq "y")
 {
 	Write-Host 
-	Write-Host "A .txt file containing the Choco packages to be installed will now open"
+	Write-Host "A .txt file containing the Chocolatey packages to be installed will now open"
 	Write-Host "edit, save and close the file separating each package name with a semicolon"
 	Write-Host 
 	Read-Host "Press ENTER to open the chocolist.txt file"
-	notepad.exe ".\chocolist.txt"
+	notepad.exe "$($env:TEMP)\winstall-core\chocolist.txt"
 	Read-Host "Press ENTER to continue after the chocolist.txt file has been saved"	
 }
-$chocolist = [IO.File]::ReadAllText(".\chocolist.txt")
+$chocolist = [IO.File]::ReadAllText("$($env:TEMP)\winstall-core\chocolist.txt")
 
 
 Write-Host
