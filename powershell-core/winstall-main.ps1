@@ -43,6 +43,7 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/chocolist.txt') | out-file "$($env:TEMP)\winstall-core\chocolist.txt" -force
 }
 
+
 while ($confirmationrename -ne "n" -and $confirmationrename -ne "y")
 {
 	$confirmationrename = Read-Host "Rename this PC? [y/n]"
@@ -56,11 +57,11 @@ while ($confirmationrename -ne "n" -and $confirmationrename -ne "y")
 }
 
 
-
 while($confirmationdomainjoin -ne "n" -and $confirmationdomainjoin -ne "y")
 {
 	$confirmationdomainjoin = Read-Host "Join PC to domain? [y/n]"
 }
+
 
 if ($confirmationdomainjoin -eq "y")
 {
@@ -83,6 +84,7 @@ while($confirmationonedrive -ne "n" -and $confirmationonedrive -ne "y")
 	$confirmationonedrive = Read-Host "Remove all traces of OneDrive? [y/n]"
 }
 
+
 while($confirmationstartmenu -ne "n" -and $confirmationstartmenu -ne "y")
 {
 	$confirmationstartmenu = Read-Host "Remove all startmenu, desktop, taskbar icons? Essential shortcuts will be created. (Chrome, Explorer) [y/n]"
@@ -93,6 +95,8 @@ while($confirmationchocoinstall -ne "n" -and $confirmationchocoinstall -ne "y")
 {
 	$confirmationchocoinstall = Read-Host "Install Chocolatey and choose packages? [y/n]"
 }
+
+
 if($confirmationchocoinstall -eq "y")
 {
 	Write-Host 
