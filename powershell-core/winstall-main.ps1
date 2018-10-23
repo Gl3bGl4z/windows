@@ -22,7 +22,7 @@ else
 }
 ##############
 
-
+Install-Module -Name PendingReboot -Force
 
 
 Write-Host "#############################"
@@ -44,15 +44,14 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 }
 
 
-while($confirmationrename -ne "n" -and $confirmationrename -ne "y" -and $pcname -ne "")
+while($confirmationrename -ne "n" -and $confirmationrename -ne "y" -or (![string]::IsNullOrEmpty($pcname)) -ne $true)
 {
 	$confirmationrename = Read-Host "Rename this PC? [y/n]"
 	if($confirmationrename -eq "y")
 	{
-			$pcname = Read-Host "Type the new name for this PC"
+		$pcname = Read-Host "Type the new name for this PC"
 	}
 }
-
 
 
 
@@ -292,19 +291,26 @@ if ($confirmationstartmenu -eq "y")
 # Pinapp function
 ##########################################################################
 
-	function Pin-App {    param(
+	function Pin-App 
+	{    
+		param(
 		[string]$appname,
 		[switch]$unpin
 		)
-		try{
-			if ($unpin.IsPresent){
+		try
+		{
+			if($unpin.IsPresent){
 				((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.replace('&','') -match 'Von "Start" lösen|Unpin from Start'} | %{$_.DoIt()}
 				return "App '$appname' unpinned from Start"
-			}else{
+			}
+			else
+			{
 				((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.replace('&','') -match 'An "Start" anheften|Pin to Start'} | %{$_.DoIt()}
 				return "App '$appname' pinned to Start"
 			}
-		}catch{
+		}
+		catch
+		{
 			#Write-Error "Error Pinning/Unpinning App! (App-Name correct?)"
 		}
 	}
@@ -436,7 +442,7 @@ if ($confirmationonedrive -eq "y")
 # Start explorer.exe
 ##########################################################################
 
-Install-Module -Name PendingReboot -Force -Confirm:$false
+
 
 Invoke-Expression "start explorer.exe"
 
