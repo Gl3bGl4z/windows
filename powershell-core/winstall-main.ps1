@@ -44,15 +44,12 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 }
 
 
-while($confirmationrename -ne "n" -and $confirmationrename -ne "y")
+while($confirmationrename -ne "n" -and $confirmationrename -ne "y" -and $pcname -eq "")
 {
 	$confirmationrename = Read-Host "Rename this PC? [y/n]"
 	if($confirmationrename -eq "y")
 	{
-		while($pcname -eq "")
-		{
 			$pcname = Read-Host "Type the new name for this PC"
-		}
 	}
 }
 
