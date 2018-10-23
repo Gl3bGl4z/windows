@@ -39,7 +39,7 @@ Set-Location "$($env:TEMP)\winstall-core"
 
 if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 {
-	Write-Host "chocolist.txt not found"
+	#Write-Host "chocolist.txt not found"
 	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/chocolist.txt') | out-file "$($env:TEMP)\winstall-core\chocolist.txt" -force
 }
 
@@ -363,9 +363,9 @@ if ($confirmationstartmenu -eq "y")
 # Turn Off All Windows 10 Telemetry
 ##########################################################################
 
-(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/hahndorf/Set-Privacy/master/Set-Privacy.ps1') | out-file "$($env:TEMP)\winstall-core\set-privacy.ps1" -force
+(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/hahndorf/Set-Privacy/master/Set-Privacy.ps1') | out-file .\set-privacy.ps1 -force
 #Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
-"$($env:TEMP)\winstall-core\set-privacy.ps1" -Strong -admin
+.\set-privacy.ps1 -Strong -admin
 
 ###########################################################################
 # Remove OneDrive
