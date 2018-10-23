@@ -37,25 +37,26 @@ New-Item -Path $env:TEMP -Name "winstall-core" -ItemType "directory" -Force >$nu
 
 Set-Location "$($env:TEMP)\winstall-core"
 
-if(!(Test-Path -Path .\chocolist.txt ))
+if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 {
 	Write-Host "chocolist.txt not found"
-	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/chocolist.txt') | out-file .\chocolist.txt -force
+	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/chocolist.txt') | out-file "$($env:TEMP)\winstall-core\chocolist.txt" -force
 }
 
 
 while($confirmationrename -ne "n" -and $confirmationrename -ne "y")
 {
 	$confirmationrename = Read-Host "Rename this PC? [y/n]"
-}
-
-if($confirmationrename -eq "y")
-{
-	while($pcname -eq "")
+	if($confirmationrename -eq "y")
 	{
-		$pcname = Read-Host "Type the new name for this PC"
+		while($pcname -eq "")
+		{
+			$pcname = Read-Host "Type the new name for this PC"
+		}
 	}
 }
+
+
 
 
 
@@ -156,10 +157,6 @@ Get-AppxPackage -AllUsers | where-object {$_.name -notlike "*Microsoft.WindowsSt
 Get-AppxProvisionedPackage -online | where-object {$_.packagename -notlike "*Microsoft.WindowsStore*"} | where-object {$_.packagename -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.packagename -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxProvisionedPackage -online -erroraction 'silentlycontinue'
 
 
-
-
-
-
 ###########################################################################
 # Choco install
 ##########################################################################
@@ -176,18 +173,14 @@ if ($confirmationchocoinstall -eq "y")
 
 
 
-
-
-
-
-
+###########################################################################
+# Taskbar pinapp function
+##########################################################################
 
 if ($confirmationstartmenu -eq "y")
 {
 
-###########################################################################
-# Taskbar pinapp function
-##########################################################################
+
 
 	
 	function findTheNeedle ($needle, $haystack, $startIndexInHaystack=0, $needlePartsThatDontMatter=@())
@@ -369,9 +362,9 @@ if ($confirmationstartmenu -eq "y")
 # Turn Off All Windows 10 Telemetry
 ##########################################################################
 
-(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/hahndorf/Set-Privacy/master/Set-Privacy.ps1') | out-file .\set-privacy.ps1 -force
+(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/hahndorf/Set-Privacy/master/Set-Privacy.ps1') | out-file "$($env:TEMP)\winstall-core\set-privacy.ps1" -force
 #Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
-.\set-privacy.ps1 -Strong -admin
+"$($env:TEMP)\winstall-core\set-privacy.ps1" -Strong -admin
 
 ###########################################################################
 # Remove OneDrive
