@@ -37,23 +37,25 @@ New-Item -Path $env:TEMP -Name "winstall-core" -ItemType "directory" -Force >$nu
 
 Set-Location "$($env:TEMP)\winstall-core"
 
-if(Test-Path .\chocolist.txt -eq $False)
+if(!(Test-Path -Path .\chocolist.txt ))
 {
-Write-Host "chocolist.txt not found"
+	Write-Host "chocolist.txt not found"
+	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/chocolist.txt') | out-file .\chocolist.txt -force
 }
-
-
 
 
 while($confirmationrename -ne "n" -and $confirmationrename -ne "y")
 {
 	$confirmationrename = Read-Host "Rename this PC? [y/n]"
 }
-if ($confirmationrename -eq "y")
-{
-	Rename-Computer -NewName $pcname
-}
 
+if($confirmationrename -eq "y")
+{
+	while($pcname -ne "")
+	{
+		$pcname = Read-Host "Type the new name for this PC"
+	}
+}
 
 
 
