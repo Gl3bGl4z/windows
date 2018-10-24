@@ -51,11 +51,23 @@ else
 
 Write-Host "Searching for updates..."
 
-Copy-Item "$($dir)\PSWindowsUpdate" -Destination "$($env:USERPROFILE)\Documents\WindowsPowerShell\Modules\PSWindowsUpdate\" -Recurse -Force
+Install-Module -Name PSWindowsUpdate -Force
+
+
+
+
+
+
+
+
+
+
+
+#Copy-Item "$($dir)\PSWindowsUpdate" -Destination "$($env:USERPROFILE)\Documents\WindowsPowerShell\Modules\PSWindowsUpdate\" -Recurse -Force
 
 Import-Module PSWindowsUpdate
 
-Get-WUInstall -AcceptAll
+Get-WUInstall
 
 Clear
 
