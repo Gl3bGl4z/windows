@@ -17,21 +17,28 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0"
+$ver = "1.1"
 Write-host "######################################"
 Write-host "#       Windows 10 Benchmark Script  #"
 Write-host "#       Version: "$ver"	             #"
 Write-host "######################################"
 Write-host
 Write-host
-Install-Module -Name Benchmark
-Import-Module Benchmark
+Set-Location "$($env:TEMP)\winstall-core"
 while($confirmationupdate -ne "n" -and $confirmationupdate -ne "y")
 {	
 	$confirmationupdate = Read-Host "Run Windows 10 CPU benchmark? [y/n]"
 }if($confirmationupdate -eq "y")
 {Write-Host "Running benchmark please wait..."
-Measure-These -Count 5 -ScriptBlock { sleep 1 }, { sleep 2 }, { sleep 5 } -Title '1 second', '2 seconds', '5 seconds' | Format-Table -AutoSize
-
+	if(!(Test-Path -Path "$($env:TEMP)\winstall-core\bench.exe" ))
+	{
+		[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+		$url = "https://github.com/Ad3t0/windows/raw/master/powershell-core/bin/bench.exe"
+		$output = "$($env:TEMP)\winstall-core\bench.exe"
+		$start_time = Get-Date
+		Invoke-WebRequest -Uri $url -OutFile $output
+		Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)"
+	}
+	./bench multithread
 }Read-Host "Press ENTER to exit"
 Exit
