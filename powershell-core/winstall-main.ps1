@@ -22,6 +22,7 @@ else
 }
 ##############
 Install-Module -Name PendingReboot -Force
+Clear-Host
 Write-Host "#############################"
 Write-Host "#                           #"
 Write-Host "#  Windows 10 Setup Script  #"
