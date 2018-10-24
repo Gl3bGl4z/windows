@@ -24,11 +24,16 @@ Write-host "#       Version: "$ver"	          #"
 Write-host "###################################"
 Write-host
 Write-host
-Write-Host "Searching for updates please wait..."
+while ($confirmationupdate -ne "n" -and $confirmationupdate -ne "y")
+{	
+	$confirmationupdate = Read-Host "Enable RDP on this PC? [y/n]"
+}if ($confirmationupdate -eq "y")
+{Write-Host "Searching for updates please wait..."
 Install-Module -Name PSWindowsUpdate -Force
 Import-Module PSWindowsUpdate
 Hide-WindowsUpdate -Title "Bing*"
+Hide-WindowsUpdate -Title "Silverlight*"
 Get-WindowsUpdate -MicrosoftUpdate -AcceptAll -Install
 Get-WURebootStatus
-Read-Host "Press ENTER to exit"
+}Read-Host "Press ENTER to exit"
 Exit
