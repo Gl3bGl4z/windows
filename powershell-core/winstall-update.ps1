@@ -28,4 +28,4 @@ Import-Module PSWindowsUpdate
 Get-WindowsUpdate –MicrosoftUpdate -AcceptAll -Install
 Write-Host "Finished looking for updates."
 Get-WURebootStatus
-Read-Host "Finished"
+Read-Host
