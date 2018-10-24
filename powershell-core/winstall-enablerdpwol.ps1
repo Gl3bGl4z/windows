@@ -44,5 +44,6 @@ while ($confirmationrdp -ne "n" -and $confirmationrdp -ne "y")
 	if ($Adapters.count -gt 0){
 		foreach ($Adapter in $Adapters){$Adapter.enablewakeonmagicpacketonly = "$True"}
 	}else{$Adapters.enablewakeonmagicpacketonly = "$True"}
-	Write-Host "Enabling Windows RDP completed successfully."
+	Write-Host "Enabling Windows WOL completed successfully."
 }Read-Host "Press any key to exit"
+Exit

@@ -31,3 +31,4 @@ Hide-WindowsUpdate -Title "Bing*"
 Get-WindowsUpdate -MicrosoftUpdate -AcceptAll -Install
 Get-WURebootStatus
 Read-Host "Press ENTER to exit"
+Exit

@@ -346,3 +346,4 @@ if ($rebootpending = "True")
 	Read-Host "Complete, press ENTER to close and finish"
 	Write-Host
 }
+Exit
