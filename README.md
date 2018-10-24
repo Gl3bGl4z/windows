@@ -1,4 +1,4 @@
-# winstall
+# Winstall Setup Scripts by Ad3t0
 ### **Paste links in an Administrator elevated PowerShell window**
 ## winstall-setupscript
 #### This script can rename the PC, join a domain, remove OneDrive, remove all Desktop, Startmenu, Taskbar icons (Including the People, Taskview, and Action Center icons on the Taskbar) delete all Windows Store apps (except the Calculator, Photos, and the Windows Store) and install Chocolatey with selected packages and install major system dependencies. (Dependencies include all .NET Framework versions and all VCRedist Visual C++ versions)
