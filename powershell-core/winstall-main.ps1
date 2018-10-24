@@ -131,7 +131,7 @@ if ($confirmationchocoinstall -eq "y")
 {
 	Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 	choco feature enable -n=allowGlobalconfirmation
-	choco install "$($chocolist);vcredist-all;dotnet4.0;dotnet4.5;dotnet4.5.2;dotnet4.6;dotnet4.6.1;dotnet4.6.2;dotnet4.7 --ignore-checksums"
+	choco install "$($chocolist);vcredist-all;dotnet4.0;dotnet4.5;dotnet4.5.2;dotnet4.6;dotnet4.6.1;dotnet4.6.2 --ignore-checksums"
 }
 ###########################################################################
 # Taskbar pinapp function
