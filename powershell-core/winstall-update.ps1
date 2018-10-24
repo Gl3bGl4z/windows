@@ -26,14 +26,14 @@ Write-host
 Write-host
 while($confirmationupdate -ne "n" -and $confirmationupdate -ne "y")
 {	
-	$confirmationupdate = Read-Host "Enable RDP on this PC? [y/n]"
+	$confirmationupdate = Read-Host "Begin installing all available Windows 10 updates? [y/n]"
 }if($confirmationupdate -eq "y")
 {Write-Host "Searching for updates please wait..."
-Install-Module -Name PSWindowsUpdate -Force
-Import-Module PSWindowsUpdate
-Hide-WindowsUpdate -Title "Bing*"
-Hide-WindowsUpdate -Title "Silverlight*"
-Get-WindowsUpdate -MicrosoftUpdate -AcceptAll -Install
-Get-WURebootStatus
+	Install-Module -Name PSWindowsUpdate -Force
+	Import-Module PSWindowsUpdate
+	Hide-WindowsUpdate -Title "Bing*"
+	Hide-WindowsUpdate -Title "Silverlight*"
+	Get-WindowsUpdate -MicrosoftUpdate -AcceptAll -Install
+	Get-WURebootStatus
 }Read-Host "Press ENTER to exit"
 Exit

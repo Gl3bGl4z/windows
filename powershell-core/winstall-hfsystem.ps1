@@ -58,7 +58,7 @@ function header
 	Write-Host " 2 - Hidden (+h)"
 	Write-Host " 3 - Normal (-s -h)"
 	Write-Host " 4 - Exit"
-	Write-Host "Restarting Explorer.exe to show hidden files and folders." -foreground "yellow" | Out-Null
+	Write-Host "Restarting explorer.exe to show hidden files and folders." -foreground "yellow" | Out-Null
 	Write-Host
 	while($runs -lt 5 -and -ne 0)
 	{

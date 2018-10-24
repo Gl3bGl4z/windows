@@ -1,5 +1,5 @@
 ############################################################
-#	Title:      Windows 10 Add Powershell to Context Menu  #
+#	Title:      Windows 10 Add PowerShell to Context Menu  #
 #	Creator:	Ad3t0	                                   #
 #	Date:		10/21/2018             	                   #
 ############################################################
@@ -19,7 +19,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 }#####
 $ver = "1.0"
 Write-host "####################################################"
-Write-host "#       Windows 10 Add Powershell to Context Menu  #"
+Write-host "#       Windows 10 Add PowerShell to Context Menu  #"
 Write-host "#       Version: "$ver"	                           #"
 Write-host "####################################################"
 Write-host

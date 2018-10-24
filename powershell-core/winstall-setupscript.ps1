@@ -61,7 +61,7 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 {	$confirmationstartmenu = Read-Host "Remove all startmenu, desktop, taskbar icons? [y/n]"
 	while($confirmationappremoval -ne "n" -and $confirmationappremoval -ne "y")
 	{	
-		$confirmationappremoval = Read-Host "Remove all Windows store app except the Calculator, Photos, and the Windows Store? [y/n]"
+		$confirmationappremoval = Read-Host "Remove all Windows Store apps except the Calculator, Photos, and the Windows Store? [y/n]"
 	}
 }while($confirmationchocoinstall -ne "n" -and $confirmationchocoinstall -ne "y")
 {	$confirmationchocoinstall = Read-Host "Install Chocolatey and choose packages? [y/n]"
