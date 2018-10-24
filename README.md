@@ -1,6 +1,6 @@
 ### **Paste links in an Administrator elevated PowerShell window**
 # winstall-setupscript
-#### This script can rename the PC, join a domain, remove OneDrive, remove all Desktop, Startmenu, Taskbar icons (Including the People, Taskview, and Action Center icons on the Taskbar) delete all Windows Store apps (except the Calculator, Photos, and the Windows Store) and install Chocolatey with selected packages and install major system dependencies. (Dependencies include all .NET Framework and VCRedist versions)
+#### This script can rename the PC, join a domain, remove OneDrive, remove all Desktop, Startmenu, Taskbar icons (Including the People, Taskview, and Action Center icons on the Taskbar) delete all Windows Store apps (except the Calculator, Photos, and the Windows Store) and install Chocolatey with selected packages and install major system dependencies. (Dependencies include all .NET Framework versions and VCRedist versions)
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/winstall-setupscript.ps1'))
 ```
