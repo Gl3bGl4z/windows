@@ -1,3 +1,8 @@
+############################################################
+#	Title:      Windows 10 Add Powershell to Context Menu  #
+#	Creator:	Ad3t0	                                   #
+#	Date:		10/21/2018             	                   #
+############################################################
 $myWindowsID=[System.Security.Principal.WindowsIdentity]::GetCurrent()
 $myWindowsPrincipal=new-object System.Security.Principal.WindowsPrincipal($myWindowsID)
 $adminRole=[System.Security.Principal.WindowsBuiltInRole]::Administrator
@@ -12,6 +17,13 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }#####
+$ver = "1.0"
+Write-host "####################################################"
+Write-host "#       Windows 10 Add Powershell to Context Menu  #"
+Write-host "#       Version: "$ver"	                           #"
+Write-host "####################################################"
+Write-host
+Write-host
 while ($confirmationgef -ne "n" -and $confirmationgef -ne "y")
 {	
 	$confirmationgef = Read-Host "Add an Open ""Open Windows PowerShell Here as Administrator"" to the context menu? [y/n]"
