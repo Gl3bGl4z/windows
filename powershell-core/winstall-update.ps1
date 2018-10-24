@@ -22,10 +22,17 @@ else
 }
 ##############
 #Write-Host "Searching for updates..."
+
 Install-Module -Name PSWindowsUpdate -Force
+
 Hide-WindowsUpdate -Title "Bing*"
+
 Import-Module PSWindowsUpdate
+
 Get-WindowsUpdate –MicrosoftUpdate -AcceptAll -Install
+
 #Write-Host "Finished looking for updates."
+
 Get-WURebootStatus
+
 Read-Host
