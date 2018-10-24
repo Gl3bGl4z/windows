@@ -6,7 +6,7 @@
 $myWindowsID=[System.Security.Principal.WindowsIdentity]::GetCurrent()
 $myWindowsPrincipal=new-object System.Security.Principal.WindowsPrincipal($myWindowsID)
 $adminRole=[System.Security.Principal.WindowsBuiltInRole]::Administrator
-if ($myWindowsPrincipal.IsInRole($adminRole))
+if($myWindowsPrincipal.IsInRole($adminRole))
 {	$Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + "(Elevated)"
 	$Host.UI.RawUI.BackgroundColor = "DarkBlue"
 	clear-host
@@ -24,10 +24,10 @@ Write-host "#       Version: "$ver"	                           #"
 Write-host "####################################################"
 Write-host
 Write-host
-while ($confirmationgef -ne "n" -and $confirmationgef -ne "y")
+while($confirmationgef -ne "n" -and $confirmationgef -ne "y")
 {	
 	$confirmationgef = Read-Host "Add an Open ""Open Windows PowerShell Here as Administrator"" to the context menu? [y/n]"
-}if ($confirmationgef -eq "y")
+}if($confirmationgef -eq "y")
 {	$menu = 'Open Windows PowerShell Here as Administrator'
 	$command = "$PSHOME\powershell.exe -NoExit -NoProfile -Command ""Set-Location '%V'"""
 	'directory', 'directory\background', 'drive' | ForEach-Object {

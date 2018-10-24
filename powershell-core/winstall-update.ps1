@@ -24,10 +24,10 @@ Write-host "#       Version: "$ver"	          #"
 Write-host "###################################"
 Write-host
 Write-host
-while ($confirmationupdate -ne "n" -and $confirmationupdate -ne "y")
+while($confirmationupdate -ne "n" -and $confirmationupdate -ne "y")
 {	
 	$confirmationupdate = Read-Host "Enable RDP on this PC? [y/n]"
-}if ($confirmationupdate -eq "y")
+}if($confirmationupdate -eq "y")
 {Write-Host "Searching for updates please wait..."
 Install-Module -Name PSWindowsUpdate -Force
 Import-Module PSWindowsUpdate

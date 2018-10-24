@@ -6,7 +6,7 @@
 $myWindowsID=[System.Security.Principal.WindowsIdentity]::GetCurrent()
 $myWindowsPrincipal=new-object System.Security.Principal.WindowsPrincipal($myWindowsID)
 $adminRole=[System.Security.Principal.WindowsBuiltInRole]::Administrator
-if ($myWindowsPrincipal.IsInRole($adminRole))
+if($myWindowsPrincipal.IsInRole($adminRole))
 {	$Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + "(Elevated)"
 	$Host.UI.RawUI.BackgroundColor = "DarkBlue"
 	clear-host
@@ -32,7 +32,7 @@ Set-Location "$($env:TEMP)\winstall-core"
 if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 {	
 	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/chocolist.txt') | out-file "$($env:TEMP)\winstall-core\chocolist.txt" -force
-}while ($confirmationrename -ne "n" -and $confirmationrename -ne "y")
+}while($confirmationrename -ne "n" -and $confirmationrename -ne "y")
 {	$confirmationrename = Read-Host "Rename this PC? [y/n]"
 	if($confirmationrename -eq "y")
 	{
@@ -43,7 +43,7 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 	}
 }while($confirmationdomainjoin -ne "n" -and $confirmationdomainjoin -ne "y")
 {	$confirmationdomainjoin = Read-Host "Join PC to domain? [y/n]"
-}if ($confirmationdomainjoin -eq "y")
+}if($confirmationdomainjoin -eq "y")
 {	while($confirmationdomainjoin2 -ne "n")
 	{
 		try
@@ -83,14 +83,14 @@ Write-Host "App Removal: [$($confirmationappremoval)]"
 Write-Host "Choco install: [$($confirmationchocoinstall)]"
 Write-Host
 Write-Host "Windows 10 Setup Script will now run"
-Write-Host "explorer.exe will taskkill while running and restart when finished"
+Write-Host "explorer.exe will taskkill whilerunning and restart when finished"
 Write-Host
 while($confirmationfull -ne "n" -and $confirmationfull -ne "y")
 {	$confirmationfull = Read-Host "Continue? [y/n]"
-}if ($confirmationfull -ne "y")
+}if($confirmationfull -ne "y")
 {	Clear-Host
 	exit
-}if ($confirmationrename -eq "y")
+}if($confirmationrename -eq "y")
 {	Rename-Computer -NewName $pcname
 }###########################################################################
 # Disable Windows Store automatic install service
@@ -104,20 +104,20 @@ Invoke-Expression "taskkill /f /im explorer.exe"
 ###########################################################################
 # Remove all Windows store apps expect WindowsStore, Calculator and Photos
 ##########################################################################
-if ($confirmationappremoval -eq "y")
+if($confirmationappremoval -eq "y")
 {	Get-AppxPackage -AllUsers | where-object {$_.name -notlike "*Microsoft.WindowsStore*"} | where-object {$_.name -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.name -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxPackage -erroraction 'silentlycontinue'
 	Get-AppxProvisionedPackage -online | where-object {$_.packagename -notlike "*Microsoft.WindowsStore*"} | where-object {$_.packagename -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.packagename -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxProvisionedPackage -online #-erroraction 'silentlycontinue'
 }###########################################################################
 # Choco install
 ##########################################################################
-if ($confirmationchocoinstall -eq "y")
+if($confirmationchocoinstall -eq "y")
 {	Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 	choco feature enable -n=allowGlobalconfirmation
 	choco install "$($chocolist);vcredist-all;dotnet4.0;dotnet4.5;dotnet4.5.2;dotnet4.6;dotnet4.6.1;dotnet4.6.2 --ignore-checksums"
 }###########################################################################
 # Taskbar pinapp function
 ##########################################################################
-if ($confirmationstartmenu -eq "y")
+if($confirmationstartmenu -eq "y")
 {	
 	function findTheNeedle ($needle, $haystack, $startIndexInHaystack=0, $needlePartsThatDontMatter=@())
 	{
@@ -125,17 +125,17 @@ if ($confirmationstartmenu -eq "y")
 		$needleLastIndex = ($needle.Length - 1)
 		$needleCurrentIndex = 0
 		$haystackCurrentIndex = $startIndexInHaystack
-		while ($haystackCurrentIndex -lt $haystackLastIndex)
+		while($haystackCurrentIndex -lt $haystackLastIndex)
 		{
-			if ($haystack[$haystackCurrentIndex] -eq $needle[$needleCurrentIndex] -or ($needleCurrentIndex -in $needlePartsThatDontMatter))
+			if($haystack[$haystackCurrentIndex] -eq $needle[$needleCurrentIndex] -or ($needleCurrentIndex -in $needlePartsThatDontMatter))
 			{
 				$startIndex = $haystackCurrentIndex
-				while ($haystack[$haystackCurrentIndex] -eq $needle[$needleCurrentIndex] -or ($needleCurrentIndex -in $needlePartsThatDontMatter))
+				while($haystack[$haystackCurrentIndex] -eq $needle[$needleCurrentIndex] -or ($needleCurrentIndex -in $needlePartsThatDontMatter))
 				{
 					$needleCurrentIndex += 1
 					$haystackCurrentIndex += 1
 				}
-				if (($needleCurrentIndex - 1) -eq $needleLastIndex)
+				if(($needleCurrentIndex - 1) -eq $needleLastIndex)
 				{
 					return ($startIndex + 1)
 				}
@@ -151,17 +151,17 @@ if ($confirmationstartmenu -eq "y")
 		$needleLastIndex = ($needle.Length - 1)
 		$needleCurrentIndex = $needleLastIndex
 		$haystackCurrentIndex = $startIndexInHaystack
-		while ($haystackCurrentIndex -gt 0)
+		while($haystackCurrentIndex -gt 0)
 		{
-			if ($haystack[$haystackCurrentIndex] -eq $needle[$needleCurrentIndex]  -or ($needleCurrentIndex -in $needlePartsThatDontMatter))
+			if($haystack[$haystackCurrentIndex] -eq $needle[$needleCurrentIndex]  -or ($needleCurrentIndex -in $needlePartsThatDontMatter))
 			{
 				$startIndex = $haystackCurrentIndex
-				while ($haystack[$haystackCurrentIndex] -eq $needle[$needleCurrentIndex] -or ($needleCurrentIndex -in $needlePartsThatDontMatter))
+				while($haystack[$haystackCurrentIndex] -eq $needle[$needleCurrentIndex] -or ($needleCurrentIndex -in $needlePartsThatDontMatter))
 				{
 					$needleCurrentIndex -= 1
 					$haystackCurrentIndex -= 1
 				}
-				if (($needleCurrentIndex + 1) -eq 0)
+				if(($needleCurrentIndex + 1) -eq 0)
 				{
 					return ($haystackCurrentIndex + 1)
 				}
@@ -199,17 +199,17 @@ if ($confirmationstartmenu -eq "y")
 	{
 		$haystack = (Get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Taskband" -Name "Favorites").Favorites
 		$needleStart = findTheNeedle $app["appThumbprint"] $haystack
-		if ($needleStart -ne -1)
+		if($needleStart -ne -1)
 		{
 			$firstIndexAfterNeedle = $needleStart + $app["appThumbprint"].Length
 			$lastIndexOfEntry = (findTheNeedle $app["taskbarEntryTrailerBytes"] $haystack $firstIndexAfterNeedle $app["taskbarEntryTrailerBytesThatDontMatter"]) + ($app["taskbarEntryTrailerBytes"].Length - 1)
-			if (($lastIndexOfEntry) -ne -1)
+			if(($lastIndexOfEntry) -ne -1)
 			{
 				$firstIndexOfEntry = findTheNeedleReverse $app["taskbarEntryHeaderBytes"] $haystack $needleStart $app["taskbarEntryHeaderBytesThatDontMatter"]
-				if (($firstIndexOfEntry) -ne -1)
+				if(($firstIndexOfEntry) -ne -1)
 				{
 					$atLeastOneAppIsPinned = $true
-					if ($firstIndexOfEntry -eq 0)
+					if($firstIndexOfEntry -eq 0)
 					{
 						$newArray = $haystack[$lastIndexOfEntry..($haystack.Length)]
 					}
@@ -292,15 +292,15 @@ if ($confirmationstartmenu -eq "y")
 ###########################################################################
 # Remove OneDrive
 ##########################################################################
-if ($confirmationonedrive -eq "y")
+if($confirmationonedrive -eq "y")
 {	
 	echo "73 OneDrive process and explorer"
 	taskkill.exe /F /IM "OneDrive.exe"
 	echo "Remove OneDrive"
-	if (Test-Path "$env:systemroot\System32\OneDriveSetup.exe") {
+	if(Test-Path "$env:systemroot\System32\OneDriveSetup.exe") {
 		& "$env:systemroot\System32\OneDriveSetup.exe" /uninstall
 	}
-	if (Test-Path "$env:systemroot\SysWOW64\OneDriveSetup.exe") {
+	if(Test-Path "$env:systemroot\SysWOW64\OneDriveSetup.exe") {
 		& "$env:systemroot\SysWOW64\OneDriveSetup.exe" /uninstall
 	}
 	echo "Disable OneDrive via Group Policies"
@@ -326,7 +326,7 @@ if ($confirmationonedrive -eq "y")
 ##########################################################################
 Invoke-Expression "start explorer.exe"
 $rebootpending = Test-PendingReboot | Select-Object -Property IsRebootPending | Format-Wide
-if ($rebootpending = "True")
+if($rebootpending = "True")
 {	Write-Host
 	Write-Host
 	Write-Warning "REBOOT REQUIRED"
@@ -335,7 +335,7 @@ if ($rebootpending = "True")
 	{
 		$confirmationreboot = Read-Host "Reboot is pending reboot this PC now? [y/n]"
 	}
-	if ($confirmationreboot -eq "y")
+	if($confirmationreboot -eq "y")
 	{	
 		Restart-Computer
 	}
