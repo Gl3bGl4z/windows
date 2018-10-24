@@ -294,29 +294,29 @@ if($confirmationstartmenu -eq "y")
 ##########################################################################
 if($confirmationonedrive -eq "y")
 {	
-	echo "73 OneDrive process and explorer"
+	Write-Host "73 OneDrive process and explorer"
 	taskkill.exe /F /IM "OneDrive.exe"
-	echo "Remove OneDrive"
+	Write-Host "Remove OneDrive"
 	if(Test-Path "$env:systemroot\System32\OneDriveSetup.exe") {
 		& "$env:systemroot\System32\OneDriveSetup.exe" /uninstall
 	}
 	if(Test-Path "$env:systemroot\SysWOW64\OneDriveSetup.exe") {
 		& "$env:systemroot\SysWOW64\OneDriveSetup.exe" /uninstall
 	}
-	echo "Disable OneDrive via Group Policies"
+	Write-Host "Disable OneDrive via Group Policies"
 	sp "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\OneDrive" "DisableFileSyncNGSC" 1 -erroraction 'silentlycontinue'
-	echo "Removing OneDrive leftovers trash"
+	Write-Host "Removing OneDrive leftovers trash"
 	rm -Recurse -Force -ErrorAction SilentlyContinue "$env:localappdata\Microsoft\OneDrive"
 	rm -Recurse -Force -ErrorAction SilentlyContinue "$env:programdata\Microsoft OneDrive"
 	rm -Recurse -Force -ErrorAction SilentlyContinue "C:\OneDriveTemp"
-	echo "Remove Onedrive from explorer sidebar"
+	Write-Host "Remove Onedrive from explorer sidebar"
 	New-PSDrive -PSProvider "Registry" -Root "HKEY_CLASSES_ROOT" -Name "HKCR"
 	mkdir -Force "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}"
 	sp "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" "System.IsPinnedToNameSpaceTree" 0 -erroraction 'silentlycontinue'
 	mkdir -Force "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}"
 	sp "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" "System.IsPinnedToNameSpaceTree" 0 -erroraction 'silentlycontinue'
 	Remove-PSDrive "HKCR"
-	echo "Removing run option for new users"
+	Write-Host "Removing run option for new users"
 	reg load "hku\Default" "C:\Users\Default\NTUSER.DAT"
 }###########################################################################
 # Pin taskbar apps
