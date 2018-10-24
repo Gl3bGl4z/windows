@@ -23,23 +23,18 @@ else
 ##############
 
 
+Write-Host "Searching for updates..."
 
 Install-Module -Name PSWindowsUpdate -Force
 
-#Clear-Host
-
-Write-Host "Searching for updates..."
-
-#Copy-Item "$($dir)\PSWindowsUpdate" -Destination "$($env:USERPROFILE)\Documents\WindowsPowerShell\Modules\PSWindowsUpdate\" -Recurse -Force
+Hide-WindowsUpdate -Title "Bing*"
 
 Import-Module PSWindowsUpdate
 
-Get-WUInstall
+Get-WindowsUpdate –MicrosoftUpdate -AcceptAll -Install
 
 Write-Host "Finished looking for updates."
 
 Get-WURebootStatus
 
 Read-Host "Press ENTER to exit" 
-
-Exit
