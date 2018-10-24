@@ -1,20 +1,15 @@
 ###########################################################################
-#
-# Windows 10 Setup Script
-#
-##########################################################################
+## Windows 10 Setup Script
+###########################################################################
 $myWindowsID=[System.Security.Principal.WindowsIdentity]::GetCurrent()
 $myWindowsPrincipal=new-object System.Security.Principal.WindowsPrincipal($myWindowsID)
 $adminRole=[System.Security.Principal.WindowsBuiltInRole]::Administrator
 if ($myWindowsPrincipal.IsInRole($adminRole))
-{
-	$Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + "(Elevated)"
+{	$Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + "(Elevated)"
 	$Host.UI.RawUI.BackgroundColor = "DarkBlue"
 	clear-host
-}
-else
-{
-	$newProcess = new-object System.Diagnostics.ProcessStartInfo "PowerShell";
+}else
+{	$newProcess = new-object System.Diagnostics.ProcessStartInfo "PowerShell";
 	$newProcess.Arguments = $myInvocation.MyCommand.Definition;
 	$newProcess.Verb = "runas";
 	[System.Diagnostics.Process]::Start($newProcess);
@@ -32,13 +27,10 @@ Write-Host
 New-Item -Path $env:TEMP -Name "winstall-core" -ItemType "directory" -Force >$null 2>&1
 Set-Location "$($env:TEMP)\winstall-core"
 if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
-{
-	#Write-Host "chocolist.txt not found"
+{	
 	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/chocolist.txt') | out-file "$($env:TEMP)\winstall-core\chocolist.txt" -force
-}
-while ($confirmationrename -ne "n" -and $confirmationrename -ne "y")
-{
-	$confirmationrename = Read-Host "Rename this PC? [y/n]"
+}while ($confirmationrename -ne "n" -and $confirmationrename -ne "y")
+{	$confirmationrename = Read-Host "Rename this PC? [y/n]"
 	if($confirmationrename -eq "y")
 	{
 		while((![string]::IsNullOrEmpty($pcname)) -ne $true)
@@ -46,14 +38,10 @@ while ($confirmationrename -ne "n" -and $confirmationrename -ne "y")
 			$pcname = Read-Host "Type the new name for this PC"
 		}
 	}
-}
-while($confirmationdomainjoin -ne "n" -and $confirmationdomainjoin -ne "y")
-{
-	$confirmationdomainjoin = Read-Host "Join PC to domain? [y/n]"
-}
-if ($confirmationdomainjoin -eq "y")
-{
-	while($confirmationdomainjoin2 -ne "n")
+}while($confirmationdomainjoin -ne "n" -and $confirmationdomainjoin -ne "y")
+{	$confirmationdomainjoin = Read-Host "Join PC to domain? [y/n]"
+}if ($confirmationdomainjoin -eq "y")
+{	while($confirmationdomainjoin2 -ne "n")
 	{
 		try
 		{
@@ -64,30 +52,21 @@ if ($confirmationdomainjoin -eq "y")
 			$confirmationdomainjoin2 = Read-Host "Domain join failed. Retry domain join? Answering no will skip domain join. [y/n]"
 		}
 	}
-}
-while($confirmationonedrive -ne "n" -and $confirmationonedrive -ne "y")
-{
-	$confirmationonedrive = Read-Host "Remove all traces of OneDrive? [y/n]"
-}
-while($confirmationstartmenu -ne "n" -and $confirmationstartmenu -ne "y")
-{
-	$confirmationstartmenu = Read-Host "Remove all startmenu, desktop, taskbar icons? Essential shortcuts will be created. (Chrome, Explorer) [y/n]"
-}
-while($confirmationchocoinstall -ne "n" -and $confirmationchocoinstall -ne "y")
-{
-	$confirmationchocoinstall = Read-Host "Install Chocolatey and choose packages? [y/n]"
-}
-if($confirmationchocoinstall -eq "y")
-{
-	Write-Host
+}while($confirmationonedrive -ne "n" -and $confirmationonedrive -ne "y")
+{	$confirmationonedrive = Read-Host "Remove all traces of OneDrive? [y/n]"
+}while($confirmationstartmenu -ne "n" -and $confirmationstartmenu -ne "y")
+{	$confirmationstartmenu = Read-Host "Remove all startmenu, desktop, taskbar icons? Essential shortcuts will be created. (Chrome, Explorer) [y/n]"
+}while($confirmationchocoinstall -ne "n" -and $confirmationchocoinstall -ne "y")
+{	$confirmationchocoinstall = Read-Host "Install Chocolatey and choose packages? [y/n]"
+}if($confirmationchocoinstall -eq "y")
+{	Write-Host
 	Write-Host "A .txt file containing the Chocolatey packages to be installed will now open"
 	Write-Host "edit, save and close the file separating each package name with a semicolon"
 	Write-Host
 	Read-Host "Press ENTER to open the chocolist.txt file"
 	notepad.exe "$($env:TEMP)\winstall-core\chocolist.txt"
 	Read-Host "Press ENTER to continue after the chocolist.txt file has been saved"	
-}
-$chocolist = [IO.File]::ReadAllText("$($env:TEMP)\winstall-core\chocolist.txt")
+}$chocolist = [IO.File]::ReadAllText("$($env:TEMP)\winstall-core\chocolist.txt")
 Write-Host
 Write-Host "Rename PC: [$($confirmationrename)]"
 Write-Host "Domain Join: [$($confirmationdomainjoin)]"
@@ -99,17 +78,12 @@ Write-Host "Windows 10 Setup Script will now run"
 Write-Host "explorer.exe will taskkill while running and restart when finished"
 Write-Host
 while($confirmationfull -ne "n" -and $confirmationfull -ne "y")
-{
-	$confirmationfull = Read-Host "Continue? [y/n]"
-}
-if ($confirmationfull -ne "y")
-{
-	Clear-Host
+{	$confirmationfull = Read-Host "Continue? [y/n]"
+}if ($confirmationfull -ne "y")
+{	Clear-Host
 	exit
-}
-if ($confirmationrename -eq "y")
-{
-	Rename-Computer -NewName $pcname
+}if ($confirmationrename -eq "y")
+{	Rename-Computer -NewName $pcname
 }
 ###########################################################################
 # Disable Windows Store automatic install service
@@ -129,8 +103,7 @@ Get-AppxProvisionedPackage -online | where-object {$_.packagename -notlike "*Mic
 # Choco install
 ##########################################################################
 if ($confirmationchocoinstall -eq "y")
-{
-	Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+{	Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 	choco feature enable -n=allowGlobalconfirmation
 	choco install "$($chocolist);vcredist-all;dotnet4.0;dotnet4.5;dotnet4.5.2;dotnet4.6;dotnet4.6.1;dotnet4.6.2 --ignore-checksums"
 }
@@ -138,8 +111,7 @@ if ($confirmationchocoinstall -eq "y")
 # Taskbar pinapp function
 ##########################################################################
 if ($confirmationstartmenu -eq "y")
-{
-	
+{	
 	function findTheNeedle ($needle, $haystack, $startIndexInHaystack=0, $needlePartsThatDontMatter=@())
 	{
 		$haystackLastIndex = ($haystack.Length - 1)
@@ -305,23 +277,18 @@ if ($confirmationstartmenu -eq "y")
 # Delete all desktop icons
 ##########################################################################
 	Remove-Item C:\Users\*\Desktop\*lnk -force
-}
-###########################################################################
+}###########################################################################
 # Turn Off All Windows 10 Telemetry
 ##########################################################################
 (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/hahndorf/Set-Privacy/master/Set-Privacy.ps1') | out-file .\set-privacy.ps1 -force
-#Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
 .\set-privacy.ps1 -Strong -admin
 ###########################################################################
 # Remove OneDrive
 ##########################################################################
 if ($confirmationonedrive -eq "y")
-{
-	#Import-Module -DisableNameChecking $PSScriptRoot\..\lib\force-mkdir.psm1
-	#Import-Module -DisableNameChecking $PSScriptRoot\..\lib\take-own.psm1
+{	
 	echo "73 OneDrive process and explorer"
 	taskkill.exe /F /IM "OneDrive.exe"
-	
 	
 	echo "Remove OneDrive"
 	if (Test-Path "$env:systemroot\System32\OneDriveSetup.exe") {
@@ -331,7 +298,7 @@ if ($confirmationonedrive -eq "y")
 		& "$env:systemroot\SysWOW64\OneDriveSetup.exe" /uninstall
 	}
 	echo "Disable OneDrive via Group Policies"
-	#force-mkdir "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\OneDrive"
+	
 	sp "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\OneDrive" "DisableFileSyncNGSC" 1 -erroraction 'silentlycontinue'
 	echo "Removing OneDrive leftovers trash"
 	rm -Recurse -Force -ErrorAction SilentlyContinue "$env:localappdata\Microsoft\OneDrive"
@@ -346,31 +313,16 @@ if ($confirmationonedrive -eq "y")
 	Remove-PSDrive "HKCR"
 	echo "Removing run option for new users"
 	reg load "hku\Default" "C:\Users\Default\NTUSER.DAT"
-}
-###########################################################################
+}###########################################################################
 # Pin taskbar apps
 ##########################################################################
-#if ($chocolist -like '*firefox*')
-#{
-#Copy-Item "$($env:TEMP)\icons\Firefox.lnk" -Destination "$($env:APPDATA)\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\Firefox.lnk" -Force
-#$WshShell = New-Object -comObject WScript.Shell
-#$Shortcut = $WshShell.CreateShortcut("$($env:APPDATA)\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\Firefox.lnk")
-#$Shortcut.TargetPath = "$($env:ProgramFiles)\Mozilla Firefox\firefox.exe"
-#$Shortcut.Save()
-#}
-#if ($chocolist -like '*chrome*')
-#{
-#Copy-Item "$($env:TEMP)\icons\Google Chrome.lnk" -Destination "$($env:APPDATA)\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\Google Chrome.lnk" -Force
-#}
-#Copy-Item "$($env:TEMP)\icons\File Explorer.lnk" -Destination "$($env:APPDATA)\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\File Explorer.lnk" -Force
 ###########################################################################
 # Start explorer.exe
 ##########################################################################
 Invoke-Expression "start explorer.exe"
 $rebootpending = Test-PendingReboot | Select-Object -Property IsRebootPending | Format-Wide
 if ($rebootpending = "True")
-{
-	Write-Host
+{	Write-Host
 	Write-Host
 	Write-Warning "REBOOT REQUIRED"
 	Write-Host
@@ -382,13 +334,10 @@ if ($rebootpending = "True")
 	{	
 		Restart-Computer
 	}
-}
-else
-{
-	Write-Host
+}else
+{	Write-Host
 	Write-Host
 	Write-Host "No reboot required"
 	Read-Host "Complete, press ENTER to close and finish"
 	Write-Host
-	
 }
