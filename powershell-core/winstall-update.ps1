@@ -26,7 +26,7 @@ else
 
 Install-Module -Name PSWindowsUpdate -Force
 
-Clear-Host
+#Clear-Host
 
 Write-Host "Searching for updates..."
 
