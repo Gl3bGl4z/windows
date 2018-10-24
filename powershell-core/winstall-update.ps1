@@ -1,6 +1,8 @@
-########################
-# Windows 10 Updater
-########################
+##########################################
+#	Title:      Windows 10 Update Script #
+#	Creator:	Ad3t0	                 #
+#	Date:		10/21/2018             	 #
+##########################################
 $myWindowsID=[System.Security.Principal.WindowsIdentity]::GetCurrent()
 $myWindowsPrincipal=new-object System.Security.Principal.WindowsPrincipal($myWindowsID)
 $adminRole=[System.Security.Principal.WindowsBuiltInRole]::Administrator
@@ -15,6 +17,13 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
+$ver = "1.0"
+Write-host "###################################"
+Write-host "#       Windows 10 Update Script  #"
+Write-host "#       Version: "$ver"	          #"
+Write-host "###################################"
+Write-host
+Write-host
 Write-Host "Searching for updates please wait..."
 Install-Module -Name PSWindowsUpdate -Force
 Import-Module PSWindowsUpdate

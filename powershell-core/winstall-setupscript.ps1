@@ -1,6 +1,8 @@
-###########################################################################
-## Windows 10 Setup Script
-###########################################################################
+##########################################
+#	Title:      Windows 10 Setup Script	 #
+#	Creator:	Ad3t0	                 #
+#	Date:		10/20/2018             	 #
+##########################################
 $myWindowsID=[System.Security.Principal.WindowsIdentity]::GetCurrent()
 $myWindowsPrincipal=new-object System.Security.Principal.WindowsPrincipal($myWindowsID)
 $adminRole=[System.Security.Principal.WindowsBuiltInRole]::Administrator
@@ -14,15 +16,16 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	$newProcess.Verb = "runas";
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
-}
-##############
+}##############
+$ver = "1.0"
 Install-Module -Name PendingReboot -Force
 Clear-Host
-Write-Host "#############################"
-Write-Host "#                           #"
-Write-Host "#  Windows 10 Setup Script  #"
-Write-Host "#                           #"
-Write-Host "#############################"
+Write-host "###################################"
+Write-host "#       Windows 10 Setup Script   #"
+Write-host "#       Version: "$ver"	          #"
+Write-host "###################################"
+Write-host " "
+Write-host " "
 Write-Host
 New-Item -Path $env:TEMP -Name "winstall-core" -ItemType "directory" -Force >$null 2>&1
 Set-Location "$($env:TEMP)\winstall-core"
@@ -89,8 +92,7 @@ while($confirmationfull -ne "n" -and $confirmationfull -ne "y")
 	exit
 }if ($confirmationrename -eq "y")
 {	Rename-Computer -NewName $pcname
-}
-###########################################################################
+}###########################################################################
 # Disable Windows Store automatic install service
 ##########################################################################
 cmd /c net stop InstallService
@@ -105,16 +107,14 @@ Invoke-Expression "taskkill /f /im explorer.exe"
 if ($confirmationappremoval -eq "y")
 {	Get-AppxPackage -AllUsers | where-object {$_.name -notlike "*Microsoft.WindowsStore*"} | where-object {$_.name -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.name -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxPackage -erroraction 'silentlycontinue'
 	Get-AppxProvisionedPackage -online | where-object {$_.packagename -notlike "*Microsoft.WindowsStore*"} | where-object {$_.packagename -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.packagename -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxProvisionedPackage -online #-erroraction 'silentlycontinue'
-}
-###########################################################################
+}###########################################################################
 # Choco install
 ##########################################################################
 if ($confirmationchocoinstall -eq "y")
 {	Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 	choco feature enable -n=allowGlobalconfirmation
 	choco install "$($chocolist);vcredist-all;dotnet4.0;dotnet4.5;dotnet4.5.2;dotnet4.6;dotnet4.6.1;dotnet4.6.2 --ignore-checksums"
-}
-###########################################################################
+}###########################################################################
 # Taskbar pinapp function
 ##########################################################################
 if ($confirmationstartmenu -eq "y")
@@ -284,8 +284,7 @@ if ($confirmationstartmenu -eq "y")
 # Delete all desktop icons
 ##########################################################################
 	Remove-Item C:\Users\*\Desktop\*lnk -force
-}
-###########################################################################
+}###########################################################################
 # Turn Off All Windows 10 Telemetry
 ##########################################################################
 (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/hahndorf/Set-Privacy/master/Set-Privacy.ps1') | out-file .\set-privacy.ps1 -force
@@ -297,7 +296,7 @@ if ($confirmationonedrive -eq "y")
 {	
 	echo "73 OneDrive process and explorer"
 	taskkill.exe /F /IM "OneDrive.exe"
-		echo "Remove OneDrive"
+	echo "Remove OneDrive"
 	if (Test-Path "$env:systemroot\System32\OneDriveSetup.exe") {
 		& "$env:systemroot\System32\OneDriveSetup.exe" /uninstall
 	}
@@ -305,7 +304,7 @@ if ($confirmationonedrive -eq "y")
 		& "$env:systemroot\SysWOW64\OneDriveSetup.exe" /uninstall
 	}
 	echo "Disable OneDrive via Group Policies"
-		sp "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\OneDrive" "DisableFileSyncNGSC" 1 -erroraction 'silentlycontinue'
+	sp "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\OneDrive" "DisableFileSyncNGSC" 1 -erroraction 'silentlycontinue'
 	echo "Removing OneDrive leftovers trash"
 	rm -Recurse -Force -ErrorAction SilentlyContinue "$env:localappdata\Microsoft\OneDrive"
 	rm -Recurse -Force -ErrorAction SilentlyContinue "$env:programdata\Microsoft OneDrive"
@@ -319,8 +318,7 @@ if ($confirmationonedrive -eq "y")
 	Remove-PSDrive "HKCR"
 	echo "Removing run option for new users"
 	reg load "hku\Default" "C:\Users\Default\NTUSER.DAT"
-}
-###########################################################################
+}###########################################################################
 # Pin taskbar apps
 ##########################################################################
 ###########################################################################

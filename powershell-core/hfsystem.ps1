@@ -1,63 +1,43 @@
-#########################################
-#	Wake On Lan and Configuration		#
-#	Creator:	Adam Curtis	            #
-#	Date:		5/20/2017             	#
-#########################################
-
-
-$ver = "1.0"
+##########################################
+#	Title:      Hide File System	     #
+#	Creator:	Ad3t0	                 #
+#	Date:		5/20/2017             	 #
+##########################################
+$ver = "1.1"
 $myWindowsID=[System.Security.Principal.WindowsIdentity]::GetCurrent()
 $myWindowsPrincipal=new-object System.Security.Principal.WindowsPrincipal($myWindowsID)
 $adminRole=[System.Security.Principal.WindowsBuiltInRole]::Administrator
 if ($myWindowsPrincipal.IsInRole($adminRole))
-{
-	$Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + "(Elevated)"
+{	$Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + "(Elevated)"
 	$Host.UI.RawUI.BackgroundColor = "DarkBlue"
 	clear-host
-}
-else
-{
-	$newProcess = new-object System.Diagnostics.ProcessStartInfo "PowerShell";
+}else
+{	$newProcess = new-object System.Diagnostics.ProcessStartInfo "PowerShell";
 	$newProcess.Arguments = $myInvocation.MyCommand.Definition;
 	$newProcess.Verb = "runas";
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
-}
-#####
+}#####
 Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name Hidden -Value 1
 Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name ShowSuperHidden -Value 1
 Stop-Process -processName: Explorer
 regset
-$scriptpath = $MyInvocation.MyCommand.Path
-$dir = Split-Path $scriptpath
-Set-Location $dir
+Set-Location "$($env:TEMP)\winstall-core"
+$dir = "$($env:TEMP)\winstall-core"
 $rec = "\*.*"
-
-
 function header
-{
-	clear-host
-	Write-host "#####################################################"
-	Write-host "#                           	   		    #"
-	Write-host "#       Set File 	   	    #"
-	Write-host "#                           	  		    #"
-	Write-host "#       Version: "$ver"		        	    #"
-	Write-host "#                           	   		    #"
-	Write-host "#       Date: 5/20/2017	        	   	    #"
-	Write-host "#                           	   		    #"
-	Write-host "#####################################################"
-	Write-host " "
-	Write-host " "
-}
-
-function fileorfolder
-{
-	Write-Host "  ----------------------------------------"
-	" "
+{	clear-host
+	Write-host "############################"
+	Write-host "#       Hide File System   #"
+	Write-host "#       Version: "$ver"	   #"
+	Write-host "############################"
+	Write-host
+	Write-host
+}function fileorfolder
+{	Write-Host "  ----------------------------------------"
 	Write-Host " 1 - Folder"
 	Write-Host " 2 - File"
-	" "
-	" "
+	
 	$fileorfolder = Read-Host -Prompt "Input option"
 	if ($fileorfolder -eq "1")
 	{
@@ -71,46 +51,19 @@ function fileorfolder
 		$filen = "FileName"
 		mainselect
 	}
-}
-
-
-function mainf
-{
-	header
-
-	
-	" "
-
-
-	" "
-	" "
+}function mainf
+{	header
 	Write-Host "  Options" -foreground "yellow"
-	" "
 	Write-Host "  ----------------------------------------"
-	" "
 	Write-Host " 1 - System and Hidden (+s +h)"
 	Write-Host " 2 - Hidden (+h)"
-	Write-Host " 3 - Normal (-s -h)"
-	" "
-	" "
+	Write-Host " 3 - Normal (-s -h)"	
 	Write-Host "Restarting Explorer.exe to show hidden files and folders please wait..." -foreground "yellow" | Out-Null
-	" "
 	$runs = Read-Host -Prompt "Input option"
 	fileorfolder
-}
-
-
-
-
-
-
-
-function mainselect 
-{
-
-	[System.Reflection.Assembly]::LoadWithPartialName("System.windows.forms") |
-	Out-Null     
-
+}function mainselect
+{	[System.Reflection.Assembly]::LoadWithPartialName("System.windows.forms") |
+	Out-Null
 	$objForm = New-Object System.Windows.Forms.$($forfs)
 	$Show = $objForm.ShowDialog()
 	$modpath = $objForm.$($filen)
@@ -122,12 +75,10 @@ function mainselect
 			{
 				attrib +s +h /s /d "$($modpath)\*.*"
 				attrib +s +h /s /d "$($modpath)"
-				
 			}
 			if ($fileorfolder -eq "2")
 			{
 				attrib +s +h /s /d "$($modpath)"
-				
 			}
 		}
 		if ($runs -eq "2")
@@ -136,12 +87,10 @@ function mainselect
 			{
 				attrib +h /s /d "$($modpath)\*.*"
 				attrib +h /s /d "$($modpath)"
-				
 			}
 			if ($fileorfolder -eq "2")
 			{
 				attrib +h /s /d "$($modpath)"
-				
 			}
 		}
 		if ($runs -eq "3")
@@ -150,12 +99,10 @@ function mainselect
 			{
 				attrib -s -h /s /d "$($modpath)\*.*"
 				attrib -s -h /s /d "$($modpath)"
-				
 			}
 			if ($fileorfolder -eq "2")
 			{
 				attrib -s -h /s /d "$($modpath)"
-				
 			}
 		}
 	}
@@ -163,26 +110,15 @@ function mainselect
 	{
 		Write-Error "Operation cancelled by user."
 	}
-}
-
-
-
-mainf
+}mainf
 $reloop = Read-Host "Input [y\Y]Yes to return to the beginning press enter to quit"
 clear-host
-
 while ($reloop -eq "y" -or $reloop -eq "yes")
-{
-
-Stop-Process -processName: Explorer
+{	Stop-Process -processName: Explorer
 	$runs = "0"
 	mainf
-	" "
-	" "
-	" "
 	$reloop = Read-Host "Input [y\Y]Yes to return to the beginning press enter to quit"
 	clear-host
-}
-	Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name Hidden -Value 0
+}Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name Hidden -Value 0
 Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name ShowSuperHidden -Value 0
 Stop-Process -processName: Explorer
