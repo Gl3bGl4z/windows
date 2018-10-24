@@ -10,7 +10,7 @@ $adminRole=[System.Security.Principal.WindowsBuiltInRole]::Administrator
 if ($myWindowsPrincipal.IsInRole($adminRole))
 {	$Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + "(Elevated)"
 	$Host.UI.RawUI.BackgroundColor = "DarkBlue"
-	clear-host
+	Clear-Host
 }else
 {	$newProcess = new-object System.Diagnostics.ProcessStartInfo "PowerShell";
 	$newProcess.Arguments = $myInvocation.MyCommand.Definition;
@@ -26,7 +26,7 @@ Set-Location "$($env:TEMP)\winstall-core"
 $dir = "$($env:TEMP)\winstall-core"
 $rec = "\*.*"
 function header
-{	clear-host
+{	Clear-Host
 	Write-host "############################"
 	Write-host "#       Hide File System   #"
 	Write-host "#       Version: "$ver"	   #"
@@ -37,15 +37,14 @@ function header
 {	Write-Host "  ----------------------------------------"
 	Write-Host " 1 - Folder"
 	Write-Host " 2 - File"
-	
-	$fileorfolder = Read-Host -Prompt "Input option"
-	if ($fileorfolder -eq "1")
+		$fileorfolder = Read-Host -Prompt "Input option"
+	if ($fileorfolder -eq 1)
 	{
 		$forfs = "FolderBrowserDialog"
 		$filen = "SelectedPath"
 		mainselect
 	}
-	if ($fileorfolder -eq "2")
+	if ($fileorfolder -eq 2)
 	{
 		$forfs = "OpenFileDialog"
 		$filen = "FileName"
@@ -57,9 +56,14 @@ function header
 	Write-Host "  ----------------------------------------"
 	Write-Host " 1 - System and Hidden (+s +h)"
 	Write-Host " 2 - Hidden (+h)"
-	Write-Host " 3 - Normal (-s -h)"	
-	Write-Host "Restarting Explorer.exe to show hidden files and folders please wait..." -foreground "yellow" | Out-Null
-	$runs = Read-Host -Prompt "Input option"
+	Write-Host " 3 - Normal (-s -h)"
+	Write-Host " 4 - Exit"
+	Write-Host "Restarting Explorer.exe to show hidden files and folders." -foreground "yellow" | Out-Null
+	Write-Host
+	while ($runs -lt 5 -and -ne 0)
+	{
+		$runs = Read-Host -Prompt "Input option"
+	}
 	fileorfolder
 }function mainselect
 {	[System.Reflection.Assembly]::LoadWithPartialName("System.windows.forms") |
@@ -67,58 +71,65 @@ function header
 	$objForm = New-Object System.Windows.Forms.$($forfs)
 	$Show = $objForm.ShowDialog()
 	$modpath = $objForm.$($filen)
-	If ($Show -eq "OK")
+	if ($Show -eq "OK")
 	{
-		if ($runs -eq "1")
+		if ($runs -eq 1)
 		{
-			if ($fileorfolder -eq "1")
+			if ($fileorfolder -eq 1)
 			{
 				attrib +s +h /s /d "$($modpath)\*.*"
 				attrib +s +h /s /d "$($modpath)"
 			}
-			if ($fileorfolder -eq "2")
+			if ($fileorfolder -eq 2)
 			{
 				attrib +s +h /s /d "$($modpath)"
 			}
 		}
-		if ($runs -eq "2")
+		if ($runs -eq 2)
 		{
-			if ($fileorfolder -eq "1")
+			if ($fileorfolder -eq 1)
 			{
 				attrib +h /s /d "$($modpath)\*.*"
 				attrib +h /s /d "$($modpath)"
 			}
-			if ($fileorfolder -eq "2")
+			if ($fileorfolder -eq 2)
 			{
 				attrib +h /s /d "$($modpath)"
 			}
 		}
-		if ($runs -eq "3")
+		if ($runs -eq 3)
 		{
-			if ($fileorfolder -eq "1")
+			if ($fileorfolder -eq 1)
 			{
 				attrib -s -h /s /d "$($modpath)\*.*"
 				attrib -s -h /s /d "$($modpath)"
 			}
-			if ($fileorfolder -eq "2")
+			if ($fileorfolder -eq 2)
 			{
 				attrib -s -h /s /d "$($modpath)"
 			}
 		}
+		if ($runs -eq 4)
+		{
+			Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name Hidden -Value 0
+			Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name ShowSuperHidden -Value 0
+			Stop-Process -processName: Explorer
+			Exit
+		}
 	}
-	Else
+	else
 	{
 		Write-Error "Operation cancelled by user."
 	}
 }mainf
 $reloop = Read-Host "Input [y\Y]Yes to return to the beginning press enter to quit"
-clear-host
-while ($reloop -eq "y" -or $reloop -eq "yes")
+Clear-Host
+while ($reloop -eq "y")
 {	Stop-Process -processName: Explorer
 	$runs = "0"
 	mainf
-	$reloop = Read-Host "Input [y\Y]Yes to return to the beginning press enter to quit"
-	clear-host
+	$reloop = Read-Host "Input [y] to return to the beginning press enter to quit"
+	Clear-Host
 }Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name Hidden -Value 0
 Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name ShowSuperHidden -Value 0
 Stop-Process -processName: Explorer
