@@ -1,4 +1,4 @@
-### **Paste links into an Administrator elevated Powershell window**
+### **Paste links into an Administrator elevated PowerShell window**
 # winstall-setupscript
 #### This script can rename the PC, join a domain, remove OneDrive, remove all desktop, startmenu, taskbar icons (Including the People, Taskview and Action Center icons) delete all Windows Store apps (except the Calculator and Photos and the Windows Store) and install Chocolatey with selected packages and major system dependencies. (All .NET Framework and VCRedist versions)
 ```powershell
@@ -14,8 +14,18 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.We
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/winstall-hfsystem.ps1'))
 ```
-# winstall-enablerdpwol
+# enable-rdpwol
 #### This script can enable both RDP and WOL depending on selection
 ```powershell
-Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/winstall-enablerdpwol.ps1'))
+Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/enable-rdpwol.ps1'))
+```
+# enable-powershellcontextmenu
+#### This script will add an "Open PowerShell here as Administrator" option to the context (right click) menu in File Explorer
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://github.com/Ad3t0/windows/blob/master/powershell-core/enable-powershellcontextmenu.ps1'))
+```
+# geforceexp-nologin
+#### This script will disable the forced Geforce Experience login
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://github.com/Ad3t0/windows/blob/master/powershell-core/geforceexp-nologin.ps1'))
 ```
