@@ -55,7 +55,11 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 }while($confirmationonedrive -ne "n" -and $confirmationonedrive -ne "y")
 {	$confirmationonedrive = Read-Host "Remove all traces of OneDrive? [y/n]"
 }while($confirmationstartmenu -ne "n" -and $confirmationstartmenu -ne "y")
-{	$confirmationstartmenu = Read-Host "Remove all startmenu, desktop, taskbar icons? Essential shortcuts will be created. (Chrome, Explorer) [y/n]"
+{	$confirmationstartmenu = Read-Host "Remove all startmenu, desktop, taskbar icons? [y/n]"
+	while($confirmationappremoval -ne "n" -and $confirmationappremoval -ne "y")
+	{	
+		$confirmationappremoval = Read-Host "Remove all Windows store app except the Calculator, Photos, and the Windows Store? [y/n]"
+	}
 }while($confirmationchocoinstall -ne "n" -and $confirmationchocoinstall -ne "y")
 {	$confirmationchocoinstall = Read-Host "Install Chocolatey and choose packages? [y/n]"
 }if($confirmationchocoinstall -eq "y")
@@ -72,6 +76,7 @@ Write-Host "Rename PC: [$($confirmationrename)]"
 Write-Host "Domain Join: [$($confirmationdomainjoin)]"
 Write-Host "OneDrive Removal: [$($confirmationonedrive)]"
 Write-Host "Icon Removal: [$($confirmationstartmenu)]"
+Write-Host "App Removal: [$($confirmationappremoval)]"
 Write-Host "Choco install: [$($confirmationchocoinstall)]"
 Write-Host
 Write-Host "Windows 10 Setup Script will now run"
@@ -97,8 +102,10 @@ Invoke-Expression "taskkill /f /im explorer.exe"
 ###########################################################################
 # Remove all Windows store apps expect WindowsStore, Calculator and Photos
 ##########################################################################
-Get-AppxPackage -AllUsers | where-object {$_.name -notlike "*Microsoft.WindowsStore*"} | where-object {$_.name -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.name -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxPackage -erroraction 'silentlycontinue'
-Get-AppxProvisionedPackage -online | where-object {$_.packagename -notlike "*Microsoft.WindowsStore*"} | where-object {$_.packagename -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.packagename -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxProvisionedPackage -online #-erroraction 'silentlycontinue'
+if ($confirmationappremoval -eq "y")
+{	Get-AppxPackage -AllUsers | where-object {$_.name -notlike "*Microsoft.WindowsStore*"} | where-object {$_.name -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.name -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxPackage -erroraction 'silentlycontinue'
+	Get-AppxProvisionedPackage -online | where-object {$_.packagename -notlike "*Microsoft.WindowsStore*"} | where-object {$_.packagename -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.packagename -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxProvisionedPackage -online #-erroraction 'silentlycontinue'
+}
 ###########################################################################
 # Choco install
 ##########################################################################
@@ -277,7 +284,8 @@ if ($confirmationstartmenu -eq "y")
 # Delete all desktop icons
 ##########################################################################
 	Remove-Item C:\Users\*\Desktop\*lnk -force
-}###########################################################################
+}
+###########################################################################
 # Turn Off All Windows 10 Telemetry
 ##########################################################################
 (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/hahndorf/Set-Privacy/master/Set-Privacy.ps1') | out-file .\set-privacy.ps1 -force
@@ -289,8 +297,7 @@ if ($confirmationonedrive -eq "y")
 {	
 	echo "73 OneDrive process and explorer"
 	taskkill.exe /F /IM "OneDrive.exe"
-	
-	echo "Remove OneDrive"
+		echo "Remove OneDrive"
 	if (Test-Path "$env:systemroot\System32\OneDriveSetup.exe") {
 		& "$env:systemroot\System32\OneDriveSetup.exe" /uninstall
 	}
@@ -298,8 +305,7 @@ if ($confirmationonedrive -eq "y")
 		& "$env:systemroot\SysWOW64\OneDriveSetup.exe" /uninstall
 	}
 	echo "Disable OneDrive via Group Policies"
-	
-	sp "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\OneDrive" "DisableFileSyncNGSC" 1 -erroraction 'silentlycontinue'
+		sp "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\OneDrive" "DisableFileSyncNGSC" 1 -erroraction 'silentlycontinue'
 	echo "Removing OneDrive leftovers trash"
 	rm -Recurse -Force -ErrorAction SilentlyContinue "$env:localappdata\Microsoft\OneDrive"
 	rm -Recurse -Force -ErrorAction SilentlyContinue "$env:programdata\Microsoft OneDrive"
@@ -313,7 +319,8 @@ if ($confirmationonedrive -eq "y")
 	Remove-PSDrive "HKCR"
 	echo "Removing run option for new users"
 	reg load "hku\Default" "C:\Users\Default\NTUSER.DAT"
-}###########################################################################
+}
+###########################################################################
 # Pin taskbar apps
 ##########################################################################
 ###########################################################################

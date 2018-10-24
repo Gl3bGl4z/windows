@@ -17,8 +17,8 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 }##############
 Write-Host "Searching for updates please wait..."
 Install-Module -Name PSWindowsUpdate -Force
-Hide-WindowsUpdate -Title "Bing*"
 Import-Module PSWindowsUpdate
+Hide-WindowsUpdate -Title "Bing*"
 Get-WindowsUpdate -MicrosoftUpdate -AcceptAll -Install
 Get-WURebootStatus
 Read-Host "Press ENTER to exit"
