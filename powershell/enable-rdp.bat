@@ -1,1 +1,0 @@
-PowerShell.exe -Command "& {Start-Process PowerShell.exe -ArgumentList '-ExecutionPolicy Bypass -File ""%~dp0bin\enable-rdp.ps1""' -Verb RunAs}"
