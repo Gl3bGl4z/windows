@@ -1,1 +1,1 @@
-googlechrome adobereader bleachbit windirstat geekuninstaller
+googlechrome;adobereader;bleachbit;windirstat;geekuninstaller
