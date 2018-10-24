@@ -22,10 +22,10 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.We
 # enable-powershellcontextmenu
 #### This script will add an "Open Windows PowerShell Here as Administrator" option to the context (right click) menu in File Explorer
 ```powershell
-Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://github.com/Ad3t0/windows/blob/master/powershell-core/enable-powershellcontextmenu.ps1'))
+Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/enable-powershellcontextmenu.ps1'))
 ```
 # geforceexp-nologin
 #### This script will disable the forced Geforce Experience login
 ```powershell
-Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://github.com/Ad3t0/windows/blob/master/powershell-core/geforceexp-nologin.ps1'))
+Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/geforceexp-nologin.ps1'))
 ```
