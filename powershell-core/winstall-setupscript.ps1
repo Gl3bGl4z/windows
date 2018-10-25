@@ -17,7 +17,12 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.2"
+$ver = "1.3.0"
+Write-host "#####################################"
+Write-host "#       Windows 10 Setup Script     #"
+Write-host "#       Version: "$ver"	            #"
+Write-host "#####################################"
+Write-host
 Install-Module -Name PendingReboot -Force
 Clear-Host
 Write-host "#####################################"
