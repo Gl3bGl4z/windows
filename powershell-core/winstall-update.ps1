@@ -17,7 +17,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0.1"
+$ver = "1.0.2"
 Write-host "#######################################"
 Write-host "#       Windows 10 Update Script      #"
 Write-host "#       Version: "$ver"	              #"
@@ -39,8 +39,8 @@ while($confirmationupdate -ne "n" -and $confirmationupdate -ne "y")
 	Install-Module -Name PSWindowsUpdate -Force
 	Import-Module PSWindowsUpdate
 	$HideUpdatesArray=('*Bing*', '*Silverlight*')
-	Hide-WUUpdate -KBArticleID $HideUpdatesArray -HideStatus:$true -Confirm:$false
-	#Hide-WindowsUpdate -Title "*Bing*"
+	Hide-WindowsUpdate -KBArticleID $HideUpdatesArray -HideStatus:$true -Confirm:$false
+	# -Title "*Bing*"
 	Get-WindowsUpdate -MicrosoftUpdate -AcceptAll -Install
 	Get-WURebootStatus
 }Read-Host "Press ENTER to exit"
