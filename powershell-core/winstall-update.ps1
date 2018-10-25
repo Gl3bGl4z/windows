@@ -23,7 +23,14 @@ Write-host "#       Windows 10 Update Script      #"
 Write-host "#       Version: "$ver"	              #"
 Write-host "#######################################"
 Write-host
-Write-host
+$strComputer = "."
+$colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
+foreach ($objItem in $colItems) {
+    Write-Host
+    Write-Host "CPU Model: " -foregroundcolor yellow -NoNewLine
+    Write-Host $objItem.Name -foregroundcolor white
+    Write-Host
+}
 while($confirmationupdate -ne "n" -and $confirmationupdate -ne "y")
 {	
 	$confirmationupdate = Read-Host "Begin installing all available Windows 10 updates? [y/n]"
