@@ -32,6 +32,17 @@ Write-host "#####################################"
 Write-host
 New-Item -Path $env:TEMP -Name "winstall-core" -ItemType "directory" -Force >$null 2>&1
 Set-Location "$($env:TEMP)\winstall-core"
+$strComputer = "." 
+$colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer 
+
+foreach ($objItem in $colItems) { 
+    Write-Host 
+    Write-Host "CPU Model: " -foregroundcolor yellow -NoNewLine 
+    Write-Host $objItem.Name -foregroundcolor white 
+    Write-Host "CPU Max Speed: " -foregroundcolor yellow -NoNewLine 
+    Write-Host $objItem.CurrentClockSpeed 
+    Write-Host 
+}
 if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 {	
 	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/chocolist.txt') | out-file "$($env:TEMP)\winstall-core\chocolist.txt" -force

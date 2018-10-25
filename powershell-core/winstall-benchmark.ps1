@@ -17,7 +17,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.1"
+$ver = "1.1.1"
 Write-host "#########################################"
 Write-host "#       Windows 10 Benchmark Script     #"
 Write-host "#       Version: "$ver"	                #"
@@ -25,6 +25,17 @@ Write-host "#########################################"
 Write-host
 New-Item -Path $env:TEMP -Name "winstall-core" -ItemType "directory" -Force >$null 2>&1
 Set-Location "$($env:TEMP)\winstall-core"
+$strComputer = "." 
+$colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer 
+
+foreach ($objItem in $colItems) { 
+    Write-Host 
+    Write-Host "CPU Model: " -foregroundcolor yellow -NoNewLine 
+    Write-Host $objItem.Name -foregroundcolor white 
+    Write-Host "CPU Max Speed: " -foregroundcolor yellow -NoNewLine 
+    Write-Host $objItem.CurrentClockSpeed 
+    Write-Host 
+}
 while($confirmationupdate -ne "n" -and $confirmationupdate -ne "y")
 {	
 	$confirmationupdate = Read-Host "Run Windows 10 CPU benchmark? [y/n]"
