@@ -18,18 +18,19 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	exit
 }##############
 $ver = "1.1"
-Write-host "######################################"
-Write-host "#       Windows 10 Benchmark Script  #"
-Write-host "#       Version: "$ver"	             #"
-Write-host "######################################"
-Write-host
+Write-host "#########################################"
+Write-host "#       Windows 10 Benchmark Script     #"
+Write-host "#       Version: "$ver"	                #"
+Write-host "#########################################"
 Write-host
 Set-Location "$($env:TEMP)\winstall-core"
 while($confirmationupdate -ne "n" -and $confirmationupdate -ne "y")
 {	
 	$confirmationupdate = Read-Host "Run Windows 10 CPU benchmark? [y/n]"
+	Write-host
 }if($confirmationupdate -eq "y")
 {Write-Host "Running benchmark please wait..."
+Write-host
 	if(!(Test-Path -Path "$($env:TEMP)\winstall-core\bench.exe" ))
 	{
 		[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -37,7 +38,7 @@ while($confirmationupdate -ne "n" -and $confirmationupdate -ne "y")
 		$output = "$($env:TEMP)\winstall-core\bench.exe"
 		$start_time = Get-Date
 		Invoke-WebRequest -Uri $url -OutFile $output
-		Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)"
+		#Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)"
 	}
 	./bench multithread
 }Read-Host "Press ENTER to exit"

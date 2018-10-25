@@ -17,16 +17,14 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0"
+$ver = "1.2"
 Install-Module -Name PendingReboot -Force
 Clear-Host
-Write-host "###################################"
-Write-host "#       Windows 10 Setup Script   #"
-Write-host "#       Version: "$ver"	          #"
-Write-host "###################################"
-Write-host " "
-Write-host " "
-Write-Host
+Write-host "#####################################"
+Write-host "#       Windows 10 Setup Script     #"
+Write-host "#       Version: "$ver"	            #"
+Write-host "#####################################"
+Write-host
 New-Item -Path $env:TEMP -Name "winstall-core" -ItemType "directory" -Force >$null 2>&1
 Set-Location "$($env:TEMP)\winstall-core"
 if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
