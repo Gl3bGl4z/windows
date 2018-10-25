@@ -51,8 +51,8 @@ while($confirmationupdate -ne "n" -and $confirmationupdate -ne "y")
 	{	
 		(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/PsGist.psd1') | out-file "$($env:TEMP)\winstall-core\PsGist.psd1" -force
 	}
-	(New-Object Net.WebClient).DownloadString('https://gist.githubusercontent.com/Ad3t0/7c36a22df7ff01cf50d138669281d9cf/raw') | out-file "$($env:TEMP)\winstall-core\results" -force
+	(New-Object Net.WebClient).DownloadString('https://gist.githubusercontent.com/Ad3t0/7c36a22df7ff01cf50d138669281d9cf/raw') | out-file "$($env:TEMP)\winstall-core\benchmarkresults.txt" -force
 		Import-Module .\PsGist.psd1
-	New-Gist -File "$($env:TEMP)\winstall-core\results" -Username Ad3t0
+	New-Gist -File "$($env:TEMP)\winstall-core\benchmarkresults.txt" -Username Ad3t0
 }Read-Host "Press ENTER to exit"
 Exit
