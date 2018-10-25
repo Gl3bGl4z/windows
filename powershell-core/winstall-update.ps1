@@ -18,10 +18,10 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	exit
 }##############
 $ver = "1.0"
-Write-host "###################################"
-Write-host "#       Windows 10 Update Script  #"
-Write-host "#       Version: "$ver"	          #"
-Write-host "###################################"
+Write-host "#######################################"
+Write-host "#       Windows 10 Update Script      #"
+Write-host "#       Version: "$ver"	              #"
+Write-host "#######################################"
 Write-host
 Write-host
 while($confirmationupdate -ne "n" -and $confirmationupdate -ne "y")
@@ -31,8 +31,8 @@ while($confirmationupdate -ne "n" -and $confirmationupdate -ne "y")
 {Write-Host "Searching for updates please wait..."
 	Install-Module -Name PSWindowsUpdate -Force
 	Import-Module PSWindowsUpdate
-	Hide-WindowsUpdate -Title "Bing*"
-	Hide-WindowsUpdate -Title "Silverlight*"
+	Hide-WindowsUpdate -Title "*Bing*"
+	Hide-WindowsUpdate -Title "*Silverlight*"
 	Get-WindowsUpdate -MicrosoftUpdate -AcceptAll -Install
 	Get-WURebootStatus
 }Read-Host "Press ENTER to exit"
