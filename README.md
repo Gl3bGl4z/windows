@@ -7,7 +7,7 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.We
 - Rename the PC
 - Join a domain
 - Remove OneDrive
-- Disable Cortana and InkSpace
+- Disable Cortana and Inkspace
 - Disable ALL Windows Telemetry
 - Remove/Unpin all Desktop, Startmenu and Taskbar icons
 - Remove the People, Taskview, and Action Center icons on the Taskbar
