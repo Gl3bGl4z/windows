@@ -6,7 +6,7 @@
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/winstall-setupscript.ps1'))
 ```
 ## winstall-update
-#### This script will run Windows update and install all available updates except any updates including `*Bing`* and `*Silverlight`*
+#### This script will run Windows update and install all available updates except any updates including `*Bing* and `*Silverlight*
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/winstall-update.ps1'))
 ```
