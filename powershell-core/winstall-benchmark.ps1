@@ -17,7 +17,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.1.1"
+$ver = "1.1.2"
 Write-host "#########################################"
 Write-host "#       Windows 10 Benchmark Script     #"
 Write-host "#       Version: "$ver"	                #"
@@ -31,8 +31,6 @@ foreach ($objItem in $colItems) {
     Write-Host
     Write-Host "CPU Model: " -foregroundcolor yellow -NoNewLine
     Write-Host $objItem.Name -foregroundcolor white
-    Write-Host "CPU Max Speed: " -foregroundcolor yellow -NoNewLine
-    Write-Host $objItem.CurrentClockSpeed
     Write-Host
 }while($confirmationupdate -ne "n" -and $confirmationupdate -ne "y")
 {	

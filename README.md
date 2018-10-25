@@ -25,6 +25,7 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.We
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/winstall-benchmark.ps1'))
 ```
+- Intel(R) Core(TM) i7-7700K CPU @ 4.20GHz = 1879.400024 ms
 ## winstall-hfsystem
 #### Change hidden and system file flags
 ```powershell

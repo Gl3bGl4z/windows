@@ -32,12 +32,19 @@ function header
 	Write-host "#       Version: "$ver"	   #"
 	Write-host "############################"
 	Write-host
-	Write-host
+	$strComputer = "."
+	$colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
+	foreach ($objItem in $colItems) {
+		Write-Host
+		Write-Host "CPU Model: " -foregroundcolor yellow -NoNewLine
+		Write-Host $objItem.Name -foregroundcolor white
+		Write-Host
+	}
 }function fileorfolder
 {	Write-Host "  ----------------------------------------"
 	Write-Host " 1 - Folder"
 	Write-Host " 2 - File"
-		$fileorfolder = Read-Host -Prompt "Input option"
+	$fileorfolder = Read-Host -Prompt "Input option"
 	if($fileorfolder -eq 1)
 	{
 		$forfs = "FolderBrowserDialog"

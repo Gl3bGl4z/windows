@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.3.3"
+$ver = "1.3.4"
 Write-host "#####################################"
 Write-host "#       Windows 10 Setup Script     #"
 Write-host "#       Version: "$ver"	            #"
@@ -38,8 +38,6 @@ foreach ($objItem in $colItems) {
     Write-Host
     Write-Host "CPU Model: " -foregroundcolor yellow -NoNewLine
     Write-Host $objItem.Name -foregroundcolor white
-    Write-Host "CPU Max Speed: " -foregroundcolor yellow -NoNewLine
-    Write-Host $objItem.CurrentClockSpeed
     Write-Host
 }if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 {	

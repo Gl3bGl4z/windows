@@ -23,7 +23,14 @@ Write-host "#       Disable Forced Geforce Experience Login  #"
 Write-host "#       Version: "$ver"	                         #"
 Write-host "##################################################"
 Write-host
-Write-host
+$strComputer = "."
+$colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
+foreach ($objItem in $colItems) {
+    Write-Host
+    Write-Host "CPU Model: " -foregroundcolor yellow -NoNewLine
+    Write-Host $objItem.Name -foregroundcolor white
+    Write-Host
+}
 while($confirmationgef -ne "n" -and $confirmationgef -ne "y")
 {	
 	$confirmationgef = Read-Host "Disable the forced Geforce Experience login? [y/n]"
