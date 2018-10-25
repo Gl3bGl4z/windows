@@ -17,8 +17,6 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-
-
 $ver = "1.3.0"
 Write-host "#####################################"
 Write-host "#       Windows 10 Setup Script     #"
@@ -100,6 +98,7 @@ while($confirmationfull -ne "n" -and $confirmationfull -ne "y")
 }###########################################################################
 # Disable Windows Store automatic install service
 ##########################################################################
+Set-ItemProperty -Path "HKCU:\SOFTWARE\Policies\Microsoft\WindowsStore" -Name "AutoDownload" -Type DWord -Value 2 -erroraction 'silentlycontinue'
 cmd /c net stop InstallService
 cmd /c sc config InstallService start= disabled
 cmd /c net start FDResPub
@@ -113,7 +112,6 @@ Invoke-Expression "taskkill /f /im explorer.exe"
 ###########################################################################
 # Remove all Windows store apps expect WindowsStore, Calculator and Photos
 ##########################################################################
-Set-ItemProperty -Path "HKCU:\SOFTWARE\Policies\Microsoft\WindowsStore" -Name "AutoDownload" -Type DWord -Value 2 -erroraction 'silentlycontinue'
 if($confirmationappremoval -eq "y")
 {	Get-AppxPackage -AllUsers | where-object {$_.name -notlike "*Microsoft.WindowsStore*"} | where-object {$_.name -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.name -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxPackage -erroraction 'silentlycontinue'
 	Get-AppxProvisionedPackage -online | where-object {$_.packagename -notlike "*Microsoft.WindowsStore*"} | where-object {$_.packagename -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.packagename -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxProvisionedPackage -online #-erroraction 'silentlycontinue'
@@ -265,22 +263,22 @@ if($confirmationstartmenu -eq "y")
 ###########################################################################
 # Pin these apps to the start menu
 ##########################################################################
-	Pin-App "Calculator" -pin
-	Pin-App "Photos" -pin
-	Pin-App "File Explorer" -pin
-	Pin-App "Control Panel" -pin
-	Pin-App "Task Manager" -pin
-	Pin-App "Notepad" -pin
-	Pin-App "Remote Desktop Connection" -pin
-	Pin-App "Thunderbird" -pin
-	Pin-App "Outlook 2016" -pin
-	Pin-App "Word 2016" -pin
-	Pin-App "Excel 2016" -pin
-	Pin-App "Publisher 2016" -pin
-	Pin-App "PowerPoint 2016" -pin
-	Pin-App "Malwarebytes" -pin
-	Pin-App "BleachBit" -pin
-	Pin-App "WinDirStat" -pin
+	#Pin-App "Calculator" -pin
+	#Pin-App "Photos" -pin
+	#Pin-App "File Explorer" -pin
+	#Pin-App "Control Panel" -pin
+	#Pin-App "Task Manager" -pin
+	#Pin-App "Notepad" -pin
+	#Pin-App "Remote Desktop Connection" -pin
+	#Pin-App "Thunderbird" -pin
+	#Pin-App "Outlook 2016" -pin
+	#Pin-App "Word 2016" -pin
+	#Pin-App "Excel 2016" -pin
+	#Pin-App "Publisher 2016" -pin
+	#Pin-App "PowerPoint 2016" -pin
+	#Pin-App "Malwarebytes" -pin
+	#Pin-App "BleachBit" -pin
+	#Pin-App "WinDirStat" -pin
 ###########################################################################
 # Disable Taskview and People icons from the taskbar and game overlay
 ##########################################################################
@@ -306,16 +304,13 @@ if($confirmationstartmenu -eq "y")
 	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338388Enabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
 	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338389Enabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
 	Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "JPEGImportQuality" -Type DWord -Value 0 -erroraction 'silentlycontinue'
-
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortana" -Type DWord -Value 0 -erroraction 'silentlycontinue'
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "DisableWebSearch" -Type DWord -Value 1 -erroraction 'silentlycontinue'
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\WindowsInkWorkspace" -Name "AllowWindowsInkWorkspace" -Type DWord -Value 0 -erroraction 'silentlycontinue'
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "AllowOnlineTips" -Type DWord -Value 0 -erroraction 'silentlycontinue'
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "ConnectedSearchUseWeb" -Type DWord -Value 0 -erroraction 'silentlycontinue'
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0 -erroraction 'silentlycontinue'
-
-	
-###########################################################################
+	###########################################################################
 # Delete all desktop icons
 ##########################################################################
 	Remove-Item C:\Users\*\Desktop\*lnk -force
@@ -378,5 +373,4 @@ if($rebootpending = "True")
 	Write-Host
 	Read-Host "Complete, press ENTER to close and finish"
 	Write-Host
-}
-Exit
+}Exit
