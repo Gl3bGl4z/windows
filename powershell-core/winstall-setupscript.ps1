@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.3.6"
+$ver = "1.3.7"
 Write-host "#####################################"
 Write-host "#       Windows 10 Setup Script     #"
 Write-host "#       Version: "$ver"	            #"
@@ -117,10 +117,6 @@ cmd /c net start FDResPub
 cmd /c sc config FDResPub start= auto
 cmd /c net stop DiagTrack
 cmd /c sc config DiagTrack start= disabled
-###########################################################################
-# Kill explorer.exe
-##########################################################################
-Invoke-Expression "taskkill /f /im explorer.exe"
 ###########################################################################
 # Remove all Windows store apps expect WindowsStore, Calculator and Photos
 ##########################################################################
