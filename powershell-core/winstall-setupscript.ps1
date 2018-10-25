@@ -23,6 +23,7 @@ Write-host "#       Windows 10 Setup Script     #"
 Write-host "#       Version: "$ver"	            #"
 Write-host "#####################################"
 Write-host
+Write-host "Please wait loading modules..."
 Install-Module -Name PendingReboot -Force
 Clear-Host
 Write-host "#####################################"
