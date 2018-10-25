@@ -1,17 +1,19 @@
 # Winstall Setup Scripts
 ### **Paste links in an Administrator elevated PowerShell window**
 ## winstall-setupscript
-
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/winstall-setupscript.ps1'))
 ```
 - Rename the PC
 - Join a domain
-- Remove OneDrive 
-- Remove all Desktop, Startmenu and Taskbar icons
+- Remove OneDrive
+- Disable Cortana and InkSpace
+- Disable ALL Windows Telemetry
+- Remove/Unpin all Desktop, Startmenu and Taskbar icons
 - Remove the People, Taskview, and Action Center icons on the Taskbar
-- Delete all Windows Store apps (except the Calculator, Photos, and the Windows Store) 
-- Install Chocolatey with selected packages and install all available .NET Framework versions and all VCRedist Visual C++ versions
+- Delete all Windows Store apps (except the Calculator, Photos, and the Windows Store)
+- Install [Chocolatey](https://chocolatey.org/) and defined packages
+- Install all available .NET Framework versions and all VCRedist Visual C++ versions (via Chocolatey)
 - Disable web and Windows Store app search in the Startmenu
 ## winstall-update
 #### Run Windows update and install all available updates except any updates including **Bing** and **Silverlight**
