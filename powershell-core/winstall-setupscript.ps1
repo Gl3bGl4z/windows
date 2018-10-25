@@ -278,6 +278,11 @@ if($confirmationstartmenu -eq "y")
 	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
 	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\GameDVR" -Name "AppCaptureEnabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
 	Set-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_Enabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortana" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "ConnectedSearchUseWeb" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "BingSearchEnabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "AllowSearchToUseLocation" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "CortanaConsent" -Type DWord -Value 0 -erroraction 'silentlycontinue'
 ###########################################################################
 # Delete all desktop icons
 ##########################################################################
@@ -317,9 +322,6 @@ if($confirmationonedrive -eq "y")
 	Write-Host "Removing run option for new users"
 	reg load "hku\Default" "C:\Users\Default\NTUSER.DAT"
 }###########################################################################
-# Pin taskbar apps
-##########################################################################
-###########################################################################
 # Start explorer.exe
 ##########################################################################
 Invoke-Expression "start explorer.exe"
@@ -341,6 +343,7 @@ if($rebootpending = "True")
 {	Write-Host
 	Write-Host
 	Write-Host "No reboot required"
+	Write-Host
 	Read-Host "Complete, press ENTER to close and finish"
 	Write-Host
 }
