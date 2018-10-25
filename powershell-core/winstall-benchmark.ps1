@@ -29,10 +29,6 @@ while($confirmationupdate -ne "n" -and $confirmationupdate -ne "y")
 {	
 	$confirmationupdate = Read-Host "Run Windows 10 CPU benchmark? [y/n]"
 	Write-host
-}while($confirmationpost -ne "n" -and $confirmationpost -ne "y")
-{	
-	$confirmationpost = Read-Host "Post benchmark results to Gist? [y/n]"
-	Write-host
 }if($confirmationupdate -eq "y")
 {Write-Host "Running benchmark please wait..."
 	Write-host
@@ -46,13 +42,5 @@ while($confirmationupdate -ne "n" -and $confirmationupdate -ne "y")
 		#Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)"
 	}
 	./bench multithread
-}if($confirmationpost -eq "y")
-{	if(!(Test-Path -Path "$($env:TEMP)\winstall-core\PsGist.psd1" ))
-	{	
-		(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/PsGist.psd1') | out-file "$($env:TEMP)\winstall-core\PsGist.psd1" -force
-	}
-	(New-Object Net.WebClient).DownloadString('https://gist.githubusercontent.com/Ad3t0/7c36a22df7ff01cf50d138669281d9cf/raw') | out-file "$($env:TEMP)\winstall-core\benchmarkresults.txt" -force
-		Import-Module .\PsGist.psd1
-	New-Gist -File "$($env:TEMP)\winstall-core\benchmarkresults.txt" -Username Ad3t0
 }Read-Host "Press ENTER to exit"
 Exit
