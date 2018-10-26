@@ -39,6 +39,8 @@ foreach ($objItem in $colItems) {
     Write-Host
     Write-Host "CPU Model: " -foregroundcolor yellow -NoNewLine
     Write-Host $objItem.Name -foregroundcolor white
+	Write-Host "PC Name: " -foregroundcolor yellow -NoNewLine
+	Write-Host $env:COMPUTERNAME -foregroundcolor white
     Write-Host
 }if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 {	
