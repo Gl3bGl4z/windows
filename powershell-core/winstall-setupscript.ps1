@@ -17,10 +17,12 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.4.1"
+$ver = "1.4.2"
 Write-host "#####################################"
+Write-Host "#                                   #"
 Write-host "#       Windows 10 Setup Script     #"
 Write-host "#       Version: "$ver"	            #"
+Write-Host "#                                   #"
 Write-host "#####################################"
 Write-host
 Write-host "Please wait loading modules..."
@@ -28,8 +30,10 @@ Install-PackageProvider -Name NuGet -confirm:$false
 Install-Module -Name PendingReboot -confirm:$false
 Clear-Host
 Write-host "#####################################"
+Write-Host "#                                   #"
 Write-host "#       Windows 10 Setup Script     #"
 Write-host "#       Version: "$ver"	            #"
+Write-Host "#                                   #"
 Write-host "#####################################"
 Write-host
 New-Item -Path $env:TEMP -Name "winstall-core" -ItemType "directory" -Force >$null 2>&1
