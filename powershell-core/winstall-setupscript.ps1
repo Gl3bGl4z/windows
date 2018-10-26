@@ -28,9 +28,9 @@ Write-host
 Write-host "Please wait loading modules..."
 #Install-PackageProvider -Name NuGet -confirm:$false
 #Find-PackageProvider -Name 'Nuget' -ForceBootstrap -IncludeDependencies
-Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -confirm:$false
-Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
-Install-Module -Name PendingReboot -confirm:$false
+Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -confirm:$false >$null 2>&1
+Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted >$null 2>&1
+Install-Module -Name PendingReboot -confirm:$false >$null 2>&1
 Clear-Host
 Write-host "#####################################"
 Write-Host "#                                   #"
