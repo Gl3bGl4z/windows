@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.3.8"
+$ver = "1.3.9"
 Write-host "#####################################"
 Write-host "#       Windows 10 Setup Script     #"
 Write-host "#       Version: "$ver"	            #"
@@ -41,6 +41,10 @@ foreach ($objItem in $colItems) {
     Write-Host $objItem.Name -foregroundcolor white
 	Write-Host "PC Name: " -foregroundcolor yellow -NoNewLine
 	Write-Host $env:COMPUTERNAME -foregroundcolor white
+	Write-Host "Username: " -foregroundcolor yellow -NoNewLine
+	Write-Host $env:USERNAME -foregroundcolor white
+	Write-Host "Domain: " -foregroundcolor yellow -NoNewLine
+	Write-Host $env:LOGONSERVER -foregroundcolor white
     Write-Host
 }if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 {	
@@ -320,7 +324,6 @@ if($confirmationstartmenu -eq "y")
 	#Pin-App "Malwarebytes" -pin
 	#Pin-App "BleachBit" -pin
 	#Pin-App "WinDirStat" -pin
-
 ###########################################################################
 # Delete all desktop icons
 ##########################################################################
