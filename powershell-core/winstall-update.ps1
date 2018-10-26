@@ -17,18 +17,24 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0.3"
-Write-host "#######################################"
-Write-host "#       Windows 10 Update Script      #"
-Write-host "#       Version: "$ver"	              #"
-Write-host "#######################################"
+$ver = "1.0.4"
+Write-host "#####################################"
+Write-Host "#                                   #"
+Write-host "#       Windows 10 Update Script    #"
+Write-host "#       Version: "$ver"	            #"
+Write-Host "#                                   #"
+Write-host "#####################################"
 Write-host
-Install-Module -Name PSWindowsUpdate -Force
+Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
+Find-PackageProvider -Name 'Nuget' -ForceBootstrap -IncludeDependencies
+Install-Module -Name PSWindowsUpdate -confirm:$false
 Clear-Host
-Write-host "#######################################"
-Write-host "#       Windows 10 Update Script      #"
-Write-host "#       Version: "$ver"	              #"
-Write-host "#######################################"
+Write-host "#####################################"
+Write-Host "#                                   #"
+Write-host "#       Windows 10 Update Script    #"
+Write-host "#       Version: "$ver"	            #"
+Write-Host "#                                   #"
+Write-host "#####################################"
 Write-host
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
@@ -43,7 +49,6 @@ while($confirmationupdate -ne "n" -and $confirmationupdate -ne "y")
 	$confirmationupdate = Read-Host "Begin installing all available Windows 10 updates? [y/n]"
 }if($confirmationupdate -eq "y")
 {Write-Host "Searching for updates please wait..."
-	Install-Module -Name PSWindowsUpdate -Force
 	Import-Module PSWindowsUpdate
 	$HideUpdatesArray=('*Bing*', '*Silverlight*')
 	Hide-WindowsUpdate -KBArticleID $HideUpdatesArray -Confirm:$false
