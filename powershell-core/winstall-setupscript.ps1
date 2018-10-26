@@ -17,13 +17,14 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.4.0"
+$ver = "1.4.1"
 Write-host "#####################################"
 Write-host "#       Windows 10 Setup Script     #"
 Write-host "#       Version: "$ver"	            #"
 Write-host "#####################################"
 Write-host
 Write-host "Please wait loading modules..."
+Install-PackageProvider -Name NuGet -confirm:$false
 Install-Module -Name PendingReboot -confirm:$false
 Clear-Host
 Write-host "#####################################"
