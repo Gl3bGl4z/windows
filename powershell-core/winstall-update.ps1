@@ -17,7 +17,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0.4"
+$ver = "1.0.5"
 Write-host "#####################################"
 Write-Host "#                                   #"
 Write-host "#       Windows 10 Update Script    #"
@@ -25,8 +25,8 @@ Write-host "#       Version: "$ver"	            #"
 Write-Host "#                                   #"
 Write-host "#####################################"
 Write-host
+Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -confirm:$false
 Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
-Find-PackageProvider -Name 'Nuget' -ForceBootstrap -IncludeDependencies
 Install-Module -Name PSWindowsUpdate -confirm:$false
 Clear-Host
 Write-host "#####################################"
