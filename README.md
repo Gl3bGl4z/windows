@@ -1,4 +1,4 @@
-# Winstall Setup Scripts
+# Winstall Windows 10 Setup Scripts
 ### **Paste links in an Administrator elevated PowerShell window**
 ## winstall-setupscript
 ```powershell
