@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.3.7"
+$ver = "1.3.8"
 Write-host "#####################################"
 Write-host "#       Windows 10 Setup Script     #"
 Write-host "#       Version: "$ver"	            #"
