@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.4.4"
+$ver = "1.4.5"
 Write-host "#####################################"
 Write-Host "#                                   #"
 Write-host "#       Windows 10 Setup Script     #"
@@ -28,8 +28,8 @@ Write-host
 Write-host "Please wait loading modules..."
 #Install-PackageProvider -Name NuGet -confirm:$false
 Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
-Find-PackageProvider -Name 'Nuget' -ForceBootstrap -IncludeDependencies -InstallationPolicy Trusted
-Install-Module -Name PendingReboot -confirm:$false -InstallationPolicy Trusted
+Find-PackageProvider -Name 'Nuget' -ForceBootstrap -IncludeDependencies
+Install-Module -Name PendingReboot -confirm:$false
 Clear-Host
 Write-host "#####################################"
 Write-Host "#                                   #"
