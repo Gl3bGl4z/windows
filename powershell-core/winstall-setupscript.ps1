@@ -22,7 +22,6 @@ $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId"
 $productname = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ProductName"
-
 function header
 {	Write-host " #####################################"
 	Write-Host " #                                   #"
@@ -149,8 +148,7 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 	Read-Host "Press ENTER to open the chocolist.txt file"
 	notepad.exe "$($env:TEMP)\winstall-core\chocolist.txt"
 	Read-Host "Press ENTER to continue after the chocolist.txt file has been saved"
-	
-}$chocolist = [IO.File]::ReadAllText("$($env:TEMP)\winstall-core\chocolist.txt")
+	}$chocolist = [IO.File]::ReadAllText("$($env:TEMP)\winstall-core\chocolist.txt")
 Write-Host
 Write-Host "Rename PC: [$($confirmationrename)]"
 Write-Host "Domain Join: [$($confirmationdomainjoin)]"
