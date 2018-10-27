@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.6.9"
+$ver = "1.7.0"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId"
@@ -80,14 +80,19 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 	Write-Host
 	$initialsetting = Read-Host -Prompt "Input option"
 }if($initialsetting -eq "2")
-{	$confirmationrename = "y"
+{	
 	$confirmationdomainjoin = "y"
 	$confirmationonedrive = "y"
 	$confirmationstartmenu = "y"
 	$confirmationappremoval = "y"
 	$confirmationchocoinstall = "y"
 }while($confirmationrename -ne "n" -and $confirmationrename -ne "y")
-{	$confirmationrename = Read-Host "Rename this PC? [y/n]"
+{	
+if($initialsetting -eq "2")
+{
+$confirmationrename = "y"
+}
+$confirmationrename = Read-Host "Rename this PC? [y/n]"
 	if($confirmationrename -eq "y")
 	{
 		while((![string]::IsNullOrEmpty($pcname)) -ne $true)
@@ -144,7 +149,7 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 	Read-Host "Press ENTER to open the chocolist.txt file"
 	notepad.exe "$($env:TEMP)\winstall-core\chocolist.txt"
 	Read-Host "Press ENTER to continue after the chocolist.txt file has been saved"
-	(Get-Content "$($env:TEMP)\winstall-core\chocolist.txt").replace(';;', ';') | Set-Content "$($env:TEMP)\winstall-core\chocolist.txt"
+	
 }$chocolist = [IO.File]::ReadAllText("$($env:TEMP)\winstall-core\chocolist.txt")
 Write-Host
 Write-Host "Rename PC: [$($confirmationrename)]"
@@ -200,7 +205,8 @@ if($confirmationchocoinstall -eq "y")
 	Write-Host "Installing Chocolatey, and all .NET Framework versions and all VCRedist Visual C++ versions" -foregroundcolor yellow
 	Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 	choco feature enable -n=allowGlobalconfirmation
-	choco install "$($chocolist);vcredist-all;dotnet4.0;dotnet4.5;dotnet4.5.2;dotnet4.6;dotnet4.6.1;dotnet4.6.2 --ignore-checksums"
+	$chocotobeinstalled = "$($chocolist);vcredist-all;dotnet4.0;dotnet4.5;dotnet4.5.2;dotnet4.6;dotnet4.6.1;dotnet4.6.2 --ignore-checksums".replace(';;', ';')
+	choco install $chocotobeinstalled
 }###########################################################################
 # Major registry changes
 ##########################################################################
@@ -269,7 +275,7 @@ if($initialsetting -eq "3")
 {	Write-Host "Enabling show hidden files" -foregroundcolor yellow
 	Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name Hidden -Value 1
 }###########################################################################
-# Taskbar pinapp function
+# Taskbar pin app function
 ##########################################################################
 Write-Host "Unpinning all default Task Bar icons" -foregroundcolor yellow
 if($confirmationstartmenu -eq "y")
