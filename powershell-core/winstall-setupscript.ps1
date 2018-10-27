@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.4.9"
+$ver = "1.5.0"
 Write-host "#####################################"
 Write-Host "#                                   #"
 Write-host "#       Windows 10 Setup Script     #"
@@ -138,7 +138,7 @@ cmd /c sc config FDResPub start= auto
 if($confirmationappremoval -eq "y")
 {Write-Host "Removing all Windows store apps expect Windows Store, Calculator and Photos" -foregroundcolor yellow
 	Get-AppxPackage -AllUsers | where-object {$_.name -notlike "*Microsoft.WindowsStore*"} | where-object {$_.name -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.name -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxPackage -erroraction 'silentlycontinue'
-	Get-AppxProvisionedPackage -online | where-object {$_.packagename -notlike "*Microsoft.WindowsStore*"} | where-object {$_.packagename -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.packagename -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxProvisionedPackage -online #-erroraction 'silentlycontinue'
+	Get-AppxProvisionedPackage -online | where-object {$_.packagename -notlike "*Microsoft.WindowsStore*"} | where-object {$_.packagename -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.packagename -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxProvisionedPackage -online | Out-Null
 }###########################################################################
 # Choco install
 ##########################################################################
@@ -359,8 +359,8 @@ if($confirmationstartmenu -eq "y")
 ###########################################################################
 # Delete all desktop icons
 ##########################################################################
-#Write-Host "Removing default desktop icons"	
-#Remove-Item C:\Users\*\Desktop\*lnk -force
+Write-Host "Removing default desktop icons"	
+Remove-Item "C:\Users\*\Desktop\Microsoft Edge.lnk" -force
 }###########################################################################
 # Turn Off All Windows 10 Telemetry
 ##########################################################################
@@ -373,7 +373,6 @@ Write-Host "Permanently turning off all Windows telemetry and ads" -foregroundco
 if($confirmationonedrive -eq "y")
 {	
 	Write-Host "Disabling and removing OneDrive" -foregroundcolor yellow
-	Write-Host "73 OneDrive process and explorer"
 	taskkill.exe /F /IM "OneDrive.exe"
 	Write-Host "Remove OneDrive"
 	if(Test-Path "$env:systemroot\System32\OneDriveSetup.exe") {
@@ -384,11 +383,11 @@ if($confirmationonedrive -eq "y")
 	}
 	Write-Host "Disable OneDrive via Group Policies"
 	sp "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\OneDrive" "DisableFileSyncNGSC" 1 -erroraction 'silentlycontinue'
-	Write-Host "Removing OneDrive leftovers trash"
+	Write-Host "Removing OneDrive leftover trash"
 	rm -Recurse -Force -ErrorAction SilentlyContinue "$env:localappdata\Microsoft\OneDrive"
 	rm -Recurse -Force -ErrorAction SilentlyContinue "$env:programdata\Microsoft OneDrive"
 	rm -Recurse -Force -ErrorAction SilentlyContinue "C:\OneDriveTemp"
-	Write-Host "Remove OneDrive from explorer sidebar"
+	Write-Host "Removing OneDrive from explorer sidebar"
 	New-PSDrive -PSProvider "Registry" -Root "HKEY_CLASSES_ROOT" -Name "HKCR"
 	mkdir -Force "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}"
 	sp "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" "System.IsPinnedToNameSpaceTree" 0 -erroraction 'silentlycontinue'
