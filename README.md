@@ -17,12 +17,12 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.We
 - Install [Chocolatey](https://chocolatey.org/) and defined packages
 - Install all available .NET Framework versions and all VCRedist Visual C++ versions (via Chocolatey)
 - Increase wallpaper to max compression quality at essentially no additional resource cost
-## winstall-update
+## winstall-update - BETA
 #### Run Windows update and install all available updates except any updates including **Bing** and **Silverlight**
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/winstall-update.ps1'))
 ```
-## winstall-benchmark
+## winstall-benchmark - BETA
 #### Run a quick and simple Windows multi-thread benchmark
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/winstall-benchmark.ps1'))
