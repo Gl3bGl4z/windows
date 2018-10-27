@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.4.8"
+$ver = "1.4.9"
 Write-host "#####################################"
 Write-Host "#                                   #"
 Write-host "#       Windows 10 Setup Script     #"
@@ -28,8 +28,8 @@ Write-host
 Write-host "Please wait loading modules..."
 #Install-PackageProvider -Name NuGet -confirm:$false
 #Find-PackageProvider -Name 'Nuget' -ForceBootstrap -IncludeDependencies
-Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -confirm:$false >$null 2>&1
-Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted >$null 2>&1
+Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -confirm:$false
+Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
 Install-Module -Name PendingReboot -confirm:$false >$null 2>&1
 Clear-Host
 Write-host "#####################################"
@@ -44,16 +44,16 @@ Set-Location "$($env:TEMP)\winstall-core"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
 foreach ($objItem in $colItems) {
-    Write-Host
-    Write-Host "CPU Model: " -foregroundcolor yellow -NoNewLine
-    Write-Host $objItem.Name -foregroundcolor white
+	Write-Host
+	Write-Host "CPU Model: " -foregroundcolor yellow -NoNewLine
+	Write-Host $objItem.Name -foregroundcolor white
 	Write-Host "PC Name: " -foregroundcolor yellow -NoNewLine
 	Write-Host $env:COMPUTERNAME -foregroundcolor white
 	Write-Host "Username: " -foregroundcolor yellow -NoNewLine
 	Write-Host $env:USERNAME -foregroundcolor white
 	Write-Host "Domain: " -foregroundcolor yellow -NoNewLine
 	Write-Host $env:LOGONSERVER -foregroundcolor white
-    Write-Host
+	Write-Host
 }if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 {	
 	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/chocolist.txt') | out-file "$($env:TEMP)\winstall-core\chocolist.txt" -force
@@ -97,7 +97,8 @@ foreach ($objItem in $colItems) {
 	Write-Host
 	Read-Host "Press ENTER to open the chocolist.txt file"
 	notepad.exe "$($env:TEMP)\winstall-core\chocolist.txt"
-	Read-Host "Press ENTER to continue after the chocolist.txt file has been saved"	
+	Read-Host "Press ENTER to continue after the chocolist.txt file has been saved"
+	(Get-Content "$($env:TEMP)\winstall-core\chocolist.txt").replace(';;', ';') | Set-Content "$($env:TEMP)\winstall-core\chocolist.txt"
 }$chocolist = [IO.File]::ReadAllText("$($env:TEMP)\winstall-core\chocolist.txt")
 Write-Host
 Write-Host "Rename PC: [$($confirmationrename)]"
@@ -108,7 +109,7 @@ Write-Host "App Removal: [$($confirmationappremoval)]"
 Write-Host "Choco install: [$($confirmationchocoinstall)]"
 Write-Host
 Write-Host "Windows 10 Setup Script will now run"
-Write-Host "explorer.exe will taskkill whilerunning and restart when finished"
+Write-Host "explorer.exe will taskkill while running and restart when finished"
 Write-Host
 while($confirmationfull -ne "n" -and $confirmationfull -ne "y")
 {	$confirmationfull = Read-Host "Continue? [y/n]"
@@ -135,51 +136,71 @@ cmd /c sc config FDResPub start= auto
 # Remove all Windows store apps expect WindowsStore, Calculator and Photos
 ##########################################################################
 if($confirmationappremoval -eq "y")
-{	Get-AppxPackage -AllUsers | where-object {$_.name -notlike "*Microsoft.WindowsStore*"} | where-object {$_.name -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.name -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxPackage -erroraction 'silentlycontinue'
+{Write-Host "Removing all Windows store apps expect Windows Store, Calculator and Photos" -foregroundcolor yellow
+	Get-AppxPackage -AllUsers | where-object {$_.name -notlike "*Microsoft.WindowsStore*"} | where-object {$_.name -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.name -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxPackage -erroraction 'silentlycontinue'
 	Get-AppxProvisionedPackage -online | where-object {$_.packagename -notlike "*Microsoft.WindowsStore*"} | where-object {$_.packagename -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.packagename -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxProvisionedPackage -online #-erroraction 'silentlycontinue'
 }###########################################################################
 # Choco install
 ##########################################################################
 if($confirmationchocoinstall -eq "y")
-{	Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+{	
+	Write-Host "Installing Chocolatey, and all .NET Framework versions and all VCRedist Visual C++ versions" -foregroundcolor yellow
+	Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 	choco feature enable -n=allowGlobalconfirmation
 	choco install "$($chocolist);vcredist-all;dotnet4.0;dotnet4.5;dotnet4.5.2;dotnet4.6;dotnet4.6.1;dotnet4.6.2 --ignore-checksums"
 }###########################################################################
-# Disable Taskview and People icons from the taskbar and game overlay
+# Major registry changes
 ##########################################################################
-	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People" -Name "PeopleBand" -value 0 -erroraction 'silentlycontinue'
-	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowTaskViewButton" -value 0 -erroraction 'silentlycontinue'
-	Set-ItemProperty -Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "DisableNotificationCenter" -Type DWord -Value 1 -erroraction 'silentlycontinue'
-	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
-	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\GameDVR" -Name "AppCaptureEnabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
-	Set-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_Enabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
-	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "BingSearchEnabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
-	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "AllowSearchToUseLocation" -Type DWord -Value 0 -erroraction 'silentlycontinue'
-	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "CortanaConsent" -Type DWord -Value 0 -erroraction 'silentlycontinue'
-	#Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "SystemUsesLightTheme" -Type DWord -Value 0 -erroraction 'silentlycontinue'
-	#Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "AppsUseLightTheme" -Type DWord -Value 0 -erroraction 'silentlycontinue'
-	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "ContentDeliveryAllowed" -Type DWord -Value 0 -erroraction 'silentlycontinue'
-	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SilentInstalledAppsEnabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
-	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SystemPaneSuggestionsEnabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
-	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSyncProviderNotifications" -Type DWord -Value 0 -erroraction 'silentlycontinue'
-	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SoftLandingEnabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
-	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "RotatingLockScreenEnabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
-	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "RotatingLockScreenOverlayEnabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
-	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338387Enabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
-	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338388Enabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
-	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338389Enabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
-	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353696Enabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
-	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs" -Type DWord -Value 0 -erroraction 'silentlycontinue'
-	Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "JPEGImportQuality" -Type DWord -Value 100 -erroraction 'silentlycontinue'
-	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortana" -Type DWord -Value 0 -erroraction 'silentlycontinue'
-	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "DisableWebSearch" -Type DWord -Value 1 -erroraction 'silentlycontinue'
-	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\WindowsInkWorkspace" -Name "AllowWindowsInkWorkspace" -Type DWord -Value 0 -erroraction 'silentlycontinue'
-	Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "AllowOnlineTips" -Type DWord -Value 0 -erroraction 'silentlycontinue'
-	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "ConnectedSearchUseWeb" -Type DWord -Value 0 -erroraction 'silentlycontinue'
-	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+Write-Host "Disabling the People icon on the taskbar" -foregroundcolor yellow
+Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People" -Name "PeopleBand" -value 0 -erroraction 'silentlycontinue'
+Write-Host "Disabling the Task View icon on the taskbar" -foregroundcolor yellow
+Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowTaskViewButton" -value 0 -erroraction 'silentlycontinue'
+Write-Host "Disabling the toast ads and spam notifications above the system tray" -foregroundcolor yellow
+Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+Write-Host "Disabling GameDVR and GameOverlay" -foregroundcolor yellow
+Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\GameDVR" -Name "AppCaptureEnabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+Set-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_Enabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+Write-Host "Disabling Bing search in Start Menu" -foregroundcolor yellow
+Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "BingSearchEnabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+Write-Host "Disabling Allow Search To Use Location" -foregroundcolor yellow
+Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "AllowSearchToUseLocation" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+Write-Host "Disabling Cortana ad tracking" -foregroundcolor yellow
+Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "CortanaConsent" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+Write-Host "Disabling user tracking ads" -foregroundcolor yellow
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "ContentDeliveryAllowed" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+Write-Host "Disabling silently installed apps" -foregroundcolor yellow
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SilentInstalledAppsEnabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+Write-Host "Disabling System Pane Suggestions" -foregroundcolor yellow
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SystemPaneSuggestionsEnabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+Write-Host "Disabling Sync Provider Notifications" -foregroundcolor yellow
+Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSyncProviderNotifications" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SoftLandingEnabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+Write-Host "Disabling Lock Screen ads" -foregroundcolor yellow
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "RotatingLockScreenEnabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "RotatingLockScreenOverlayEnabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+Write-Host "Disabling subscribed ads" -foregroundcolor yellow
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338387Enabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338388Enabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338389Enabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353696Enabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+Write-Host "Increasing wallpaper compression quality to 100" -foregroundcolor yellow
+Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "JPEGImportQuality" -Type DWord -Value 100 -erroraction 'silentlycontinue'
+Write-Host "Disabling Cortana" -foregroundcolor yellow
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortana" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+Write-Host "Disabling Start Menu web search" -foregroundcolor yellow
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "DisableWebSearch" -Type DWord -Value 1 -erroraction 'silentlycontinue'
+Write-Host "Disabling Windows Ink Space" -foregroundcolor yellow
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\WindowsInkWorkspace" -Name "AllowWindowsInkWorkspace" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+Write-Host "Disabling Online Tips/Ads" -foregroundcolor yellow
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "AllowOnlineTips" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "ConnectedSearchUseWeb" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+Write-Host "Disabling all Windows telemetry" -foregroundcolor yellow
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0 -erroraction 'silentlycontinue'
 ###########################################################################
 # Taskbar pinapp function
 ##########################################################################
+Write-Host "Unpinning all default Task Bar icons" -foregroundcolor yellow
 if($confirmationstartmenu -eq "y")
 {	
 	function findTheNeedle ($needle, $haystack, $startIndexInHaystack=0, $needlePartsThatDontMatter=@())
@@ -288,6 +309,7 @@ if($confirmationstartmenu -eq "y")
 ###########################################################################
 # Pinapp function
 ##########################################################################
+	Write-Host "Unpinning all Start Menu apps"	-foregroundcolor yellow
 	function Pin-App
 	{
 		param(
@@ -337,10 +359,12 @@ if($confirmationstartmenu -eq "y")
 ###########################################################################
 # Delete all desktop icons
 ##########################################################################
-	Remove-Item C:\Users\*\Desktop\*lnk -force
+#Write-Host "Removing default desktop icons"	
+#Remove-Item C:\Users\*\Desktop\*lnk -force
 }###########################################################################
 # Turn Off All Windows 10 Telemetry
 ##########################################################################
+Write-Host "Permanently turning off all Windows telemetry and ads" -foregroundcolor yellow
 (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/hahndorf/Set-Privacy/master/Set-Privacy.ps1') | out-file .\set-privacy.ps1 -force
 .\set-privacy.ps1 -Strong -admin
 ###########################################################################
@@ -348,6 +372,7 @@ if($confirmationstartmenu -eq "y")
 ##########################################################################
 if($confirmationonedrive -eq "y")
 {	
+	Write-Host "Disabling and removing OneDrive" -foregroundcolor yellow
 	Write-Host "73 OneDrive process and explorer"
 	taskkill.exe /F /IM "OneDrive.exe"
 	Write-Host "Remove OneDrive"
@@ -363,7 +388,7 @@ if($confirmationonedrive -eq "y")
 	rm -Recurse -Force -ErrorAction SilentlyContinue "$env:localappdata\Microsoft\OneDrive"
 	rm -Recurse -Force -ErrorAction SilentlyContinue "$env:programdata\Microsoft OneDrive"
 	rm -Recurse -Force -ErrorAction SilentlyContinue "C:\OneDriveTemp"
-	Write-Host "Remove Onedrive from explorer sidebar"
+	Write-Host "Remove OneDrive from explorer sidebar"
 	New-PSDrive -PSProvider "Registry" -Root "HKEY_CLASSES_ROOT" -Name "HKCR"
 	mkdir -Force "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}"
 	sp "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" "System.IsPinnedToNameSpaceTree" 0 -erroraction 'silentlycontinue'
@@ -375,6 +400,7 @@ if($confirmationonedrive -eq "y")
 }###########################################################################
 # Start explorer.exe
 ##########################################################################
+Write-Host "Restarting explorer.exe..." -foregroundcolor yellow
 Invoke-Expression "start explorer.exe"
 $rebootpending = Test-PendingReboot | Select-Object -Property IsRebootPending | Format-Wide
 if($rebootpending = "True")
