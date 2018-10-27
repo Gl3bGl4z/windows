@@ -20,8 +20,11 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 $ver = "1.5.0"
 Write-host "#####################################"
 Write-Host "#                                   #"
-Write-host "#       Windows 10 Setup Script     #"
-Write-host "#       Version: "$ver"	            #"
+Write-host "#       " -NoNewLine
+Write-host "Windows 10 Setup Script" -foregroundcolor yellow -NoNewLine
+Write-host "#       " -NoNewLine
+Write-host "Version: $($ver)" -foregroundcolor yellow -NoNewLine
+Write-host "#                   #"
 Write-Host "#                                   #"
 Write-host "#####################################"
 Write-host
@@ -34,8 +37,11 @@ Install-Module -Name PendingReboot -confirm:$false >$null 2>&1
 Clear-Host
 Write-host "#####################################"
 Write-Host "#                                   #"
-Write-host "#       Windows 10 Setup Script     #"
-Write-host "#       Version: "$ver"	            #"
+Write-host "#       " -NoNewLine
+Write-host "Windows 10 Setup Script" -foregroundcolor yellow -NoNewLine
+Write-host "#       " -NoNewLine
+Write-host "Version: $($ver)" -foregroundcolor yellow -NoNewLine
+Write-host "#                   #"
 Write-Host "#                                   #"
 Write-host "#####################################"
 Write-host
@@ -125,13 +131,14 @@ Invoke-Expression "taskkill /f /im explorer.exe"
 ###########################################################################
 # Disable Windows Store automatic install service
 ##########################################################################
+Write-host "Disabling automatic app reinstall services" -foregroundcolor yellow
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Policies\Microsoft\WindowsStore" -Name "AutoDownload" -Type DWord -Value 2 -erroraction 'silentlycontinue'
 cmd /c net stop InstallService
 cmd /c sc config InstallService start= disabled
 cmd /c net stop DiagTrack
 cmd /c sc config DiagTrack start= disabled
-cmd /c net start FDResPub
-cmd /c sc config FDResPub start= auto
+#cmd /c net start FDResPub
+#cmd /c sc config FDResPub start= auto
 ###########################################################################
 # Remove all Windows store apps expect WindowsStore, Calculator and Photos
 ##########################################################################
@@ -359,8 +366,8 @@ if($confirmationstartmenu -eq "y")
 ###########################################################################
 # Delete all desktop icons
 ##########################################################################
-Write-Host "Removing default desktop icons"	
-Remove-Item "C:\Users\*\Desktop\Microsoft Edge.lnk" -force
+	Write-Host "Removing default desktop icons"	
+	Remove-Item "C:\Users\*\Desktop\Microsoft Edge.lnk" -force
 }###########################################################################
 # Turn Off All Windows 10 Telemetry
 ##########################################################################
