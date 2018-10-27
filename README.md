@@ -7,16 +7,16 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.We
 - Rename the PC
 - Join a domain
 - Remove OneDrive
+- Disable Start Menu web search and app search
 - Disable Cortana and Ink Space
 - Disable ALL Windows Telemetry
 - Remove/Unpin all Startmenu and default Taskbar icons
 - Remove the People, Taskview, and Action Center icons on the Taskbar
 - Delete all Windows Store apps (except the Calculator, Photos, and the Windows Store)
-- Permanently disable all Windows telemetry and ad tracking
-- Increase wallpaper quality to 100% at essentially no additional resource cost
+- Permanently disable all Windows ad tracking
 - Install [Chocolatey](https://chocolatey.org/) and defined packages
 - Install all available .NET Framework versions and all VCRedist Visual C++ versions (via Chocolatey)
-- Disable web and Windows Store app search in the Startmenu
+- Increase wallpaper quality to 100% at essentially no additional resource cost
 ## winstall-update
 #### Run Windows update and install all available updates except any updates including **Bing** and **Silverlight**
 ```powershell
