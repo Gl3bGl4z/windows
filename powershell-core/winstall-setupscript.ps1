@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.5.8"
+$ver = "1.5.9"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
 function header
@@ -47,7 +47,7 @@ function header
 	}
 }header
 Write-host "Please wait loading modules..."
-Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -confirm:$false #-Force
+Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -confirm:$false
 Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
 Install-Module -Name PendingReboot -confirm:$false #>$null 2>&1
 Write-host "Modules finished loading"
