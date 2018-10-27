@@ -17,31 +17,31 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.6.0"
+$ver = "1.6.1"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
 function header
-{	Write-host "#####################################"
-	Write-Host "#                                   #"
-	Write-host "#       " -NoNewLine
+{	Write-host " #####################################"
+	Write-Host " #                                   #"
+	Write-host " #       " -NoNewLine
 	Write-host "Windows 10 Setup Script" -foregroundcolor yellow -NoNewLine
 	Write-host "     #"
-	Write-host "#          " -NoNewLine
+	Write-host " #          " -NoNewLine
 	Write-host "Version: " -foregroundcolor yellow -NoNewLine
 	Write-host $ver -foregroundcolor cyan -NoNewLine
 	Write-host "           #"
-	Write-host "#                                   #"
-	Write-host "#####################################"
+	Write-host " #                                   #"
+	Write-host " #####################################"
 	Write-host
 	foreach ($objItem in $colItems) {
 		Write-Host
-		Write-Host "CPU Model: " -foregroundcolor yellow -NoNewLine
+		Write-Host " CPU Model: " -foregroundcolor yellow -NoNewLine
 		Write-Host $objItem.Name -foregroundcolor white
-		Write-Host "PC Name: " -foregroundcolor yellow -NoNewLine
+		Write-Host " PC Name: " -foregroundcolor yellow -NoNewLine
 		Write-Host $env:COMPUTERNAME -foregroundcolor white
-		Write-Host "Username: " -foregroundcolor yellow -NoNewLine
+		Write-Host " Username: " -foregroundcolor yellow -NoNewLine
 		Write-Host $env:USERNAME -foregroundcolor white
-		Write-Host "Domain: " -foregroundcolor yellow -NoNewLine
+		Write-Host " Domain: " -foregroundcolor yellow -NoNewLine
 		Write-Host $env:LOGONSERVER -foregroundcolor white
 		Write-Host
 	}
