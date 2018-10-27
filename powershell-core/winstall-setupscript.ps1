@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.6.2"
+$ver = "1.6.3"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
 function header
@@ -131,8 +131,7 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 	{	
 		$confirmationshowhiddenfiles = Read-Host "Show hidden files in File Explorer? [y/n]"
 	}
-}
-if($confirmationchocoinstall -eq "y")
+}if($confirmationchocoinstall -eq "y")
 {	Write-Host
 	Write-Host "A .txt file containing the Chocolatey packages to be installed will now open"
 	Write-Host "edit, save and close the file separating each package name with a semicolon"
@@ -200,6 +199,10 @@ if($confirmationchocoinstall -eq "y")
 }###########################################################################
 # Major registry changes
 ##########################################################################
+Write-Host
+Write-Host " Basic Settings" -foregroundcolor yellow
+Write-Host " ----------------------------------------" -foregroundcolor cyan
+Write-Host
 Write-Host "Disabling the People icon on the taskbar" -foregroundcolor yellow
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People" -Name "PeopleBand" -value 0 -erroraction 'silentlycontinue'
 Write-Host "Disabling the Task View icon on the taskbar" -foregroundcolor yellow
@@ -244,7 +247,11 @@ Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "ConnectedSearchUseWeb" -Type DWord -Value 0 -erroraction 'silentlycontinue'
 Write-Host "Disabling all Windows telemetry" -foregroundcolor yellow
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0 -erroraction 'silentlycontinue'
-if($confirmationpcdiscover -eq "y")
+if($initialsetting -eq "3")
+{	Write-Host
+	Write-Host " Advanced Settings" -foregroundcolor yellow
+	Write-Host " ----------------------------------------" -foregroundcolor cyan
+}if($confirmationpcdiscover -eq "y")
 {	Write-Host "Increasing wallpaper compression quality to 100" -foregroundcolor yellow
 	Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "JPEGImportQuality" -Type DWord -Value 100 -erroraction 'silentlycontinue'
 }if($confirmationshowfileex -eq "y")
