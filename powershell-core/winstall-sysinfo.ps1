@@ -17,17 +17,19 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0.0"
+$ver = "1.0.1"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId"
 $productname = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ProductName"
+$mobomodel = Get-ItemProperty -Path "HKLM:\HARDWARE\DESCRIPTION\System\BIOS" -Name "BaseBoardProduct"
+$mobomanu = Get-ItemProperty -Path "HKLM:\HARDWARE\DESCRIPTION\System\BIOS" -Name "BaseBoardManufacturer"
 function header
 {	Write-host " #####################################"
 	Write-Host " #                                   #"
 	Write-host " #    " -NoNewLine
 	Write-host "Windows 10 SysInfo Script" -foregroundcolor yellow -NoNewLine
-	Write-host "    #"
+	Write-host "      #"
 	Write-host " #          " -NoNewLine
 	Write-host "Version: " -foregroundcolor yellow -NoNewLine
 	Write-host $ver -foregroundcolor cyan -NoNewLine
@@ -47,6 +49,10 @@ function header
 		Write-Host $env:USERNAME -foregroundcolor white
 		Write-Host " Domain: " -foregroundcolor yellow -NoNewLine
 		Write-Host $env:LOGONSERVER -foregroundcolor white
+		Write-Host " Manufacturer: " -foregroundcolor yellow -NoNewLine
+		Write-Host $mobomanu.BaseBoardManufacturer -foregroundcolor white
+		Write-Host " Motherboard: " -foregroundcolor yellow -NoNewLine
+		Write-Host $mobomodel.BaseBoardProduct -foregroundcolor white
 		Write-Host
 	}
 }header
