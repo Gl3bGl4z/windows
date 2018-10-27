@@ -17,14 +17,14 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.5.1"
+$ver = "1.5.2"
 Write-host "#####################################"
 Write-Host "#                                   #"
 Write-host "#       " -NoNewLine
 Write-host "Windows 10 Setup Script" -foregroundcolor yellow -NoNewLine
-Write-host "#       " -NoNewLine
+Write-host "       #"
 Write-host "Version: $($ver)" -foregroundcolor yellow -NoNewLine
-Write-host "#                   #"
+Write-host "       #"
 Write-Host "#                                   #"
 Write-host "#####################################"
 Write-host
@@ -39,9 +39,9 @@ Write-host "#####################################"
 Write-Host "#                                   #"
 Write-host "#       " -NoNewLine
 Write-host "Windows 10 Setup Script" -foregroundcolor yellow -NoNewLine
-Write-host "#       " -NoNewLine
+Write-host "       #"
 Write-host "Version: $($ver)" -foregroundcolor yellow -NoNewLine
-Write-host "#                   #"
+Write-host "       #"
 Write-Host "#                                   #"
 Write-host "#####################################"
 Write-host
