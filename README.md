@@ -16,7 +16,7 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.We
 - Permanently disable all Windows ad tracking
 - Install [Chocolatey](https://chocolatey.org/) and defined packages
 - Install all available .NET Framework versions and all VCRedist Visual C++ versions (via Chocolatey)
-- Increase wallpaper quality to 100% at essentially no additional resource cost
+- Increase wallpaper to max compression quality at essentially no additional resource cost
 ## winstall-update
 #### Run Windows update and install all available updates except any updates including **Bing** and **Silverlight**
 ```powershell
