@@ -25,9 +25,9 @@ $productname = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\Curre
 function header
 {	Write-host " #####################################"
 	Write-Host " #                                   #"
-	Write-host " #       " -NoNewLine
+	Write-host " #    " -NoNewLine
 	Write-host "Windows 10 Benchmark Script" -foregroundcolor yellow -NoNewLine
-	Write-host "     #"
+	Write-host "    #"
 	Write-host " #          " -NoNewLine
 	Write-host "Version: " -foregroundcolor yellow -NoNewLine
 	Write-host $ver -foregroundcolor cyan -NoNewLine
@@ -50,8 +50,9 @@ function header
 		Write-Host
 	}
 }header
-New-Item -Path $env:TEMP -Name "winstall-core" -ItemType "directory" -Force >$null 2>&1
-Set-Location "$($env:TEMP)\winstall-core"
+if(!(Test-Path -Path "$($env:TEMP)\winstall-core\" ))
+{	New-Item -Path $env:TEMP -Name "winstall-core" -ItemType "directory" -Force >$null 2>&1
+}Set-Location "$($env:TEMP)\winstall-core"
 while($confirmationupdate -ne "n" -and $confirmationupdate -ne "y")
 {	
 	$confirmationupdate = Read-Host "Run Windows 10 CPU benchmark? [y/n]"

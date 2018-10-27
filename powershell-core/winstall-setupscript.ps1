@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.7.0"
+$ver = "1.7.1"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId"
@@ -88,11 +88,11 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 	$confirmationchocoinstall = "y"
 }while($confirmationrename -ne "n" -and $confirmationrename -ne "y")
 {	
-if($initialsetting -eq "2")
-{
-$confirmationrename = "y"
-}
-$confirmationrename = Read-Host "Rename this PC? [y/n]"
+	if($initialsetting -eq "2")
+	{
+		$confirmationrename = "y"
+	}
+	$confirmationrename = Read-Host "Rename this PC? [y/n]"
 	if($confirmationrename -eq "y")
 	{
 		while((![string]::IsNullOrEmpty($pcname)) -ne $true)
