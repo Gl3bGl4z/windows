@@ -17,15 +17,10 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.6.4"
+$ver = "1.6.5"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
-$trunc = $env:COMPUTERNAME
-$trund = $env:LOGONSERVER
-$trund = $trund.replace('\\', '')
-if($trund -ne $trunc)
-{	$partofdomain = 1
-}function header
+function header
 {	Write-host " #####################################"
 	Write-Host " #                                   #"
 	Write-host " #       " -NoNewLine
@@ -47,16 +42,7 @@ if($trund -ne $trunc)
 		Write-Host " Username: " -foregroundcolor yellow -NoNewLine
 		Write-Host $env:USERNAME -foregroundcolor white
 		Write-Host " Domain: " -foregroundcolor yellow -NoNewLine
-		if($partofdomain -eq 1)
-		{	
-			
-			Write-Host $env:LOGONSERVER -foregroundcolor white
-			
-		}
-		else
-		{
-			Write-Host
-		}
+		Write-Host $env:LOGONSERVER -foregroundcolor white
 		Write-Host
 	}
 }header
