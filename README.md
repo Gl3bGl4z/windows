@@ -17,10 +17,10 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.We
 - Install [Chocolatey](https://chocolatey.org/) and defined packages
 - Install all available .NET Framework versions and all VCRedist Visual C++ versions (via Chocolatey)
 - Increase wallpaper to max compression quality at essentially no additional resource cost
-## winstall-update - BETA
-#### Run Windows update and install all available updates except any updates including **Bing** and **Silverlight**
+## winstall-sysinfo - BETA
+#### Run a small Windows 10 script to display important system information
 ```powershell
-Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/winstall-update.ps1'))
+Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/winstall-sysinfo.ps1'))
 ```
 ## winstall-benchmark - BETA
 #### Run a quick and simple Windows multi-thread benchmark
@@ -28,6 +28,11 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.We
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/winstall-benchmark.ps1'))
 ```
 - Intel(R) Core(TM) i7-7700K CPU @ 4.20GHz = 1879.400024 ms
+## winstall-update - BETA
+#### Run Windows update and install all available updates except any updates including **Bing** and **Silverlight**
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/winstall-update.ps1'))
+```
 ## winstall-hfsystem
 #### Change hidden and system file flags
 ```powershell
