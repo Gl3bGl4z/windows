@@ -17,19 +17,23 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0.1"
+$ver = "1.0.3"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId"
 $productname = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ProductName"
 $mobomodel = Get-ItemProperty -Path "HKLM:\HARDWARE\DESCRIPTION\System\BIOS" -Name "BaseBoardProduct"
 $mobomanu = Get-ItemProperty -Path "HKLM:\HARDWARE\DESCRIPTION\System\BIOS" -Name "BaseBoardManufacturer"
+$gpumodel = cmd /C wmic path win32_VideoController get name
+$gpumodel = $gpumodel.replace('Name', '').replace('  ', '')
+#$installedram = (Get-WMIObject -class Win32_PhysicalMemory |Measure-Object -Property capacity -Sum | % {[Math]::Round(($_.sum / 1GB),2)})
+$drives = gdr -PSProvider 'FileSystem'
 function header
 {	Write-host " #####################################"
 	Write-Host " #                                   #"
-	Write-host " #    " -NoNewLine
+	Write-host " #     " -NoNewLine
 	Write-host "Windows 10 SysInfo Script" -foregroundcolor yellow -NoNewLine
-	Write-host "      #"
+	Write-host "     #"
 	Write-host " #          " -NoNewLine
 	Write-host "Version: " -foregroundcolor yellow -NoNewLine
 	Write-host $ver -foregroundcolor cyan -NoNewLine
@@ -40,19 +44,33 @@ function header
 	foreach ($objItem in $colItems) {
 		Write-Host
 		Write-Host " CPU Model: " -foregroundcolor yellow -NoNewLine
-		Write-Host $objItem.Name -foregroundcolor white	
+		Write-Host $objItem.Name -foregroundcolor white
+		Write-Host
 		Write-Host " System: " -foregroundcolor yellow -NoNewLine
 		Write-Host $productname.ProductName $currentversion.ReleaseId -foregroundcolor white	
+		Write-Host
 		Write-Host " PC Name: " -foregroundcolor yellow -NoNewLine
 		Write-Host $env:COMPUTERNAME -foregroundcolor white
+		Write-Host
 		Write-Host " Username: " -foregroundcolor yellow -NoNewLine
 		Write-Host $env:USERNAME -foregroundcolor white
+		Write-Host
 		Write-Host " Domain: " -foregroundcolor yellow -NoNewLine
 		Write-Host $env:LOGONSERVER -foregroundcolor white
+		Write-Host
 		Write-Host " Manufacturer: " -foregroundcolor yellow -NoNewLine
 		Write-Host $mobomanu.BaseBoardManufacturer -foregroundcolor white
+		Write-Host
 		Write-Host " Motherboard: " -foregroundcolor yellow -NoNewLine
 		Write-Host $mobomodel.BaseBoardProduct -foregroundcolor white
+		Write-Host
+		Write-Host " GPU:" -foregroundcolor yellow -NoNewLine
+		Write-Host $gpumodel -foregroundcolor white
+		Write-Host
+		Write-Host " Memory: " -foregroundcolor yellow
+		Get-WmiObject win32_physicalmemory | Format-Table Manufacturer,Banklabel,Configuredclockspeed,Devicelocator,Capacity,Serialnumber -autosize
+		Write-Host " Drives: " -foregroundcolor yellow
+		gdr -PSProvider 'FileSystem'
 		Write-Host
 	}
 }header
