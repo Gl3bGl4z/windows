@@ -1,1 +1,1 @@
-vcredist-all firefox filezilla github win32diskimager wnetwatcher gpmdp geekuninstaller putty qbittorrent windirstat steam rufus bleachbit megasync recuva
+vcredist-all firefox filezilla win32diskimager wnetwatcher gpmdp geekuninstaller putty qbittorrent windirstat steam rufus bleachbit megasync yumi github-desktop teamspeak plex-home-theater winrar lockhunter hashtab --ignore-checksums
