@@ -17,22 +17,42 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.1.3"
-Write-host "#########################################"
-Write-host "#       Windows 10 Benchmark Script     #"
-Write-host "#       Version: "$ver"	                #"
-Write-host "#########################################"
-Write-host
-New-Item -Path $env:TEMP -Name "winstall-core" -ItemType "directory" -Force >$null 2>&1
-Set-Location "$($env:TEMP)\winstall-core"
+$ver = "1.1.4"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
-foreach ($objItem in $colItems) {
-    Write-Host
-    Write-Host "CPU Model: " -foregroundcolor yellow -NoNewLine
-    Write-Host $objItem.Name -foregroundcolor white
-    Write-Host
-}while($confirmationupdate -ne "n" -and $confirmationupdate -ne "y")
+$currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId"
+$productname = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ProductName"
+function header
+{	Write-host " #####################################"
+	Write-Host " #                                   #"
+	Write-host " #       " -NoNewLine
+	Write-host "Windows 10 Benchmark Script" -foregroundcolor yellow -NoNewLine
+	Write-host "     #"
+	Write-host " #          " -NoNewLine
+	Write-host "Version: " -foregroundcolor yellow -NoNewLine
+	Write-host $ver -foregroundcolor cyan -NoNewLine
+	Write-host "           #"
+	Write-host " #                                   #"
+	Write-host " #####################################"
+	Write-host
+	foreach ($objItem in $colItems) {
+		Write-Host
+		Write-Host " CPU Model: " -foregroundcolor yellow -NoNewLine
+		Write-Host $objItem.Name -foregroundcolor white	
+		Write-Host " System: " -foregroundcolor yellow -NoNewLine
+		Write-Host $productname.ProductName $currentversion.ReleaseId -foregroundcolor white	
+		Write-Host " PC Name: " -foregroundcolor yellow -NoNewLine
+		Write-Host $env:COMPUTERNAME -foregroundcolor white
+		Write-Host " Username: " -foregroundcolor yellow -NoNewLine
+		Write-Host $env:USERNAME -foregroundcolor white
+		Write-Host " Domain: " -foregroundcolor yellow -NoNewLine
+		Write-Host $env:LOGONSERVER -foregroundcolor white
+		Write-Host
+	}
+}header
+New-Item -Path $env:TEMP -Name "winstall-core" -ItemType "directory" -Force >$null 2>&1
+Set-Location "$($env:TEMP)\winstall-core"
+while($confirmationupdate -ne "n" -and $confirmationupdate -ne "y")
 {	
 	$confirmationupdate = Read-Host "Run Windows 10 CPU benchmark? [y/n]"
 	Write-host
@@ -48,7 +68,7 @@ foreach ($objItem in $colItems) {
 		Invoke-WebRequest -Uri $url -OutFile $output
 		#Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)"
 	}
-		if(!(Test-Path -Path "$($env:TEMP)\winstall-core\libwinpthread-1.dll" ))
+	if(!(Test-Path -Path "$($env:TEMP)\winstall-core\libwinpthread-1.dll" ))
 	{
 		[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 		$url = "https://github.com/Ad3t0/windows/raw/master/powershell-core/bin/libwinpthread-1.dll"
@@ -57,7 +77,6 @@ foreach ($objItem in $colItems) {
 		Invoke-WebRequest -Uri $url -OutFile $output
 		#Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)"
 	}
-	
-	./bench multithread
+		./bench multithread
 }Read-Host "Press ENTER to exit"
 Exit
