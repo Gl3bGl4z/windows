@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.6.6"
+$ver = "1.6.7"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
 function header
@@ -107,7 +107,7 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 }while($confirmationonedrive -ne "n" -and $confirmationonedrive -ne "y")
 {	$confirmationonedrive = Read-Host "Remove all traces of OneDrive? [y/n]"
 }while($confirmationstartmenu -ne "n" -and $confirmationstartmenu -ne "y")
-{	$confirmationstartmenu = Read-Host "Remove all startmenu, desktop, taskbar icons? [y/n]"
+{	$confirmationstartmenu = Read-Host "Unpin all startmenu and taskbar icons? [y/n]"
 	while($confirmationappremoval -ne "n" -and $confirmationappremoval -ne "y")
 	{	
 		$confirmationappremoval = Read-Host "Remove all Windows Store apps except the Calculator, Photos, and the Windows Store? [y/n]"
@@ -145,7 +145,7 @@ Write-Host
 Write-Host "Rename PC: [$($confirmationrename)]"
 Write-Host "Domain Join: [$($confirmationdomainjoin)]"
 Write-Host "OneDrive Removal: [$($confirmationonedrive)]"
-Write-Host "Icon Removal: [$($confirmationstartmenu)]"
+Write-Host "Unpin All Icons: [$($confirmationstartmenu)]"
 Write-Host "App Removal: [$($confirmationappremoval)]"
 Write-Host "Choco install: [$($confirmationchocoinstall)]"
 if($initialsetting -eq "3")
