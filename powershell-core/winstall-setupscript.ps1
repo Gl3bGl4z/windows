@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.6.1"
+$ver = "1.6.2"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
 function header
@@ -69,9 +69,9 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 		}
 	}
 	Write-Host "  ----------------------------------------"
-	Write-Host " 1 - Complete"
-	Write-Host " 2 - Basic"
-	Write-Host " 3 - Advanced"
+	Write-Host " 1 - Basic ALL"
+	Write-Host " 2 - Basic SELECTIVE"
+	Write-Host " 3 - Advanced SELECTIVE"
 	Write-Host
 	$initialsetting = Read-Host -Prompt "Input option"
 }if($initialsetting -eq "1")
