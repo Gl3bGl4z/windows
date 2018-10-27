@@ -17,7 +17,9 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.5.5"
+$ver = "1.5.6"
+$strComputer = "."
+$colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
 function header
 {	Write-host "#####################################"
 	Write-Host "#                                   #"
@@ -31,31 +33,31 @@ function header
 	Write-host "#                                   #"
 	Write-host "#####################################"
 	Write-host
+	foreach ($objItem in $colItems) {
+		Write-Host
+		Write-Host "CPU Model: " -foregroundcolor yellow -NoNewLine
+		Write-Host $objItem.Name -foregroundcolor white
+		Write-Host "PC Name: " -foregroundcolor yellow -NoNewLine
+		Write-Host $env:COMPUTERNAME -foregroundcolor white
+		Write-Host "Username: " -foregroundcolor yellow -NoNewLine
+		Write-Host $env:USERNAME -foregroundcolor white
+		Write-Host "Domain: " -foregroundcolor yellow -NoNewLine
+		Write-Host $env:LOGONSERVER -foregroundcolor white
+		Write-Host
+	}
 }header
 Write-host "Please wait loading modules..."
 #Install-PackageProvider -Name NuGet -confirm:$false
 #Find-PackageProvider -Name 'Nuget' -ForceBootstrap -IncludeDependencies
 Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -confirm:$false
 Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
-Install-Module -Name PendingReboot -confirm:$false >$null 2>&1
+Install-Module -Name PendingReboot -confirm:$false #>$null 2>&1
+Write-host "Modules finished loading"
 Clear-Host
 header
 New-Item -Path $env:TEMP -Name "winstall-core" -ItemType "directory" -Force >$null 2>&1
 Set-Location "$($env:TEMP)\winstall-core"
-$strComputer = "."
-$colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
-foreach ($objItem in $colItems) {
-	Write-Host
-	Write-Host "CPU Model: " -foregroundcolor yellow -NoNewLine
-	Write-Host $objItem.Name -foregroundcolor white
-	Write-Host "PC Name: " -foregroundcolor yellow -NoNewLine
-	Write-Host $env:COMPUTERNAME -foregroundcolor white
-	Write-Host "Username: " -foregroundcolor yellow -NoNewLine
-	Write-Host $env:USERNAME -foregroundcolor white
-	Write-Host "Domain: " -foregroundcolor yellow -NoNewLine
-	Write-Host $env:LOGONSERVER -foregroundcolor white
-	Write-Host
-}if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
+if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 {	
 	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/chocolist.txt') | out-file "$($env:TEMP)\winstall-core\chocolist.txt" -force
 }while($initialsetting -ne "1" -and $initialsetting -ne "2" -and $initialsetting -ne "3")
@@ -131,7 +133,7 @@ foreach ($objItem in $colItems) {
 	{	
 		$confirmationshowhiddenfiles = Read-Host "Show hidden files in File Explorer? [y/n]"
 	}
-	}
+}
 if($confirmationchocoinstall -eq "y")
 {	Write-Host
 	Write-Host "A .txt file containing the Chocolatey packages to be installed will now open"
