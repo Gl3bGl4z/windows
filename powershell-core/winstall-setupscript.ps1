@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.5.0"
+$ver = "1.5.1"
 Write-host "#####################################"
 Write-Host "#                                   #"
 Write-host "#       " -NoNewLine
