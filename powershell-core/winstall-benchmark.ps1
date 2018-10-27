@@ -17,7 +17,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.1.2"
+$ver = "1.1.3"
 Write-host "#########################################"
 Write-host "#       Windows 10 Benchmark Script     #"
 Write-host "#       Version: "$ver"	                #"
@@ -48,6 +48,16 @@ foreach ($objItem in $colItems) {
 		Invoke-WebRequest -Uri $url -OutFile $output
 		#Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)"
 	}
+		if(!(Test-Path -Path "$($env:TEMP)\winstall-core\libwinpthread-1.dll" ))
+	{
+		[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+		$url = "https://github.com/Ad3t0/windows/raw/master/powershell-core/bin/libwinpthread-1.dll"
+		$output = "$($env:TEMP)\winstall-core\libwinpthread-1.dll"
+		$start_time = Get-Date
+		Invoke-WebRequest -Uri $url -OutFile $output
+		#Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)"
+	}
+	
 	./bench multithread
 }Read-Host "Press ENTER to exit"
 Exit
