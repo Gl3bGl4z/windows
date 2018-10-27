@@ -17,19 +17,21 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.5.4"
-Write-host "#####################################"
-Write-Host "#                                   #"
-Write-host "#       " -NoNewLine
-Write-host "Windows 10 Setup Script" -foregroundcolor yellow -NoNewLine
-Write-host "     #"
-Write-host "#          " -NoNewLine
-Write-host "Version: " -foregroundcolor yellow -NoNewLine
-Write-host $ver -foregroundcolor cyan -NoNewLine
-Write-host "           #"
-Write-host "#                                   #"
-Write-host "#####################################"
-Write-host
+$ver = "1.5.5"
+function header
+{	Write-host "#####################################"
+	Write-Host "#                                   #"
+	Write-host "#       " -NoNewLine
+	Write-host "Windows 10 Setup Script" -foregroundcolor yellow -NoNewLine
+	Write-host "     #"
+	Write-host "#          " -NoNewLine
+	Write-host "Version: " -foregroundcolor yellow -NoNewLine
+	Write-host $ver -foregroundcolor cyan -NoNewLine
+	Write-host "           #"
+	Write-host "#                                   #"
+	Write-host "#####################################"
+	Write-host
+}header
 Write-host "Please wait loading modules..."
 #Install-PackageProvider -Name NuGet -confirm:$false
 #Find-PackageProvider -Name 'Nuget' -ForceBootstrap -IncludeDependencies
@@ -37,18 +39,7 @@ Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -confirm:$f
 Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
 Install-Module -Name PendingReboot -confirm:$false >$null 2>&1
 Clear-Host
-Write-host "#####################################"
-Write-Host "#                                   #"
-Write-host "#       " -NoNewLine
-Write-host "Windows 10 Setup Script" -foregroundcolor yellow -NoNewLine
-Write-host "     #"
-Write-host "#          " -NoNewLine
-Write-host "Version: " -foregroundcolor yellow -NoNewLine
-Write-host $ver -foregroundcolor cyan -NoNewLine
-Write-host "           #"
-Write-host "#                                   #"
-Write-host "#####################################"
-Write-host
+header
 New-Item -Path $env:TEMP -Name "winstall-core" -ItemType "directory" -Force >$null 2>&1
 Set-Location "$($env:TEMP)\winstall-core"
 $strComputer = "."
@@ -67,6 +58,29 @@ foreach ($objItem in $colItems) {
 }if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 {	
 	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/chocolist.txt') | out-file "$($env:TEMP)\winstall-core\chocolist.txt" -force
+}while($initialsetting -ne "1" -and $initialsetting -ne "2" -and $initialsetting -ne "3")
+{	Clear-Host
+	header
+	if(([string]::IsNullOrEmpty($initialsetting)) -ne $true)
+	{	
+		if($initialsetting -ne "1" -and $initialsetting -ne "2" -and $initialsetting -ne "3")
+		{
+			Write-Warning "Invalid option"
+		}
+	}
+	Write-Host "  ----------------------------------------"
+	Write-Host " 1 - Complete"
+	Write-Host " 2 - Selective"
+	Write-Host " 3 - Advanced"
+	Write-Host
+	$initialsetting = Read-Host -Prompt "Input option"
+}if($initialsetting -eq "1")
+{	$confirmationrename = "y"
+	$confirmationdomainjoin = "y"
+	$confirmationonedrive = "y"
+	$confirmationstartmenu = "y"
+	$confirmationappremoval = "y"
+	$confirmationchocoinstall = "y"
 }while($confirmationrename -ne "n" -and $confirmationrename -ne "y")
 {	$confirmationrename = Read-Host "Rename this PC? [y/n]"
 	if($confirmationrename -eq "y")
@@ -100,7 +114,25 @@ foreach ($objItem in $colItems) {
 	}
 }while($confirmationchocoinstall -ne "n" -and $confirmationchocoinstall -ne "y")
 {	$confirmationchocoinstall = Read-Host "Install Chocolatey and choose packages? [y/n]"
-}if($confirmationchocoinstall -eq "y")
+}if($initialsetting -eq "3")
+{	while($confirmationpcdiscover -ne "n" -and $confirmationpcdiscover -ne "y")
+	{	
+		$confirmationpcdiscover = Read-Host "Make this PC discoverable on the network? [y/n]"
+	}
+	while($confirmationwallpaperq -ne "n" -and $confirmationwallpaperq -ne "y")
+	{	
+		$confirmationwallpaperq = Read-Host "Increase desktop wallpaper compression to max quality? [y/n]"
+	}
+	while($confirmationshowfileex -ne "n" -and $confirmationshowfileex -ne "y")
+	{	
+		$confirmationshowfileex = Read-Host "Show file extension in File Explorer? [y/n]"
+	}	
+	while($confirmationshowhiddenfiles -ne "n" -and $confirmationshowhiddenfiles -ne "y")
+	{	
+		$confirmationshowhiddenfiles = Read-Host "Show hidden files in File Explorer? [y/n]"
+	}
+	}
+if($confirmationchocoinstall -eq "y")
 {	Write-Host
 	Write-Host "A .txt file containing the Chocolatey packages to be installed will now open"
 	Write-Host "edit, save and close the file separating each package name with a semicolon"
@@ -117,7 +149,12 @@ Write-Host "OneDrive Removal: [$($confirmationonedrive)]"
 Write-Host "Icon Removal: [$($confirmationstartmenu)]"
 Write-Host "App Removal: [$($confirmationappremoval)]"
 Write-Host "Choco install: [$($confirmationchocoinstall)]"
-Write-Host
+if($initialsetting -eq "3")
+{	Write-Host "PC Discoverable: [$($confirmationpcdiscover)]"
+	Write-Host "Wallpaper Max Quality: [$($confirmationwallpaperq)]"
+	Write-Host "Show File Extensions: [$($confirmationshowfileex)]"
+	Write-Host "Show Hidden Files: [$($confirmationshowhiddenfiles)]"
+}Write-Host
 Write-Host "Windows 10 Setup Script will now run"
 Write-Host "explorer.exe will taskkill while running and restart when finished"
 Write-Host
@@ -141,9 +178,10 @@ cmd /c net stop InstallService
 cmd /c sc config InstallService start= disabled
 cmd /c net stop DiagTrack
 cmd /c sc config DiagTrack start= disabled
-#cmd /c net start FDResPub
-#cmd /c sc config FDResPub start= auto
-###########################################################################
+if($confirmationpcdiscover -eq "y")
+{	cmd /c net start FDResPub
+	cmd /c sc config FDResPub start= auto
+}###########################################################################
 # Remove all Windows store apps expect WindowsStore, Calculator and Photos
 ##########################################################################
 if($confirmationappremoval -eq "y")
@@ -195,8 +233,6 @@ Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentD
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338389Enabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353696Enabled" -Type DWord -Value 0 -erroraction 'silentlycontinue'
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs" -Type DWord -Value 0 -erroraction 'silentlycontinue'
-Write-Host "Increasing wallpaper compression quality to 100" -foregroundcolor yellow
-Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "JPEGImportQuality" -Type DWord -Value 100 -erroraction 'silentlycontinue'
 Write-Host "Disabling Cortana" -foregroundcolor yellow
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortana" -Type DWord -Value 0 -erroraction 'silentlycontinue'
 Write-Host "Disabling Start Menu web search" -foregroundcolor yellow
@@ -208,7 +244,16 @@ Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "ConnectedSearchUseWeb" -Type DWord -Value 0 -erroraction 'silentlycontinue'
 Write-Host "Disabling all Windows telemetry" -foregroundcolor yellow
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0 -erroraction 'silentlycontinue'
-###########################################################################
+if($confirmationpcdiscover -eq "y")
+{	Write-Host "Increasing wallpaper compression quality to 100" -foregroundcolor yellow
+	Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "JPEGImportQuality" -Type DWord -Value 100 -erroraction 'silentlycontinue'
+}if($confirmationshowfileex -eq "y")
+{	Write-Host "Enabling show file extensions" -foregroundcolor yellow
+	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Type DWord -Value 0 -erroraction 'silentlycontinue'
+}if($confirmationshowhiddenfiles -eq "y")
+{	Write-Host "Enabling show hidden files" -foregroundcolor yellow
+	Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name Hidden -Value 1
+}###########################################################################
 # Taskbar pinapp function
 ##########################################################################
 Write-Host "Unpinning all default Task Bar icons" -foregroundcolor yellow
