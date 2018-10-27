@@ -17,9 +17,12 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.6.7"
+$ver = "1.6.8"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
+$currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId"
+$productname = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ProductName"
+
 function header
 {	Write-host " #####################################"
 	Write-Host " #                                   #"
@@ -36,7 +39,9 @@ function header
 	foreach ($objItem in $colItems) {
 		Write-Host
 		Write-Host " CPU Model: " -foregroundcolor yellow -NoNewLine
-		Write-Host $objItem.Name -foregroundcolor white
+		Write-Host $objItem.Name -foregroundcolor white	
+		Write-Host " System: " -foregroundcolor yellow -NoNewLine
+		Write-Host $productname.ProductName $currentversion.ReleaseId -foregroundcolor white	
 		Write-Host " PC Name: " -foregroundcolor yellow -NoNewLine
 		Write-Host $env:COMPUTERNAME -foregroundcolor white
 		Write-Host " Username: " -foregroundcolor yellow -NoNewLine
