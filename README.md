@@ -11,7 +11,7 @@ Basic
 - Disable Cortana and Ink Space
 - Disable ALL Windows Telemetry
 - Remove/Unpin all Startmenu and default Taskbar icons
-- Remove the People, Taskview, and Action Center icons on the Taskbar
+- Remove the People and Taskview icons on the Taskbar
 - Delete all Windows Store apps (except the Calculator, Photos, and the Windows Store)
 - Permanently disable all Windows ad tracking
 - Install [Chocolatey](https://chocolatey.org/) and defined packages
