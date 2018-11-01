@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.7.2"
+$ver = "1.7.3"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId"
@@ -124,7 +124,7 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 }if($initialsetting -eq "3")
 {	
 	while($confirmationonedrive -ne "n" -and $confirmationonedrive -ne "y")
-	{	
+	{
 		$confirmationonedrive = Read-Host "Remove all traces of OneDrive? [y/n]"
 	}
 	<# 	while($confirmationpcdiscover -ne "n" -and $confirmationpcdiscover -ne "y")
@@ -138,10 +138,18 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 	while($confirmationshowfileex -ne "n" -and $confirmationshowfileex -ne "y")
 	{	
 		$confirmationshowfileex = Read-Host "Show file extension in File Explorer? [y/n]"
-	}	
+	}
 	while($confirmationshowhiddenfiles -ne "n" -and $confirmationshowhiddenfiles -ne "y")
 	{	
 		$confirmationshowhiddenfiles = Read-Host "Show hidden files in File Explorer? [y/n]"
+	}
+	while($confirmationrdp -ne "n" -and $confirmationrdp -ne "y")
+	{	
+		$confirmationrdp = Read-Host "Enable Allow Remote Desktop Connections? [y/n]"
+	}
+	while($confirmationwol -ne "n" -and $confirmationwol -ne "y")
+	{	
+		$confirmationwol = Read-Host "Enable Allow Wake On LAN? [y/n]"
 	}
 }if($confirmationchocoinstall -eq "y")
 {	Write-Host
@@ -164,6 +172,8 @@ if($initialsetting -eq "3")
 	Write-Host "Wallpaper Max Quality: [$($confirmationwallpaperq)]"
 	Write-Host "Show File Extensions: [$($confirmationshowfileex)]"
 	Write-Host "Show Hidden Files: [$($confirmationshowhiddenfiles)]"
+	Write-Host "Allow Remote Desktop: [$($confirmationrdp)]"
+	Write-Host "Allow Wake On LAN: [$($confirmationwol)]"
 }Write-Host
 Write-Host "Windows 10 Setup Script will now run"
 Write-Host "explorer.exe will taskkill while running and restart when finished"
@@ -275,7 +285,23 @@ if($initialsetting -eq "3")
 }if($confirmationshowhiddenfiles -eq "y")
 {	Write-Host "Enabling show hidden files" -foregroundcolor yellow
 	Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name Hidden -Value 1
-}###########################################################################
+}if($confirmationrdp -eq "y")
+{	Write-Host "Enabling Allow Remote Desktop Connection" -foregroundcolor yellow
+	(Get-WmiObject Win32_TerminalServiceSetting -Namespace root\cimv2\TerminalServices).SetAllowTsConnections(1,1) | Out-Null
+	(Get-WmiObject -Class "Win32_TSGeneralSetting" -Namespace root\cimv2\TerminalServices -Filter "TerminalName='RDP-tcp'").SetUserAuthenticationRequired(0) | Out-Null
+	Get-NetFirewallRule -DisplayName "Remote Desktop*" | Set-NetFirewallRule -enabled true
+}if($confirmationrdp -eq "y")
+{	Write-Host "Enabling Allow Wake On LAN" -foregroundcolor yellow
+	$Adapters = gwmi MSPower_DeviceWakeEnable -namespace 'root\wmi'
+	if($Adapters.count -gt 0){
+		foreach($Adapter in $Adapters){$Adapter.enable = "$True"}
+	}else{$Adapters.enable = "$True"}
+	$Adapters = gwmi MSNdis_DeviceWakeOnMagicPacketOnly -namespace 'root\wmi'
+	if($Adapters.count -gt 0){
+		foreach($Adapter in $Adapters){$Adapter.enablewakeonmagicpacketonly = "$True"}
+	}else{$Adapters.enablewakeonmagicpacketonly = "$True"}
+	}
+###########################################################################
 # Taskbar pin app function
 ##########################################################################
 Write-Host "Unpinning all default Task Bar icons" -foregroundcolor yellow

@@ -38,11 +38,6 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.We
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/winstall-hfsystem.ps1'))
 ```
-## enable-rdpwol
-#### Enable both RDP and WOL depending on selection
-```powershell
-Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/enable-rdpwol.ps1'))
-```
 ## enable-powershellcontextmenu
 #### Add an "Open Windows PowerShell Here as Administrator" option to the context (right click) menu in File Explorer
 ```powershell

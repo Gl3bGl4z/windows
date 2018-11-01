@@ -43,7 +43,7 @@ function header
 	Write-host
 	foreach ($objItem in $colItems) {
 		Write-Host
-		Write-Host " CPU Model: " -foregroundcolor yellow -NoNewLine
+		Write-Host " CPU: " -foregroundcolor yellow -NoNewLine
 		Write-Host $objItem.Name -foregroundcolor white
 		Write-Host
 		Write-Host " System: " -foregroundcolor yellow -NoNewLine
