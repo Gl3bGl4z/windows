@@ -16,6 +16,7 @@ Basic
 - Permanently disable all Windows ad tracking
 - Install [Chocolatey](https://chocolatey.org/) and defined packages
 - Install all available .NET Framework versions and all VCRedist Visual C++ versions (via Chocolatey)
+
 Advanced
 - Remove OneDrive
 - Increase wallpaper to max compression quality at essentially no additional resource cost
