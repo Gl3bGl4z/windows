@@ -4,9 +4,9 @@
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/winstall-setupscript.ps1'))
 ```
+Basic
 - Rename the PC
 - Join a domain
-- Remove OneDrive
 - Disable Start Menu web search and app search
 - Disable Cortana and Ink Space
 - Disable ALL Windows Telemetry
@@ -16,7 +16,13 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.We
 - Permanently disable all Windows ad tracking
 - Install [Chocolatey](https://chocolatey.org/) and defined packages
 - Install all available .NET Framework versions and all VCRedist Visual C++ versions (via Chocolatey)
+Advanced
+- Remove OneDrive
 - Increase wallpaper to max compression quality at essentially no additional resource cost
+- Enable Show File Extension in File Explorer
+- Enable Show Hidden Files and Folders in File Explorer
+- Enable Remote Desktop Connection
+- Enable Wake On LAN
 ## winstall-sysinfo - BETA
 #### Run a small Windows 10 script to display important system information
 ```powershell
