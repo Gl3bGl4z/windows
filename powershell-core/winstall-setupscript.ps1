@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.7.1"
+$ver = "1.7.2"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId"
@@ -113,8 +113,6 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 			$confirmationdomainjoin2 = Read-Host "Domain join failed. Retry domain join? Answering no will skip domain join. [y/n]"
 		}
 	}
-}while($confirmationonedrive -ne "n" -and $confirmationonedrive -ne "y")
-{	$confirmationonedrive = Read-Host "Remove all traces of OneDrive? [y/n]"
 }while($confirmationstartmenu -ne "n" -and $confirmationstartmenu -ne "y")
 {	$confirmationstartmenu = Read-Host "Unpin all startmenu and taskbar icons? [y/n]"
 	while($confirmationappremoval -ne "n" -and $confirmationappremoval -ne "y")
@@ -124,10 +122,15 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 }while($confirmationchocoinstall -ne "n" -and $confirmationchocoinstall -ne "y")
 {	$confirmationchocoinstall = Read-Host "Install Chocolatey and choose packages? [y/n]"
 }if($initialsetting -eq "3")
-{	while($confirmationpcdiscover -ne "n" -and $confirmationpcdiscover -ne "y")
+{	
+	while($confirmationonedrive -ne "n" -and $confirmationonedrive -ne "y")
+	{	
+		$confirmationonedrive = Read-Host "Remove all traces of OneDrive? [y/n]"
+	}
+	<# 	while($confirmationpcdiscover -ne "n" -and $confirmationpcdiscover -ne "y")
 	{	
 		$confirmationpcdiscover = Read-Host "Make this PC discoverable on the network? [y/n]"
-	}
+	} #>
 	while($confirmationwallpaperq -ne "n" -and $confirmationwallpaperq -ne "y")
 	{	
 		$confirmationwallpaperq = Read-Host "Increase desktop wallpaper compression to max quality? [y/n]"
@@ -148,16 +151,16 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 	Read-Host "Press ENTER to open the chocolist.txt file"
 	notepad.exe "$($env:TEMP)\winstall-core\chocolist.txt"
 	Read-Host "Press ENTER to continue after the chocolist.txt file has been saved"
-	}$chocolist = [IO.File]::ReadAllText("$($env:TEMP)\winstall-core\chocolist.txt")
+}$chocolist = [IO.File]::ReadAllText("$($env:TEMP)\winstall-core\chocolist.txt")
 Write-Host
 Write-Host "Rename PC: [$($confirmationrename)]"
 Write-Host "Domain Join: [$($confirmationdomainjoin)]"
-Write-Host "OneDrive Removal: [$($confirmationonedrive)]"
 Write-Host "Unpin All Icons: [$($confirmationstartmenu)]"
 Write-Host "App Removal: [$($confirmationappremoval)]"
 Write-Host "Choco install: [$($confirmationchocoinstall)]"
 if($initialsetting -eq "3")
-{	Write-Host "PC Discoverable: [$($confirmationpcdiscover)]"
+{Write-Host "OneDrive Removal: [$($confirmationonedrive)]"	
+	#Write-Host "PC Discoverable: [$($confirmationpcdiscover)]"
 	Write-Host "Wallpaper Max Quality: [$($confirmationwallpaperq)]"
 	Write-Host "Show File Extensions: [$($confirmationshowfileex)]"
 	Write-Host "Show Hidden Files: [$($confirmationshowhiddenfiles)]"
@@ -415,22 +418,22 @@ if($confirmationstartmenu -eq "y")
 ###########################################################################
 # Pin these apps to the start menu
 ##########################################################################
-	#Pin-App "Calculator" -pin
-	#Pin-App "Photos" -pin
-	#Pin-App "File Explorer" -pin
-	#Pin-App "Control Panel" -pin
-	#Pin-App "Task Manager" -pin
-	#Pin-App "Notepad" -pin
-	#Pin-App "Remote Desktop Connection" -pin
-	#Pin-App "Thunderbird" -pin
-	#Pin-App "Outlook 2016" -pin
-	#Pin-App "Word 2016" -pin
-	#Pin-App "Excel 2016" -pin
-	#Pin-App "Publisher 2016" -pin
-	#Pin-App "PowerPoint 2016" -pin
-	#Pin-App "Malwarebytes" -pin
-	#Pin-App "BleachBit" -pin
-	#Pin-App "WinDirStat" -pin
+	<# 	Pin-App "Calculator" -pin
+	Pin-App "Photos" -pin
+	Pin-App "File Explorer" -pin
+	Pin-App "Control Panel" -pin
+	Pin-App "Task Manager" -pin
+	Pin-App "Notepad" -pin
+	Pin-App "Remote Desktop Connection" -pin
+	Pin-App "Thunderbird" -pin
+	Pin-App "Outlook 2016" -pin
+	Pin-App "Word 2016" -pin
+	Pin-App "Excel 2016" -pin
+	Pin-App "Publisher 2016" -pin
+	Pin-App "PowerPoint 2016" -pin
+	Pin-App "Malwarebytes" -pin
+	Pin-App "BleachBit" -pin
+	Pin-App "WinDirStat" -pin #>
 ###########################################################################
 # Delete all desktop icons
 ##########################################################################
