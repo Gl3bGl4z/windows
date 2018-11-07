@@ -17,7 +17,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0.4"
+$ver = "1.0.5"
 $data = netsh wlan show profile
 $datePattern = [Regex]::new("(?<=All User Profile     : ).*\S")
 $matches = $datePattern.Matches($data)
