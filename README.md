@@ -35,8 +35,8 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.We
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/winstall-benchmark.ps1'))
 ```
 - Intel(R) Core(TM) i7-7700K CPU @ 4.20GHz = 1879.400024 ms
-## winstall-wifiqr - BETA
-#### Create a iOS camera readable Wifi connect QR code with the information from the currently connected Windows Wifi network
+## winstall-wifiqr
+#### Create a iOS camera readable Wifi connect QR code using information from the currently connected Wifi network
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/winstall-wifiqr.ps1'))
 ```
