@@ -35,6 +35,11 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.We
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/winstall-benchmark.ps1'))
 ```
 - Intel(R) Core(TM) i7-7700K CPU @ 4.20GHz = 1879.400024 ms
+## winstall-wifiqr - BETA
+#### Create a iOS camera usable Wifi connect QR code
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/winstall-wifiqr.ps1'))
+```
 ## winstall-update - BETA
 #### Run Windows update and install all available updates except any updates including **Bing** and **Silverlight**
 ```powershell
