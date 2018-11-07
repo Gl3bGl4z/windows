@@ -17,7 +17,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0.7"
+$ver = "1.0.8"
 try
 {	$data = netsh wlan show profile
 	$datePattern = [Regex]::new("(?<=All User Profile     : ).*\S")
@@ -32,20 +32,19 @@ try
 	$wifilink = [uri]::EscapeDataString($wifilink)
 	$defaultbrowser = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice" -Name "Progid"
 	$URL = "https://chart.googleapis.com/chart?chs=547x547&cht=qr&chld=H|4&choe=UTF-8&chl=$($wifilink)"
-	
 	$wifiprofile
 	$wifikey
 	if($defaultbrowser.ProgID -like "Firefox*")
 	{	
-	Write-Host
+		Write-Host
 		Write-Host "Opening Wifi access QR code in a private Firefox window..." -foregroundcolor yellow
-		[System.Diagnostics.Process]::Start("firefox.exe","-private-window $URL")
+		[System.Diagnostics.Process]::Start("firefox.exe","-private-window $URL") | Out-Null
 	}else
 	{	
-	Write-Host
-	Write-Host "Opening Wifi access QR code in an incognito Chrome window..." -foregroundcolor yellow
-		[System.Diagnostics.Process]::Start("chrome.exe","--incognito $URL")
+		Write-Host
+		Write-Host "Opening Wifi access QR code in an incognito Chrome window..." -foregroundcolor yellow
+		[System.Diagnostics.Process]::Start("chrome.exe","--incognito $URL") | Out-Null
 	}
 }catch
 {	Write-Host "Not connected to a WIFI network exiting..." -foregroundcolor yellow
-}
+}Write-Host
