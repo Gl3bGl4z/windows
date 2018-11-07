@@ -22,7 +22,9 @@ $data = netsh wlan show profile
 $datePattern = [Regex]::new("(?<=All User Profile     : ).*\S")
 $matches = $datePattern.Matches($data)
 $wifiprofile = $matches.Value
-$data2 = netsh wlan show profile $matches.Value key=clear
+$wifiprofile = $wifiprofile.Substring(0, $wifiprofile.IndexOf(' '))
+$wifiprofile
+$data2 = netsh wlan show profile $wifiprofile key=clear
 $datePattern2 = [Regex]::new("(?<=Key Content            : ).*\S")
 $matches2 = $datePattern2.Matches($data2)
 $wifikey = $matches2.Value.split(' ')[0]

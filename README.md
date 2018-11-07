@@ -24,19 +24,19 @@ Advanced
 - Enable Show Hidden Files and Folders in File Explorer
 - Enable Remote Desktop Connection
 - Enable Wake On LAN
-## winstall-sysinfo - BETA
+## winstall-sysinfo
 #### Run a small Windows 10 script to display important system information
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/winstall-sysinfo.ps1'))
 ```
-## winstall-benchmark - BETA
+## winstall-benchmark
 #### Run a quick and simple Windows multi-thread benchmark
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/winstall-benchmark.ps1'))
 ```
 - Intel(R) Core(TM) i7-7700K CPU @ 4.20GHz = 1879.400024 ms
 ## winstall-wifiqr - BETA
-#### Create a iOS camera usable Wifi connect QR code
+#### Create a iOS camera readable Wifi connect QR code with the information from the currently connected Windows Wifi network
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/winstall-wifiqr.ps1'))
 ```
