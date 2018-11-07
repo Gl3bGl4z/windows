@@ -17,7 +17,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0.0"
+$ver = "1.0.1"
 function New-QR {
 	[CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = "low")]
 		param(
@@ -94,7 +94,7 @@ function New-QR {
 			"HA"=1852;
 		}
 		$NorA="N"
-		for ($a = 1; $a -le $Message.length; $a++) {if (!($Message.substring($a-1,1) -match "[0-9]")){$NorA="A"; break}}
+		for ($a = 1; $a -le $Message.length; $a++) {if (!($Message.substring($a-1,1) )){$NorA="A"; break}}
 		if ($Message.length -gt $Limit."$chld$NorA")
 		{
 			Write-Verbose "Message Size Limit Exceeded"; Break
@@ -107,7 +107,7 @@ function New-QR {
 		}
 		$chld = "$chld`|$margin"
 		$Message = $Message -replace(" ", "+")
-		$URL = "https://chart.googleapis.com/chart?chs=$chs&cht=qr&chld=$chld&choe=$choe&chl=$Message"
+		$URL = "https://chart.googleapis.com/chart?chs=$chs&cht=qr&chld=$chld&choe=$choe&chl=$($Message)"
 		$req = [System.Net.HttpWebRequest]::Create($url)
 		$req.Proxy = [System.Net.WebRequest]::DefaultWebProxy
 		$req.Proxy.Credentials = [System.Net.CredentialCache]::DefaultCredentials
@@ -148,7 +148,7 @@ function New-QR {
 	Write-Host " #                                   #"
 	Write-host " #     " -NoNewLine
 	Write-host "Windows 10 WifiQR Script" -foregroundcolor yellow -NoNewLine
-	Write-host "     #"
+	Write-host "      #"
 	Write-host " #          " -NoNewLine
 	Write-host "Version: " -foregroundcolor yellow -NoNewLine
 	Write-host $ver -foregroundcolor cyan -NoNewLine
@@ -167,5 +167,6 @@ $datePattern2 = [Regex]::new("(?<=Key Content            : ).*\S")
 $matches2 = $datePattern2.Matches($data2)
 $wifikey = $matches2.Value.split(' ')[0]
 $wifilink = "WIFI:S:$($wifiprofile);T:WPA;P:$($wifikey);;"
-(New-QR -message $wifilink -Size L -ECL H).fullname
+$wifilink = [uri]::EscapeDataString($wifilink)
+(New-QR -message $wifilink -Size X -ECL H -Verbose).fullname | Out-Null
 start "$($env:TEMP)\QR.png"
