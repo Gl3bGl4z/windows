@@ -17,21 +17,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0.3"
-function header
-{	Write-host " #####################################"
-	Write-Host " #                                   #"
-	Write-host " #     " -NoNewLine
-	Write-host "Windows 10 WifiQR Script" -foregroundcolor yellow -NoNewLine
-	Write-host "      #"
-	Write-host " #          " -NoNewLine
-	Write-host "Version: " -foregroundcolor yellow -NoNewLine
-	Write-host $ver -foregroundcolor cyan -NoNewLine
-	Write-host "           #"
-	Write-host " #                                   #"
-	Write-host " #####################################"
-	Write-host
-}header
+$ver = "1.0.4"
 $data = netsh wlan show profile
 $datePattern = [Regex]::new("(?<=All User Profile     : ).*\S")
 $matches = $datePattern.Matches($data)
@@ -44,13 +30,10 @@ $wifilink = "WIFI:S:$($wifiprofile);T:WPA;P:$($wifikey);;"
 $wifilink = [uri]::EscapeDataString($wifilink)
 $defaultbrowser = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice" -Name "Progid"
 $URL = "https://chart.googleapis.com/chart?chs=547x547&cht=qr&chld=H|4&choe=UTF-8&chl=$($wifilink)"
-$defaultbrowser.ProgID
 if($defaultbrowser.ProgID -like "Firefox*")
 {	
-	Write-Host "Opening QR in private Firefox instance"
 	[System.Diagnostics.Process]::Start("firefox.exe","-private-window $URL")
 }else
 {	
-	Write-Host "Opening QR in private Chrome instance"
 	[System.Diagnostics.Process]::Start("chrome.exe","--incognito $URL")
 }
