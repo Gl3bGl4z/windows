@@ -17,7 +17,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0.2"
+$ver = "1.0.3"
 function header
 {	Write-host " #####################################"
 	Write-Host " #                                   #"
@@ -31,7 +31,6 @@ function header
 	Write-host " #                                   #"
 	Write-host " #####################################"
 	Write-host
-		
 }header
 $data = netsh wlan show profile
 $datePattern = [Regex]::new("(?<=All User Profile     : ).*\S")
@@ -43,5 +42,15 @@ $matches2 = $datePattern2.Matches($data2)
 $wifikey = $matches2.Value.split(' ')[0]
 $wifilink = "WIFI:S:$($wifiprofile);T:WPA;P:$($wifikey);;"
 $wifilink = [uri]::EscapeDataString($wifilink)
+$defaultbrowser = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice" -Name "Progid"
 $URL = "https://chart.googleapis.com/chart?chs=547x547&cht=qr&chld=H|4&choe=UTF-8&chl=$($wifilink)"
-start $URL
+$defaultbrowser.ProgID
+if($defaultbrowser.ProgID -like "Firefox*")
+{	
+	Write-Host "Opening QR in private Firefox instance"
+	[System.Diagnostics.Process]::Start("firefox.exe","-private-window $URL")
+}else
+{	
+	Write-Host "Opening QR in private Chrome instance"
+	[System.Diagnostics.Process]::Start("chrome.exe","--incognito $URL")
+}
