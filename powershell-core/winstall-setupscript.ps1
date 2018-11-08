@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.7.6"
+$ver = "1.7.7"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer -erroraction 'silentlycontinue'
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId" -erroraction 'silentlycontinue'
@@ -86,8 +86,7 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 	$confirmationpowersch = "y"
 	$confirmationappremoval = "y"
 	$confirmationchocoinstall = "y"
-	
-}while($confirmationrename -ne "n" -and $confirmationrename -ne "y")
+	}while($confirmationrename -ne "n" -and $confirmationrename -ne "y")
 {	
 	if($initialsetting -eq "2")
 	{
@@ -520,4 +519,4 @@ if($rebootpending = "True")
 	Write-Host
 	Write-Host "Complete" -foregroundcolor green
 	Write-Host
-}
+}Exit
