@@ -17,11 +17,11 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.7.5"
+$ver = "1.7.6"
 $strComputer = "."
-$colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
-$currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId"
-$productname = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ProductName"
+$colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer -erroraction 'silentlycontinue'
+$currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId" -erroraction 'silentlycontinue'
+$productname = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ProductName" -erroraction 'silentlycontinue'
 function header
 {	Write-host " #####################################"
 	Write-Host " #                                   #"
@@ -53,7 +53,7 @@ function header
 Write-host "Please wait loading modules..."
 Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -confirm:$false
 Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
-Install-Module -Name PendingReboot -confirm:$false #>$null 2>&1
+Install-Module -Name PendingReboot -confirm:$false
 Write-host "Modules finished loading"
 Clear-Host
 header
@@ -83,8 +83,10 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 	$confirmationdomainjoin = "y"
 	$confirmationonedrive = "y"
 	$confirmationstartmenu = "y"
+	$confirmationpowersch = "y"
 	$confirmationappremoval = "y"
 	$confirmationchocoinstall = "y"
+	
 }while($confirmationrename -ne "n" -and $confirmationrename -ne "y")
 {	
 	if($initialsetting -eq "2")
@@ -129,10 +131,6 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 	{
 		$confirmationonedrive = Read-Host "Remove all traces of OneDrive? [y/n]"
 	}
-	<# 	while($confirmationpcdiscover -ne "n" -and $confirmationpcdiscover -ne "y")
-	{	
-		$confirmationpcdiscover = Read-Host "Make this PC discoverable on the network? [y/n]"
-	} #>
 	while($confirmationwallpaperq -ne "n" -and $confirmationwallpaperq -ne "y")
 	{	
 		$confirmationwallpaperq = Read-Host "Increase desktop wallpaper compression to max quality? [y/n]"
@@ -171,7 +169,6 @@ Write-Host "App Removal: [$($confirmationappremoval)]"
 Write-Host "Choco install: [$($confirmationchocoinstall)]"
 if($initialsetting -eq "3")
 {Write-Host "OneDrive Removal: [$($confirmationonedrive)]"	
-	#Write-Host "PC Discoverable: [$($confirmationpcdiscover)]"
 	Write-Host "Wallpaper Max Quality: [$($confirmationwallpaperq)]"
 	Write-Host "Show File Extensions: [$($confirmationshowfileex)]"
 	Write-Host "Show Hidden Files: [$($confirmationshowhiddenfiles)]"
@@ -214,7 +211,7 @@ if($confirmationpowersch -eq "y")
 	if ($cscheme[3] -eq $psguid) {
 		write-Host -ForegroundColor yellow "Already set to the correct PowerScheme settings skipping"
 	} else {
-		Write-Warning "Low PowerScheme detected, changing PowerScheme to maximum performance"
+		Write-Warning "Lower PowerScheme detected, changing PowerScheme to maximum performance"
 		PowerCfg -SetActive $psguid
 		write-Host -ForegroundColor Green "PowerScheme Successfully Applied"
 	}
@@ -287,8 +284,8 @@ Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search
 Write-Host "Disabling all Windows telemetry" -foregroundcolor yellow
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0 -erroraction 'silentlycontinue'
 Write-Host "Disabling 3D Objects folder in File Explorer" -foregroundcolor yellow
-Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}"
-Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}"
+Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}" -erroraction 'silentlycontinue'
+Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}" -erroraction 'silentlycontinue'
 if($initialsetting -eq "3")
 {	Write-Host
 	Write-Host " Advanced Settings" -foregroundcolor yellow
@@ -450,32 +447,13 @@ if($confirmationstartmenu -eq "y")
 		}
 		catch
 		{
-			#Write-Error "Error Pinning/Unpinning App! (App-Name correct?)"
+			Write-Host
 		}
 	}
 ###########################################################################
 # Unpin everything from the start menu
 ##########################################################################
 	Get-StartApps | ForEach-Object { Pin-App $_.name -unpin }
-###########################################################################
-# Pin these apps to the start menu
-##########################################################################
-	<# 	Pin-App "Calculator" -pin
-	Pin-App "Photos" -pin
-	Pin-App "File Explorer" -pin
-	Pin-App "Control Panel" -pin
-	Pin-App "Task Manager" -pin
-	Pin-App "Notepad" -pin
-	Pin-App "Remote Desktop Connection" -pin
-	Pin-App "Thunderbird" -pin
-	Pin-App "Outlook 2016" -pin
-	Pin-App "Word 2016" -pin
-	Pin-App "Excel 2016" -pin
-	Pin-App "Publisher 2016" -pin
-	Pin-App "PowerPoint 2016" -pin
-	Pin-App "Malwarebytes" -pin
-	Pin-App "BleachBit" -pin
-	Pin-App "WinDirStat" -pin #>
 ###########################################################################
 # Delete all desktop icons
 ##########################################################################
