@@ -29,6 +29,11 @@ Advanced
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/winstall-sysinfo.ps1'))
 ```
+## winstall-essentialutils
+#### Installs ProcessExplorer, GeekUninstaller, and BleachBit
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/winstall-essentialutils.ps1'))
+```
 ## winstall-benchmark
 #### Run a quick and simple Windows multi-thread benchmark
 ```powershell
