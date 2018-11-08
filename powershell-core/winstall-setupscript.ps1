@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.7.7"
+$ver = "1.7.8"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer -erroraction 'silentlycontinue'
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId" -erroraction 'silentlycontinue'
@@ -86,7 +86,7 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 	$confirmationpowersch = "y"
 	$confirmationappremoval = "y"
 	$confirmationchocoinstall = "y"
-	}while($confirmationrename -ne "n" -and $confirmationrename -ne "y")
+}while($confirmationrename -ne "n" -and $confirmationrename -ne "y")
 {	
 	if($initialsetting -eq "2")
 	{
@@ -150,6 +150,10 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 	{	
 		$confirmationwol = Read-Host "Enable Allow Wake On LAN? [y/n]"
 	}
+	while($confirmationhostsadb -ne "n" -and $confirmationhostsadb -ne "y")
+	{	
+		$confirmationhostsadb = Read-Host "Download MVPS hosts for system wide ad blocking? [y/n]"
+	}
 }if($confirmationchocoinstall -eq "y")
 {	Write-Host
 	Write-Host "A .txt file containing the Chocolatey packages to be installed will now open"
@@ -173,6 +177,7 @@ if($initialsetting -eq "3")
 	Write-Host "Show Hidden Files: [$($confirmationshowhiddenfiles)]"
 	Write-Host "Allow Remote Desktop: [$($confirmationrdp)]"
 	Write-Host "Allow Wake On LAN: [$($confirmationwol)]"
+	Write-Host "MVPS hosts File: [$($confirmationhostsadb)]"
 }Write-Host
 Write-Host "Windows 10 Setup Script will now run"
 Write-Host "explorer.exe will taskkill while running and restart when finished"
@@ -493,6 +498,13 @@ if($confirmationonedrive -eq "y")
 	Remove-PSDrive "HKCR"
 	Write-Host "Removing run option for new users"
 	reg load "hku\Default" "C:\Users\Default\NTUSER.DAT"
+}###########################################################################
+# Download MVPS hosts File and backup current hosts file
+##########################################################################
+if($confirmationonedrive -eq "y")
+{	Write-Host "Backing up hosts file to $($env:SystemRoot)\System32\drivers\etc\hosts.bak" -foregroundcolor yellow
+	Copy-Item "$($env:SystemRoot)\System32\drivers\etc\hosts" -Destination "$($env:SystemRoot)\System32\drivers\etc\hosts.bak"
+	(New-Object Net.WebClient).DownloadString('http://winhelp2002.mvps.org/hosts.txt') | out-file "$($env:SystemRoot)\System32\drivers\etc\hosts" -force
 }###########################################################################
 # Start explorer.exe
 ##########################################################################
