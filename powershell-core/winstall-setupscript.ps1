@@ -46,7 +46,7 @@ function header
 		Write-Host " Username: " -foregroundcolor yellow -NoNewLine
 		Write-Host $env:USERNAME -foregroundcolor white
 		Write-Host " Domain: " -foregroundcolor yellow -NoNewLine
-		Write-Host $env:LOGONSERVER -foregroundcolor white
+		Write-Host $env:USERDNSDOMAIN -foregroundcolor white
 		Write-Host
 	}
 }header
