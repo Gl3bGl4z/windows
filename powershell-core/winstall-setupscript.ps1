@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.7.3"
+$ver = "1.7.4"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId"
@@ -113,6 +113,8 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 			$confirmationdomainjoin2 = Read-Host "Domain join failed. Retry domain join? Answering no will skip domain join. [y/n]"
 		}
 	}
+}while($confirmationpowersch -ne "n" -and $confirmationpowersch -ne "y")
+{	$confirmationpowersch = Read-Host "Set PowerScheme to maximum performance? [y/n]"
 }while($confirmationstartmenu -ne "n" -and $confirmationstartmenu -ne "y")
 {	$confirmationstartmenu = Read-Host "Unpin all startmenu and taskbar icons? [y/n]"
 	while($confirmationappremoval -ne "n" -and $confirmationappremoval -ne "y")
@@ -163,6 +165,7 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 Write-Host
 Write-Host "Rename PC: [$($confirmationrename)]"
 Write-Host "Domain Join: [$($confirmationdomainjoin)]"
+Write-Host "Maximum PowerScheme: [$($confirmationpowersch)]"
 Write-Host "Unpin All Icons: [$($confirmationstartmenu)]"
 Write-Host "App Removal: [$($confirmationappremoval)]"
 Write-Host "Choco install: [$($confirmationchocoinstall)]"
@@ -201,6 +204,20 @@ cmd /c sc config DiagTrack start= disabled
 if($confirmationpcdiscover -eq "y")
 {	cmd /c net start FDResPub
 	cmd /c sc config FDResPub start= auto
+}###########################################################################
+# Change Windows PowerScheme to maximum performance
+##########################################################################
+if($confirmationpowersch -eq "y")
+{	$psguid = 'a666c91e-9613-4d84-a48e-2e4b7a016431'
+	$currScheme = POWERCFG -GETACTIVESCHEME
+	$cscheme = $currScheme.Split()
+	if ($cscheme[3] -eq $psguid) {
+		write-Host -ForegroundColor yellow "Already set to the correct PowerScheme settings skipping"
+	} else {
+		Write-Warning "Low PowerScheme detected, changing PowerScheme to maximum performance"
+		PowerCfg -SetActive $psguid
+		write-Host -ForegroundColor Green "PowerScheme Successfully Applied"
+	}
 }###########################################################################
 # Remove all Windows store apps expect WindowsStore, Calculator and Photos
 ##########################################################################
@@ -276,7 +293,7 @@ if($initialsetting -eq "3")
 {	Write-Host
 	Write-Host " Advanced Settings" -foregroundcolor yellow
 	Write-Host " ----------------------------------------" -foregroundcolor cyan
-}if($confirmationpcdiscover -eq "y")
+}if($confirmationwallpaperq -eq "y")
 {	Write-Host "Increasing wallpaper compression quality to 100" -foregroundcolor yellow
 	Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "JPEGImportQuality" -Type DWord -Value 100 -erroraction 'silentlycontinue'
 }if($confirmationshowfileex -eq "y")
@@ -300,8 +317,7 @@ if($initialsetting -eq "3")
 	if($Adapters.count -gt 0){
 		foreach($Adapter in $Adapters){$Adapter.enablewakeonmagicpacketonly = "$True"}
 	}else{$Adapters.enablewakeonmagicpacketonly = "$True"}
-	}
-###########################################################################
+}###########################################################################
 # Taskbar pin app function
 ##########################################################################
 Write-Host "Unpinning all default Task Bar icons" -foregroundcolor yellow
