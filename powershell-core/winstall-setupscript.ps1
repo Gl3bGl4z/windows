@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.7.4"
+$ver = "1.7.5"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId"
@@ -540,6 +540,6 @@ if($rebootpending = "True")
 	Write-Host
 	Write-Host "No reboot required"
 	Write-Host
-	Read-Host "Complete, press ENTER to close and finish"
+	Write-Host "Complete" -foregroundcolor green
 	Write-Host
-}Exit
+}
