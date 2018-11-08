@@ -24,6 +24,7 @@ Advanced
 - Enable Show Hidden Files and Folders in File Explorer
 - Enable Remote Desktop Connection
 - Enable Wake On LAN
+- Download [MVPS](http://winhelp2002.mvps.org/hosts.txt) hosts file for system wide ad blocking
 ## winstall-sysinfo
 #### Run a small Windows 10 script to display important system information
 ```powershell
