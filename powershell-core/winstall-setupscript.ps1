@@ -292,7 +292,7 @@ Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyCo
 Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}" -erroraction 'silentlycontinue'
 if($initialsetting -eq "3")
 {	Write-Host
-	Write-Host " Advanced Settings" -foregroundcolor yellow
+	Write-Host " Full Advanced Settings" -foregroundcolor yellow
 	Write-Host " ----------------------------------------" -foregroundcolor cyan
 }if($confirmationwallpaperq -eq "y")
 {	Write-Host "Increasing wallpaper compression quality to 100" -foregroundcolor yellow
