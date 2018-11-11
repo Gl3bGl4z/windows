@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.9.3"
+$ver = "1.9.4"
 if((Get-WMIObject win32_operatingsystem).name -notlike "*Windows 10*")
 {	
 	Write-Warning "Operating system is not Windows 10..."
@@ -119,25 +119,45 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 	{
 		try
 		{
-			$domainname = Read-Host "Enter the name of the domain"
-			[ipaddress]$serverip = Read-Host "Enter the IP address of the DNS server"
-			Write-Host "Testing connection with DNS server..."
-			if (Test-Connection -ComputerName $serverip -Quiet)
+			$fqdn = Read-Host "Enter the FQDN for the domain"
+			$dn = $fqdn.Substring($fqdn.IndexOf(".") + 1)
+			
+			if($fqdn -notlike "*.*")
 			{
-				Write-Host "DNS Server Connection successful" -foregroundcolor green
+				Write-Error "Invalid FQDN"
+			}
+			$dn = $fqdn.Substring($fqdn.IndexOf(".") + 1)
+			Write-Host "Pinging FQDN..."
+			if (Test-Connection -ComputerName $fqdn -Quiet)
+			{
+				Write-Host "FQDN ping successful" -foregroundcolor green
+				Add-Computer -DomainName $fqdn
 			}
 			else
 			{
-				Write-Host "DNS Server connection unsuccessful" -foregroundcolor red
-			}
-			$adap = Get-NetAdapter
-			$adapter = $adap.ifIndex | Select-Object -last 1
-			Set-DnsClientServerAddress -InterfaceIndex $adapter -ServerAddresses ($serverip,"1.1.1.1")
-			Add-Computer -DomainName $domainname
+				Write-Host "FQDN ping unsuccessful" -foregroundcolor red
+				
+				while($confirmationmanconfig -ne "n" -and $confirmationmanconfig -ne "y")
+				{
+					$confirmationmanconfig = Read-Host "Manually configure DNS? Answering no will skip domain join. [y/n]"
+				}
+				if($confirmationmanconfig -eq "y")
+				{
+					[ipaddress]$serverip = Read-Host "Enter the IP address of the DNS server for manual configuration"
+					$adap = Get-NetAdapter
+					$adapter = $adap.ifIndex | Select-Object -last 1
+					Set-DnsClientServerAddress -InterfaceIndex $adapter -ServerAddresses ($serverip,"1.1.1.1")
+					Add-Computer -DomainName $dn
+				}
+				else
+				{
+					Write-Host "Skipping domain join..." -foregroundcolor yellow
+				}
+			}	
 		}
 		catch
 		{
-			$confirmationdomainjoin2 = Read-Host "Domain join failed or IP address invalid. Retry domain join? Answering no will skip domain join. [y/n]"
+			$confirmationdomainjoin2 = Read-Host "Domain join failed or DNS IP address invalid. Retry domain join? Answering no will skip domain join. [y/n]"
 		}
 	}
 }while($confirmationpowersch -ne "n" -and $confirmationpowersch -ne "y")
