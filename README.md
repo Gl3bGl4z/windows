@@ -4,6 +4,8 @@
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/winstall-setupscript.ps1'))
 ```
+Each option can be selected individually within the script
+------- 
 Basic
 - Rename the PC
 - Join a domain
