@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.8.6"
+$ver = "1.8.7"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer | Out-Null
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId" | Out-Null
@@ -240,7 +240,8 @@ if($confirmationchocoinstall -eq "y")
 	Write-Host "Installing Chocolatey, and all .NET Framework versions and all VCRedist Visual C++ versions..." -foregroundcolor yellow
 	Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 	choco feature enable -n=allowGlobalconfirmation
-	$chocotobeinstalled = "$($chocolist);vcredist-all;dotnet4.0;dotnet4.5;dotnet4.5.2;dotnet4.6;dotnet4.6.1;dotnet4.6.2 --ignore-checksums".replace(';;', ';')
+	choco feature disable -n=checksumFiles
+	$chocotobeinstalled = "$($chocolist);vcredist-all".replace(' ', ';').replace(';;', ';')
 	choco install $chocotobeinstalled
 }###########################################################################
 # Registry changes

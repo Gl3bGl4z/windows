@@ -8,15 +8,18 @@ Each option can be selected individually within the script
 - Basic
   - Rename the PC
   - Join a domain
-  - Disable Start Menu web search and app search
-  - Disable Cortana and Ink Space
-  - Disable ALL Windows Telemetry
+  - 
+  - Disable Start Menu bing search and application suggestions
+  - Disable subscribed ads, location tracking, and advertiser ID
+  - Disable resource intensive P2P sharing
+  - Disable Cortana, Ink Space and 3D Objects folder
+  - Disable ALL Windows Telemetry and Online Tips/Ads
+  - Disable Wi-Fi Sense (Removed in 1803)
   - Remove/Unpin all Startmenu and default Taskbar icons
-  - Remove the People and Taskview icons on the Taskbar
+  - Remove the People and Taskview icons
   - Delete all Windows Store apps (except the Calculator, Photos, and the Windows Store)
-  - Permanently disable all Windows ad tracking
   - Install [Chocolatey](https://chocolatey.org/) and defined packages
-  - Install all available .NET Framework versions and all VCRedist Visual C++ versions (via Chocolatey)
+  - Install all available VCRedist Visual C++ versions (via Chocolatey)
 - Full
   - Remove OneDrive
   - Increase wallpaper to max compression quality at essentially no additional resource cost
@@ -42,7 +45,7 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.We
 ```
 - Intel(R) Core(TM) i7-7700K CPU @ 4.20GHz = 1879.400024 ms
 ## winstall-wifiqr
-#### Create a iOS camera readable Wifi connect QR code using information from the currently connected Wifi network
+#### Create a iOS camera readable Wi-Fi connect QR code using information from the currently connected Wi-Fi network
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/winstall-wifiqr.ps1'))
 ```
