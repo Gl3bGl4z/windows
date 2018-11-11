@@ -8,7 +8,6 @@ Each option can be selected individually within the script
 - Basic
   - Rename the PC
   - Join a domain
-  - 
   - Disable Start Menu bing search and application suggestions
   - Disable subscribed ads, location tracking, and advertiser ID
   - Disable resource intensive P2P sharing

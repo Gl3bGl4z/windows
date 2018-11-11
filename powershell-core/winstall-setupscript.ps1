@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.8.7"
+$ver = "1.8.8"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer | Out-Null
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId" | Out-Null
@@ -61,7 +61,7 @@ Set-Location "$($env:TEMP)\winstall-core"
 if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 {	
 	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/chocolist.txt') | out-file "$($env:TEMP)\winstall-core\chocolist.txt" -force
-}while($initialsetting -ne "1" -and $initialsetting -ne "2" -and $initialsetting -ne "3")
+}while($initialsetting -ne "1" -and $initialsetting -ne "2" -and $initialsetting -ne "3" -and $initialsetting -ne "4")
 {	Clear-Host
 	header
 	if(([string]::IsNullOrEmpty($initialsetting)) -ne $true)
