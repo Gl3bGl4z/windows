@@ -17,7 +17,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0.3"
+$ver = "1.0.4"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId"
@@ -42,31 +42,22 @@ function header
 	Write-host " #####################################"
 	Write-host
 	foreach ($objItem in $colItems) {
-		Write-Host
 		Write-Host " CPU: " -foregroundcolor yellow -NoNewLine
 		Write-Host $objItem.Name -foregroundcolor white
-		Write-Host
 		Write-Host " System: " -foregroundcolor yellow -NoNewLine
 		Write-Host $productname.ProductName $currentversion.ReleaseId -foregroundcolor white	
-		Write-Host
 		Write-Host " PC Name: " -foregroundcolor yellow -NoNewLine
 		Write-Host $env:COMPUTERNAME -foregroundcolor white
-		Write-Host
 		Write-Host " Username: " -foregroundcolor yellow -NoNewLine
 		Write-Host $env:USERNAME -foregroundcolor white
-		Write-Host
 		Write-Host " Domain: " -foregroundcolor yellow -NoNewLine
-		Write-Host $env:LOGONSERVER -foregroundcolor white
-		Write-Host
+		Write-Host $env:USERDNSDOMAIN -foregroundcolor white
 		Write-Host " Manufacturer: " -foregroundcolor yellow -NoNewLine
 		Write-Host $mobomanu.BaseBoardManufacturer -foregroundcolor white
-		Write-Host
 		Write-Host " Motherboard: " -foregroundcolor yellow -NoNewLine
 		Write-Host $mobomodel.BaseBoardProduct -foregroundcolor white
-		Write-Host
 		Write-Host " GPU:" -foregroundcolor yellow -NoNewLine
 		Write-Host $gpumodel -foregroundcolor white
-		Write-Host
 		Write-Host " Memory: " -foregroundcolor yellow
 		Get-WmiObject win32_physicalmemory | Format-Table Manufacturer,Banklabel,Configuredclockspeed,Devicelocator,Capacity,Serialnumber -autosize
 		Write-Host " Drives: " -foregroundcolor yellow

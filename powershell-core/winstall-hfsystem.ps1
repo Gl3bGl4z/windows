@@ -3,7 +3,6 @@
 #	Creator:	Ad3t0	                 #
 #	Date:		5/20/2017             	 #
 ##########################################
-$ver = "1.1"
 $myWindowsID=[System.Security.Principal.WindowsIdentity]::GetCurrent()
 $myWindowsPrincipal=new-object System.Security.Principal.WindowsPrincipal($myWindowsID)
 $adminRole=[System.Security.Principal.WindowsBuiltInRole]::Administrator
@@ -18,6 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }#####
+$ver = "1.1.1"
 Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name Hidden -Value 1
 Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name ShowSuperHidden -Value 1
 Stop-Process -processName: Explorer
@@ -36,8 +36,16 @@ function header
 	$colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
 	foreach ($objItem in $colItems) {
 		Write-Host
-		Write-Host "CPU Model: " -foregroundcolor yellow -NoNewLine
-		Write-Host $objItem.Name -foregroundcolor white
+		Write-Host " CPU Model: " -foregroundcolor yellow -NoNewLine
+		Write-Host $objItem.Name -foregroundcolor white	
+		Write-Host " System: " -foregroundcolor yellow -NoNewLine
+		Write-Host $productname.ProductName $currentversion.ReleaseId -foregroundcolor white	
+		Write-Host " PC Name: " -foregroundcolor yellow -NoNewLine
+		Write-Host $env:COMPUTERNAME -foregroundcolor white
+		Write-Host " Username: " -foregroundcolor yellow -NoNewLine
+		Write-Host $env:USERNAME -foregroundcolor white
+		Write-Host " Domain: " -foregroundcolor yellow -NoNewLine
+		Write-Host $env:USERDNSDOMAIN -foregroundcolor white
 		Write-Host
 	}
 }function fileorfolder
