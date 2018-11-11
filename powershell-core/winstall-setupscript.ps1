@@ -17,14 +17,13 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.9.2"
+$ver = "1.9.3"
 if((Get-WMIObject win32_operatingsystem).name -notlike "*Windows 10*")
 {	
 	Write-Warning "Operating system is not Windows 10..."
 	Read-Host "Press ENTER to exit."
 	Exit
-}
-$strComputer = "."
+}$strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId"
 $productname = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ProductName"
@@ -121,7 +120,16 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 		try
 		{
 			$domainname = Read-Host "Enter the name of the domain"
-			[ipaddress]$serverip = Read-Host "Enter the IP address for the DNS server"
+			[ipaddress]$serverip = Read-Host "Enter the IP address of the DNS server"
+			Write-Host "Testing connection with DNS server..."
+			if (Test-Connection -ComputerName $serverip -Quiet)
+			{
+				Write-Host "DNS Server Connection successful" -foregroundcolor green
+			}
+			else
+			{
+				Write-Host "DNS Server connection unsuccessful" -foregroundcolor red
+			}
 			$adap = Get-NetAdapter
 			$adapter = $adap.ifIndex | Select-Object -last 1
 			Set-DnsClientServerAddress -InterfaceIndex $adapter -ServerAddresses ($serverip,"1.1.1.1")
