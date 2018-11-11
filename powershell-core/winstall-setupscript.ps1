@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.8.8"
+$ver = "1.8.9"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer | Out-Null
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId" | Out-Null
@@ -78,8 +78,8 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 	Write-Host " 4 - Full ALL"
 	Write-Host
 	$initialsetting = Read-Host -Prompt "Input option"
-}if($initialsetting -eq "2")
-{	
+}if($initialsetting -eq "2" -or $initialsetting -eq "4")
+{	$confirmationrename = "y"
 	$confirmationdomainjoin = "y"
 	$confirmationonedrive = "y"
 	$confirmationstartmenu = "y"
@@ -87,12 +87,7 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 	$confirmationappremoval = "y"
 	$confirmationchocoinstall = "y"
 }if($initialsetting -eq "4")
-{	$confirmationrename = "y"
-	$confirmationdomainjoin = "y"
-	$confirmationpowersch = "y"
-	$confirmationstartmenu = "y"
-	$confirmationappremoval = "y"
-	$confirmationchocoinstall = "y"
+{	
 	$confirmationonedrive = "y"
 	$confirmationwallpaperq = "y"
 	$confirmationshowfileex = "y"
