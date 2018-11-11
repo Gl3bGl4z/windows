@@ -7,7 +7,7 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.We
 Each option can be selected individually within the script
 - Basic
   - Rename the PC and join a domain
-  - Disable Start Menu bing search and application suggestions
+  - Disable Start Menu Bing search and application suggestions
   - Disable subscribed ads, location tracking, and advertiser ID
   - Disable resource intensive P2P sharing
   - Disable Cortana, Ink Space and 3D Objects folder
@@ -17,7 +17,7 @@ Each option can be selected individually within the script
   - Remove the People and Taskview icons
   - Delete all Windows Store apps (except the Calculator, Photos, and the Windows Store)
   - Install [Chocolatey](https://chocolatey.org/) and defined packages
-  - Install all available VCRedist Visual C++ versions (via Chocolatey)
+  - Install all available [VCRedist Visual C++](https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads) versions (via Chocolatey)
 - Full
   - Remove OneDrive
   - Increase wallpaper to max compression quality at essentially no additional resource cost
