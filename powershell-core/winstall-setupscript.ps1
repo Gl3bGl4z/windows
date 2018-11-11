@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.7.8"
+$ver = "1.7.9"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer -erroraction 'silentlycontinue'
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId" -erroraction 'silentlycontinue'
@@ -220,14 +220,14 @@ if($confirmationpowersch -eq "y")
 		write-Host -ForegroundColor Green "PowerScheme Successfully Applied"
 	}
 }###########################################################################
-# Remove all Windows store apps expect WindowsStore, Calculator and Photos
+# Remove all Windows store apps except WindowsStore, Calculator and Photos
 ##########################################################################
 if($confirmationappremoval -eq "y")
 {Write-Host "Removing all Windows store apps expect Windows Store, Calculator and Photos" -foregroundcolor yellow
 	Get-AppxPackage -AllUsers | where-object {$_.name -notlike "*Microsoft.WindowsStore*"} | where-object {$_.name -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.name -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxPackage -erroraction 'silentlycontinue'
 	Get-AppxProvisionedPackage -online | where-object {$_.packagename -notlike "*Microsoft.WindowsStore*"} | where-object {$_.packagename -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.packagename -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxProvisionedPackage -online | Out-Null
 }###########################################################################
-# Choco install
+# Chocolatey install
 ##########################################################################
 if($confirmationchocoinstall -eq "y")
 {	
@@ -237,7 +237,7 @@ if($confirmationchocoinstall -eq "y")
 	$chocotobeinstalled = "$($chocolist);vcredist-all;dotnet4.0;dotnet4.5;dotnet4.5.2;dotnet4.6;dotnet4.6.1;dotnet4.6.2 --ignore-checksums".replace(';;', ';')
 	choco install $chocotobeinstalled
 }###########################################################################
-# Major registry changes
+# Registry changes
 ##########################################################################
 Write-Host
 Write-Host " Basic Settings" -foregroundcolor yellow
@@ -466,7 +466,7 @@ if($confirmationstartmenu -eq "y")
 }###########################################################################
 # Turn Off All Windows 10 Telemetry
 ##########################################################################
-Write-Host "Permanently turning off all Windows telemetry and ads" -foregroundcolor yellow
+Write-Host "Turning off all Windows telemetry and ads" -foregroundcolor yellow
 (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/hahndorf/Set-Privacy/master/Set-Privacy.ps1') | out-file .\set-privacy.ps1 -force
 .\set-privacy.ps1 -Strong -admin
 ###########################################################################
@@ -485,7 +485,7 @@ if($confirmationonedrive -eq "y")
 	}
 	Write-Host "Disable OneDrive via Group Policies"
 	sp "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\OneDrive" "DisableFileSyncNGSC" 1 -erroraction 'silentlycontinue'
-	Write-Host "Removing OneDrive leftover trash"
+	Write-Host "Removing OneDrive leftovers"
 	rm -Recurse -Force -ErrorAction SilentlyContinue "$env:localappdata\Microsoft\OneDrive"
 	rm -Recurse -Force -ErrorAction SilentlyContinue "$env:programdata\Microsoft OneDrive"
 	rm -Recurse -Force -ErrorAction SilentlyContinue "C:\OneDriveTemp"
@@ -496,10 +496,10 @@ if($confirmationonedrive -eq "y")
 	mkdir -Force "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}"
 	sp "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" "System.IsPinnedToNameSpaceTree" 0 -erroraction 'silentlycontinue'
 	Remove-PSDrive "HKCR"
-	Write-Host "Removing run option for new users"
+	Write-Host "Removing OneDrive run option for new users"
 	reg load "hku\Default" "C:\Users\Default\NTUSER.DAT"
 }###########################################################################
-# Download MVPS hosts File and backup current hosts file
+# Download MVPS hosts file and backup current hosts file
 ##########################################################################
 if($confirmationonedrive -eq "y")
 {	Write-Host "Backing up hosts file to $($env:SystemRoot)\System32\drivers\etc\hosts.bak" -foregroundcolor yellow
@@ -513,8 +513,9 @@ Invoke-Expression "start explorer.exe"
 $rebootpending = Test-PendingReboot | Select-Object -Property IsRebootPending | Format-Wide
 if($rebootpending = "True")
 {	Write-Host
+	Write-Host "Complete" -foregroundcolor green
 	Write-Host
-	Write-Warning "REBOOT REQUIRED"
+	Write-Warning "Reboot Required"
 	Write-Host
 	while($confirmationreboot -ne "n" -and $confirmationreboot -ne "y")
 	{
@@ -527,8 +528,8 @@ if($rebootpending = "True")
 }else
 {	Write-Host
 	Write-Host
-	Write-Host "No reboot required"
-	Write-Host
 	Write-Host "Complete" -foregroundcolor green
+	Write-Host
+	Write-Host "No Reboot Required" -foregroundcolor yellow
 	Write-Host
 }Exit
