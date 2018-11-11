@@ -17,7 +17,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0.4"
+$ver = "1.0.5"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId"
@@ -58,6 +58,8 @@ function header
 		Write-Host $mobomodel.BaseBoardProduct -foregroundcolor white
 		Write-Host " GPU:" -foregroundcolor yellow -NoNewLine
 		Write-Host $gpumodel -foregroundcolor white
+		Write-Host " Network:" -foregroundcolor yellow -NoNewLine
+		Write-Host Get-NetAdapter -foregroundcolor white
 		Write-Host " Memory: " -foregroundcolor yellow
 		Get-WmiObject win32_physicalmemory | Format-Table Manufacturer,Banklabel,Configuredclockspeed,Devicelocator,Capacity,Serialnumber -autosize
 		Write-Host " Drives: " -foregroundcolor yellow

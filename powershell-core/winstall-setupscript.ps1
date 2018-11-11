@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.8.9"
+$ver = "1.9.0"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer | Out-Null
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId" | Out-Null
@@ -116,7 +116,12 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 	{
 		try
 		{
-			Add-Computer
+			$domainname = Read-Host "Enter the name of the domain"
+			$serverip = Read-Host "Enter the IP address for the DNS server"
+			$adap = Get-NetAdapter
+			$adapter = $adap.ifIndex | Select-Object -last 1
+			Set-DnsClientServerAddress -InterfaceIndex $adapter -ServerAddresses ($serverip,"1.1.1.1")
+			Add-Computer -DomainName $domainname
 		}
 		catch
 		{
@@ -179,7 +184,7 @@ Write-Host "Maximum PowerScheme: [$($confirmationpowersch)]"
 Write-Host "Unpin All Icons: [$($confirmationstartmenu)]"
 Write-Host "App Removal: [$($confirmationappremoval)]"
 Write-Host "Choco install: [$($confirmationchocoinstall)]"
-if($initialsetting -eq "3")
+if($initialsetting -eq "3" -or $initialsetting -eq "4")
 {Write-Host "OneDrive Removal: [$($confirmationonedrive)]"	
 	Write-Host "Wallpaper Max Quality: [$($confirmationwallpaperq)]"
 	Write-Host "Show File Extensions: [$($confirmationshowfileex)]"
