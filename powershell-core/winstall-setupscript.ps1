@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.8.5"
+$ver = "1.8.6"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer | Out-Null
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId" | Out-Null
@@ -66,7 +66,7 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 	header
 	if(([string]::IsNullOrEmpty($initialsetting)) -ne $true)
 	{	
-		if($initialsetting -ne "1" -and $initialsetting -ne "2" -and $initialsetting -ne "3")
+		if($initialsetting -ne "1" -and $initialsetting -ne "2" -and $initialsetting -ne "3" -and $initialsetting -ne "4")
 		{
 			Write-Warning "Invalid option"
 		}
@@ -75,6 +75,7 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 	Write-Host " 1 - Basic SELECTIVE"
 	Write-Host " 2 - Basic ALL"
 	Write-Host " 3 - Full SELECTIVE"
+	Write-Host " 4 - Full ALL"
 	Write-Host
 	$initialsetting = Read-Host -Prompt "Input option"
 }if($initialsetting -eq "2")
@@ -85,6 +86,20 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 	$confirmationpowersch = "y"
 	$confirmationappremoval = "y"
 	$confirmationchocoinstall = "y"
+}if($initialsetting -eq "4")
+{	$confirmationrename = "y"
+	$confirmationdomainjoin = "y"
+	$confirmationpowersch = "y"
+	$confirmationstartmenu = "y"
+	$confirmationappremoval = "y"
+	$confirmationchocoinstall = "y"
+	$confirmationonedrive = "y"
+	$confirmationwallpaperq = "y"
+	$confirmationshowfileex = "y"
+	$confirmationshowhiddenfiles = "y"
+	$confirmationrdp = "y"
+	$confirmationwol = "y"
+	$confirmationhostsadb = "y"
 }while($confirmationrename -ne "n" -and $confirmationrename -ne "y")
 {	
 	if($initialsetting -eq "2")
