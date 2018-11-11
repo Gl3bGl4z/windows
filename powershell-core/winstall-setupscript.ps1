@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.8.1"
+$ver = "1.8.2"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId"
@@ -50,11 +50,10 @@ function header
 		Write-Host
 	}
 }header
-Write-host "Please wait loading modules..."
+Write-host "Please wait loading modules..." -foregroundcolor green
 Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -confirm:$false
 Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
 Install-Module -Name PendingReboot -confirm:$false
-Write-host "Modules finished loading"
 Clear-Host
 header
 New-Item -Path $env:TEMP -Name "winstall-core" -ItemType "directory" -Force >$null 2>&1
@@ -180,7 +179,7 @@ if($initialsetting -eq "3")
 	Write-Host "MVPS hosts File: [$($confirmationhostsadb)]"
 }Write-Host
 Write-Host "Windows 10 Setup Script will now run"
-Write-Host "explorer.exe will taskkill while running and restart when finished"
+Write-Host "explorer.exe will taskkill while running and restart when finished..."
 Write-Host
 while($confirmationfull -ne "n" -and $confirmationfull -ne "y")
 {	$confirmationfull = Read-Host "Continue? [y/n]"
@@ -196,7 +195,7 @@ Invoke-Expression "taskkill /f /im explorer.exe"
 ###########################################################################
 # Disable Windows Store automatic install service
 ##########################################################################
-Write-host "Disabling automatic app reinstall services" -foregroundcolor yellow
+Write-host "Disabling automatic app reinstall services..." -foregroundcolor yellow
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Policies\Microsoft\WindowsStore" -Name "AutoDownload" -Type DWord -Value 2
 cmd /c net stop InstallService
 cmd /c sc config InstallService start= disabled
@@ -213,25 +212,18 @@ if($confirmationpowersch -eq "y")
 	$currScheme = POWERCFG -GETACTIVESCHEME
 	$cscheme = $currScheme.Split()
 	if ($cscheme[3] -eq $psguid) {
-		write-Host -ForegroundColor yellow "Already set to the correct PowerScheme settings skipping"
+		write-Host -ForegroundColor yellow "Already set to the correct PowerScheme settings skipping..."
 	} else {
-		Write-Warning "Lower PowerScheme detected, changing PowerScheme to maximum performance"
+		Write-Warning "Lower PowerScheme detected, changing PowerScheme to maximum performance..."
 		PowerCfg -SetActive $psguid
 		write-Host -ForegroundColor Green "PowerScheme Successfully Applied"
 	}
-}###########################################################################
-# Remove all Windows store apps except WindowsStore, Calculator and Photos
-##########################################################################
-if($confirmationappremoval -eq "y")
-{Write-Host "Removing all Windows store apps expect Windows Store, Calculator and Photos" -foregroundcolor yellow
-	Get-AppxPackage -AllUsers | where-object {$_.name -notlike "*Microsoft.WindowsStore*"} | where-object {$_.name -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.name -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxPackage
-	Get-AppxProvisionedPackage -online | where-object {$_.packagename -notlike "*Microsoft.WindowsStore*"} | where-object {$_.packagename -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.packagename -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxProvisionedPackage -online | Out-Null
 }###########################################################################
 # Chocolatey install
 ##########################################################################
 if($confirmationchocoinstall -eq "y")
 {	
-	Write-Host "Installing Chocolatey, and all .NET Framework versions and all VCRedist Visual C++ versions" -foregroundcolor yellow
+	Write-Host "Installing Chocolatey, and all .NET Framework versions and all VCRedist Visual C++ versions..." -foregroundcolor yellow
 	Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 	choco feature enable -n=allowGlobalconfirmation
 	$chocotobeinstalled = "$($chocolist);vcredist-all;dotnet4.0;dotnet4.5;dotnet4.5.2;dotnet4.6;dotnet4.6.1;dotnet4.6.2 --ignore-checksums".replace(';;', ';')
@@ -244,20 +236,20 @@ Write-Host " Basic Settings" -foregroundcolor yellow
 Write-Host " ----------------------------------------" -foregroundcolor cyan
 Write-Host
 ############
-Write-Host "Disabling the Task View icon on the taskbar" -foregroundcolor yellow
+Write-Host "Disabling the Task View icon on the taskbar..." -foregroundcolor yellow
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowTaskViewButton" -value 0
 ############
-Write-Host "Disabling the toast ads and spam notifications above the system tray" -foregroundcolor yellow
+Write-Host "Disabling the toast ads and spam notifications above the system tray..." -foregroundcolor yellow
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -Type DWord -Value 0
 ############
-Write-Host "Disabling Lock Screen ads" -foregroundcolor yellow
+Write-Host "Disabling Lock Screen ads..." -foregroundcolor yellow
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "RotatingLockScreenEnabled" -Type DWord -Value 0
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "RotatingLockScreenOverlayEnabled" -Type DWord -Value 0
 ############
-Write-Host "Disabling subscribed ads" -foregroundcolor yellow
+Write-Host "Disabling subscribed ads..." -foregroundcolor yellow
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs" -Type DWord -Value 0
 ############
-Write-Output "Restricting Windows Update P2P optimization to local network..."
+Write-Host "Restricting Windows Update P2P optimization to local network..."
 If ([System.Environment]::OSVersion.Version.Build -eq 10240) {
 	If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config")) {
 		New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config" | Out-Null
@@ -271,7 +263,7 @@ If ([System.Environment]::OSVersion.Version.Build -eq 10240) {
 } Else {
 	Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization" -Name "DODownloadMode" -ErrorAction SilentlyContinue
 }############
-Write-Output "Disabling Windows Update P2P optimization..." -foregroundcolor yellow
+Write-Host "Disabling Windows Update P2P optimization..." -foregroundcolor yellow
 If ([System.Environment]::OSVersion.Version.Build -eq 10240) {
 	If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config")) {
 		New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config" | Out-Null
@@ -283,7 +275,7 @@ If ([System.Environment]::OSVersion.Version.Build -eq 10240) {
 	}
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization" -Name "DODownloadMode" -Type DWord -Value 100
 }############
-Write-Output "Disabling Xbox features..." -foregroundcolor yellow
+Write-Host "Disabling Xbox features..." -foregroundcolor yellow
 Get-AppxPackage "Microsoft.XboxApp" | Remove-AppxPackage
 Get-AppxPackage "Microsoft.XboxIdentityProvider" | Remove-AppxPackage -ErrorAction SilentlyContinue
 Get-AppxPackage "Microsoft.XboxSpeechToTextOverlay" | Remove-AppxPackage
@@ -298,29 +290,29 @@ If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR")) {
 	New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR" | Out-Null
 }Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR" -Name "AllowGameDVR" -Type DWord -Value 0
 ############
-Write-Output "Disabling search for app in store for unknown extensions..." -foregroundcolor yellow
+Write-Host "Disabling search for app in store for unknown extensions..." -foregroundcolor yellow
 If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer")) {
 	New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" | Out-Null
 }Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "NoUseStoreOpenWith" -Type DWord -Value 1
 ############
-Write-Output "Hiding People icon..." -foregroundcolor yellow
+Write-Host "Hiding People icon..." -foregroundcolor yellow
 If (!(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People")) {
 	New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People" | Out-Null
 }Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People" -Name "PeopleBand" -Type DWord -Value 0
 ############
-Write-Output "Stopping and disabling WAP Push Service..." -foregroundcolor yellow
+Write-Host "Stopping and disabling WAP Push Service..." -foregroundcolor yellow
 Stop-Service "dmwappushservice" -WarningAction SilentlyContinue
 Set-Service "dmwappushservice" -StartupType Disabled
 ############
-Write-Output "Stopping and disabling Diagnostics Tracking Service..." -foregroundcolor yellow
+Write-Host "Stopping and disabling Diagnostics Tracking Service..." -foregroundcolor yellow
 Stop-Service "DiagTrack" -WarningAction SilentlyContinue
 Set-Service "DiagTrack" -StartupType Disabled
 ############
-Write-Output "Disabling Error reporting..." -foregroundcolor yellow
+Write-Host "Disabling Error reporting..." -foregroundcolor yellow
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\Windows Error Reporting" -Name "Disabled" -Type DWord -Value 1
 Disable-ScheduledTask -TaskName "Microsoft\Windows\Windows Error Reporting\QueueReporting" | Out-Null
 ############
-Write-Output "Disabling Cortana..." -foregroundcolor yellow
+Write-Host "Disabling Cortana..." -foregroundcolor yellow
 If (!(Test-Path "HKCU:\Software\Microsoft\Personalization\Settings")) {
 	New-Item -Path "HKCU:\Software\Microsoft\Personalization\Settings" -Force | Out-Null
 }Set-ItemProperty -Path "HKCU:\Software\Microsoft\Personalization\Settings" -Name "AcceptedPrivacyPolicy" -Type DWord -Value 0
@@ -335,20 +327,20 @@ If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search")) {
 	New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Force | Out-Null
 }Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortana" -Type DWord -Value 0
 ############
-Write-Output "Disabling Website Access to Language List..." -foregroundcolor yellow
+Write-Host "Disabling Website Access to Language List..." -foregroundcolor yellow
 Set-ItemProperty -Path "HKCU:\Control Panel\International\User Profile" -Name "HttpAcceptLanguageOptOut" -Type DWord -Value 1
 ############
-Write-Output "Disabling Advertising ID..." -foregroundcolor yellow
+Write-Host "Disabling Advertising ID..." -foregroundcolor yellow
 If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AdvertisingInfo")) {
 	New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AdvertisingInfo" | Out-Null
 }Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AdvertisingInfo" -Name "DisabledByGroupPolicy" -Type DWord -Value 1
 ############
-Write-Output "Disabling Tailored Experiences..." -foregroundcolor yellow
+Write-Host "Disabling Tailored Experiences..." -foregroundcolor yellow
 If (!(Test-Path "HKCU:\Software\Policies\Microsoft\Windows\CloudContent")) {
 	New-Item -Path "HKCU:\Software\Policies\Microsoft\Windows\CloudContent" -Force | Out-Null
 }Set-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\CloudContent" -Name "DisableTailoredExperiencesWithDiagnosticData" -Type DWord -Value 1
 ############
-Write-Output "Disabling Feedback..." -foregroundcolor yellow
+Write-Host "Disabling Feedback..." -foregroundcolor yellow
 If (!(Test-Path "HKCU:\Software\Microsoft\Siuf\Rules")) {
 	New-Item -Path "HKCU:\Software\Microsoft\Siuf\Rules" -Force | Out-Null
 }Set-ItemProperty -Path "HKCU:\Software\Microsoft\Siuf\Rules" -Name "NumberOfSIUFInPeriod" -Type DWord -Value 0
@@ -356,22 +348,22 @@ Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection
 Disable-ScheduledTask -TaskName "Microsoft\Windows\Feedback\Siuf\DmClient" -ErrorAction SilentlyContinue | Out-Null
 Disable-ScheduledTask -TaskName "Microsoft\Windows\Feedback\Siuf\DmClientOnScenarioDownload" -ErrorAction SilentlyContinue | Out-Null
 ############
-Write-Output "Disabling automatic Maps updates..." -foregroundcolor yellow
+Write-Host "Disabling automatic Maps updates..." -foregroundcolor yellow
 Set-ItemProperty -Path "HKLM:\SYSTEM\Maps" -Name "AutoUpdateEnabled" -Type DWord -Value 0
 ############
-Write-Output "Disabling Location Tracking..." -foregroundcolor yellow
+Write-Host "Disabling Location Tracking..." -foregroundcolor yellow
 If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\location")) {
 	New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\location" -Force | Out-Null
 }Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\location" -Name "Value" -Type String -Value "Deny"
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Sensor\Overrides\{BFA794E4-F964-4FDB-90F6-51056BFE4B44}" -Name "SensorPermissionState" -Type DWord -Value 0
 Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\lfsvc\Service\Configuration" -Name "Status" -Type DWord -Value 0
 ############
-Write-Output "Disabling Background application access..." -foregroundcolor yellow
+Write-Host "Disabling Background application access..." -foregroundcolor yellow
 Get-ChildItem -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications" -Exclude "Microsoft.Windows.Cortana*","Microsoft.Windows.ShellExperienceHost*" | ForEach-Object {
 	Set-ItemProperty -Path $_.PsPath -Name "Disabled" -Type DWord -Value 1
 	Set-ItemProperty -Path $_.PsPath -Name "DisabledByUser" -Type DWord -Value 1
 }############
-Write-Output "Disabling Application suggestions..." -foregroundcolor yellow
+Write-Host "Disabling Application suggestions..." -foregroundcolor yellow
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "ContentDeliveryAllowed" -Type DWord -Value 0
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "OemPreInstalledAppsEnabled" -Type DWord -Value 0
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "PreInstalledAppsEnabled" -Type DWord -Value 0
@@ -393,7 +385,7 @@ If ([System.Environment]::OSVersion.Version.Build -ge 17134) {
 	Set-ItemProperty -Path $key.PSPath -Name "Data" -Type Binary -Value $key.Data[0..15]
 	Stop-Process -Name "ShellExperienceHost" -Force -ErrorAction SilentlyContinue
 }############
-Write-Output "Disabling Bing Search in Start Menu..." -foregroundcolor yellow
+Write-Host "Disabling Bing Search in Start Menu..." -foregroundcolor yellow
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "BingSearchEnabled" -Type DWord -Value 0
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "CortanaConsent" -Type DWord -Value 0
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "AllowSearchToUseLocation" -Type DWord -Value 0
@@ -422,7 +414,7 @@ Disable-ScheduledTask -TaskName "Microsoft\Windows\Customer Experience Improveme
 Disable-ScheduledTask -TaskName "Microsoft\Windows\Customer Experience Improvement Program\UsbCeip" | Out-Null
 Disable-ScheduledTask -TaskName "Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector" | Out-Null
 ############
-Write-Output "Disabling Wi-Fi Sense..." -foregroundcolor yellow
+Write-Host "Disabling Wi-Fi Sense..." -foregroundcolor yellow
 If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\WiFi\AllowWiFiHotSpotReporting")) {
 	New-Item -Path "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\WiFi\AllowWiFiHotSpotReporting" -Force | Out-Null
 }Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\WiFi\AllowWiFiHotSpotReporting" -Name "Value" -Type DWord -Value 0
@@ -434,7 +426,7 @@ If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\WcmSvc\wifinetworkmanager\config")) {
 }Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\WcmSvc\wifinetworkmanager\config" -Name "AutoConnectAllowedOEM" -Type Dword -Value 0
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\WcmSvc\wifinetworkmanager\config" -Name "WiFISenseAllowed" -Type Dword -Value 0
 ############
-Write-Output "Disabling SmartScreen Filter..."
+Write-Host "Disabling SmartScreen Filter..."
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System" -Name "EnableSmartScreen" -Type DWord -Value 0
 If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\PhishingFilter")) {
 	New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\PhishingFilter" -Force | Out-Null
@@ -472,6 +464,13 @@ if($initialsetting -eq "3")
 	if($Adapters.count -gt 0){
 		foreach($Adapter in $Adapters){$Adapter.enablewakeonmagicpacketonly = "$True"}
 	}else{$Adapters.enablewakeonmagicpacketonly = "$True"}
+}###########################################################################
+# Remove all Windows store apps except WindowsStore, Calculator and Photos
+##########################################################################
+if($confirmationappremoval -eq "y")
+{Write-Host "Removing all Windows store apps expect Windows Store, Calculator and Photos..." -foregroundcolor yellow
+	Get-AppxPackage -AllUsers | where-object {$_.name -notlike "*Microsoft.WindowsStore*"} | where-object {$_.name -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.name -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxPackage
+	Get-AppxProvisionedPackage -online | where-object {$_.packagename -notlike "*Microsoft.WindowsStore*"} | where-object {$_.packagename -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.packagename -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxProvisionedPackage -online | Out-Null
 }###########################################################################
 # Taskbar pin app function
 ##########################################################################
