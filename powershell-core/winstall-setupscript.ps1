@@ -17,14 +17,14 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.9.4"
+$ver = "1.9.5"
 if((Get-WMIObject win32_operatingsystem).name -notlike "*Windows 10*")
 {	
 	Write-Warning "Operating system is not Windows 10..."
 	Read-Host "Press ENTER to exit."
 	Exit
 }$strComputer = "."
-$colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
+$colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2"
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId"
 $productname = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ProductName"
 function header
@@ -42,7 +42,7 @@ function header
 	Write-host
 	Write-Host
 	Write-Host " CPU Model: " -foregroundcolor yellow -NoNewLine
-	Write-Host $objItem.Name -foregroundcolor white	
+	Write-Host $colItems.Name -foregroundcolor white	
 	Write-Host " System: " -foregroundcolor yellow -NoNewLine
 	Write-Host $productname.ProductName $currentversion.ReleaseId -foregroundcolor white
 	Write-Host " PC Name: " -foregroundcolor yellow -NoNewLine
