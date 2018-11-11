@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.8.2"
+$ver = "1.8.3"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId"
@@ -196,7 +196,6 @@ Invoke-Expression "taskkill /f /im explorer.exe"
 # Disable Windows Store automatic install service
 ##########################################################################
 Write-host "Disabling automatic app reinstall services..." -foregroundcolor yellow
-Set-ItemProperty -Path "HKCU:\SOFTWARE\Policies\Microsoft\WindowsStore" -Name "AutoDownload" -Type DWord -Value 2
 cmd /c net stop InstallService
 cmd /c sc config InstallService start= disabled
 cmd /c net stop DiagTrack
@@ -208,7 +207,7 @@ if($confirmationpcdiscover -eq "y")
 # Change Windows PowerScheme to maximum performance
 ##########################################################################
 if($confirmationpowersch -eq "y")
-{	$psguid = 'a666c91e-9613-4d84-a48e-2e4b7a016431'
+{	$psguid = 'e9a42b02-d5df-448d-aa00-03f14749eb61'
 	$currScheme = POWERCFG -GETACTIVESCHEME
 	$cscheme = $currScheme.Split()
 	if ($cscheme[3] -eq $psguid) {
@@ -249,7 +248,7 @@ Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentD
 Write-Host "Disabling subscribed ads..." -foregroundcolor yellow
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs" -Type DWord -Value 0
 ############
-Write-Host "Restricting Windows Update P2P optimization to local network..."
+Write-Host "Restricting Windows Update P2P optimization to local network..." -foregroundcolor yellow
 If ([System.Environment]::OSVersion.Version.Build -eq 10240) {
 	If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config")) {
 		New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config" | Out-Null
@@ -426,7 +425,7 @@ If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\WcmSvc\wifinetworkmanager\config")) {
 }Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\WcmSvc\wifinetworkmanager\config" -Name "AutoConnectAllowedOEM" -Type Dword -Value 0
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\WcmSvc\wifinetworkmanager\config" -Name "WiFISenseAllowed" -Type Dword -Value 0
 ############
-Write-Host "Disabling SmartScreen Filter..."
+Write-Host "Disabling SmartScreen Filter..." -foregroundcolor yellow
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System" -Name "EnableSmartScreen" -Type DWord -Value 0
 If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\PhishingFilter")) {
 	New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\PhishingFilter" -Force | Out-Null
@@ -469,7 +468,7 @@ if($initialsetting -eq "3")
 ##########################################################################
 if($confirmationappremoval -eq "y")
 {Write-Host "Removing all Windows store apps expect Windows Store, Calculator and Photos..." -foregroundcolor yellow
-	Get-AppxPackage -AllUsers | where-object {$_.name -notlike "*Microsoft.WindowsStore*"} | where-object {$_.name -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.name -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxPackage
+	Get-AppxPackage -AllUsers | where-object {$_.name -notlike "*Microsoft.WindowsStore*"} | where-object {$_.name -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.name -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxPackage | Out-Null
 	Get-AppxProvisionedPackage -online | where-object {$_.packagename -notlike "*Microsoft.WindowsStore*"} | where-object {$_.packagename -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.packagename -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxProvisionedPackage -online | Out-Null
 }###########################################################################
 # Taskbar pin app function
