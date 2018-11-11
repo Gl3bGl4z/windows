@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.7.9"
+$ver = "1.8.0"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer -erroraction 'silentlycontinue'
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId" -erroraction 'silentlycontinue'
@@ -75,7 +75,7 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 	Write-Host "  ----------------------------------------"
 	Write-Host " 1 - Basic SELECTIVE"
 	Write-Host " 2 - Basic ALL"
-	Write-Host " 3 - Advanced SELECTIVE"
+	Write-Host " 3 - Full SELECTIVE"
 	Write-Host
 	$initialsetting = Read-Host -Prompt "Input option"
 }if($initialsetting -eq "2")
