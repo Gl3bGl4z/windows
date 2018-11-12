@@ -9,7 +9,7 @@ Each option can be selected individually within the script
   - Rename the PC and join a domain
   - Disable Start Menu Bing search and application suggestions
   - Disable subscribed ads, location tracking, and advertiser ID
-  - Disable resource intensive P2P sharing
+  - Disable resource intensive P2P update sharing
   - Disable Cortana, Ink Space and 3D Objects folder
   - Disable ALL Windows Telemetry and Online Tips/Ads
   - Disable Wi-Fi Sense (Removed in 1803)
@@ -20,7 +20,7 @@ Each option can be selected individually within the script
   - Install all available [VCRedist Visual C++](https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads) versions (via Chocolatey)
 - Full
   - Remove OneDrive
-  - Increase wallpaper to max compression quality at essentially no additional resource cost
+  - Increase wallpaper to max compression quality at no additional resource cost
   - Enable Show File Extension in File Explorer
   - Enable Show Hidden Files and Folders in File Explorer
   - Enable Remote Desktop Connection
