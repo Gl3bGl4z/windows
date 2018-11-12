@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.9.5"
+$ver = "1.9.6"
 if((Get-WMIObject win32_operatingsystem).name -notlike "*Windows 10*")
 {	
 	Write-Warning "Operating system is not Windows 10..."
@@ -119,15 +119,13 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 	{
 		try
 		{
-			$fqdn = Read-Host "Enter the FQDN for the domain"
-			$dn = $fqdn.Substring($fqdn.IndexOf(".") + 1)
-			
+			$fqdn = Read-Host "Enter the FQDN for the domain"	
 			if($fqdn -notlike "*.*")
 			{
 				Write-Error "Invalid FQDN"
 			}
 			$dn = $fqdn.Substring($fqdn.IndexOf(".") + 1)
-			Write-Host "Pinging FQDN..."
+			Write-Host "Test ping FQDN..."
 			if (Test-Connection -ComputerName $fqdn -Quiet)
 			{
 				Write-Host "FQDN ping successful" -foregroundcolor green
@@ -143,20 +141,25 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 				}
 				if($confirmationmanconfig -eq "y")
 				{
+					$confirmationdomainjoin2 = "n"
 					[ipaddress]$serverip = Read-Host "Enter the IP address of the DNS server for manual configuration"
 					$adap = Get-NetAdapter
 					$adapter = $adap.ifIndex | Select-Object -last 1
 					Set-DnsClientServerAddress -InterfaceIndex $adapter -ServerAddresses ($serverip,"1.1.1.1")
 					Add-Computer -DomainName $dn
+					
 				}
 				else
 				{
+					$confirmationdomainjoin2 = "n"
 					Write-Host "Skipping domain join..." -foregroundcolor yellow
 				}
-			}	
+			}
+			
 		}
 		catch
-		{
+		{	
+			$confirmationdomainjoin2 = ""
 			$confirmationdomainjoin2 = Read-Host "Domain join failed or DNS IP address invalid. Retry domain join? Answering no will skip domain join. [y/n]"
 		}
 	}
