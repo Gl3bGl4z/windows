@@ -17,7 +17,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0.5"
+$ver = "1.0.6"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId"
@@ -26,6 +26,7 @@ $mobomodel = Get-ItemProperty -Path "HKLM:\HARDWARE\DESCRIPTION\System\BIOS" -Na
 $mobomanu = Get-ItemProperty -Path "HKLM:\HARDWARE\DESCRIPTION\System\BIOS" -Name "BaseBoardManufacturer"
 $gpumodel = cmd /C wmic path win32_VideoController get name
 $gpumodel = $gpumodel.replace('Name', '').replace('  ', '')
+$netadap = Get-NetAdapter
 #$installedram = (Get-WMIObject -class Win32_PhysicalMemory |Measure-Object -Property capacity -Sum | % {[Math]::Round(($_.sum / 1GB),2)})
 $drives = gdr -PSProvider 'FileSystem'
 function header
@@ -58,8 +59,8 @@ function header
 		Write-Host $mobomodel.BaseBoardProduct -foregroundcolor white
 		Write-Host " GPU:" -foregroundcolor yellow -NoNewLine
 		Write-Host $gpumodel -foregroundcolor white
-		Write-Host " Network:" -foregroundcolor yellow -NoNewLine
-		Write-Host Get-NetAdapter -foregroundcolor white
+		Write-Host " Network:" -foregroundcolor yellow
+		Write-Host $netadap -foregroundcolor white
 		Write-Host " Memory: " -foregroundcolor yellow
 		Get-WmiObject win32_physicalmemory | Format-Table Manufacturer,Banklabel,Configuredclockspeed,Devicelocator,Capacity,Serialnumber -autosize
 		Write-Host " Drives: " -foregroundcolor yellow
