@@ -63,7 +63,7 @@ New-Item -Path $env:TEMP -Name "winstall-core" -ItemType "directory" -Force >$nu
 Set-Location "$($env:TEMP)\winstall-core"
 if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 {	
-	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/chocolist.txt') | out-file "$($env:TEMP)\winstall-core\chocolist.txt" -force
+	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/chocolist.txt') | Out-File "$($env:TEMP)\winstall-core\chocolist.txt" -force
 }while($initialsetting -ne "1" -and $initialsetting -ne "2" -and $initialsetting -ne "3" -and $initialsetting -ne "4")
 {	Clear-Host
 	header
@@ -734,5 +734,5 @@ if($rebootpending = "True")
 	Write-Host "Complete" -foregroundcolor green
 	Write-Host
 	Write-Host "No Reboot Required" -foregroundcolor yellow
-	Write-Host
+	Read-Host "Press ENTER to exit"
 }Exit
