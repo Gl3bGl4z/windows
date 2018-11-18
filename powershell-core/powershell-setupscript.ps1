@@ -8,7 +8,7 @@ $myWindowsPrincipal=new-object System.Security.Principal.WindowsPrincipal($myWin
 $adminRole=[System.Security.Principal.WindowsBuiltInRole]::Administrator
 if($myWindowsPrincipal.IsInRole($adminRole))
 {	$Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + "(Elevated)"
-	$Host.UI.RawUI.BackgroundColor = "DarkBlue"
+	#$Host.UI.RawUI.BackgroundColor = "DarkBlue"
 	clear-host
 }else
 {	$newProcess = new-object System.Diagnostics.ProcessStartInfo "PowerShell";
@@ -17,7 +17,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.9.6"
+$ver = "1.9.7"
 if((Get-WMIObject win32_operatingsystem).name -notlike "*Windows 10*")
 {	
 	Write-Warning "Operating system is not Windows 10..."
@@ -25,8 +25,8 @@ if((Get-WMIObject win32_operatingsystem).name -notlike "*Windows 10*")
 	Exit
 }$strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2"
-$currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId"
-$productname = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ProductName"
+$currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId" -ErrorAction SilentlyContinue
+$productname = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ProductName" -ErrorAction SilentlyContinue
 function header
 {	Write-host " #####################################"
 	Write-Host " #                                   #"
@@ -40,7 +40,6 @@ function header
 	Write-host " #                                   #"
 	Write-host " #####################################"
 	Write-host
-	Write-Host
 	Write-Host " CPU Model: " -foregroundcolor yellow -NoNewLine
 	Write-Host $colItems.Name -foregroundcolor white	
 	Write-Host " System: " -foregroundcolor yellow -NoNewLine
