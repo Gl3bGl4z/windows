@@ -3,12 +3,24 @@
 #	Creator:	Ad3t0	                 #
 #	Date:		10/20/2018             	 #
 ##########################################
-##############
-$ver = "2.0.1"
+$myWindowsID=[System.Security.Principal.WindowsIdentity]::GetCurrent()
+$myWindowsPrincipal=new-object System.Security.Principal.WindowsPrincipal($myWindowsID)
+$adminRole=[System.Security.Principal.WindowsBuiltInRole]::Administrator
+if ($myWindowsPrincipal.IsInRole($adminRole))
+{	$Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + "(Elevated)"
+	clear-host
+}else
+{	$newProcess = new-object System.Diagnostics.ProcessStartInfo "PowerShell";
+	$newProcess.Arguments = $myInvocation.MyCommand.Definition;
+	$newProcess.Verb = "runas";
+	[System.Diagnostics.Process]::Start($newProcess);
+	exit
+}##############
+$ver = "2.0.2"
 if((Get-WMIObject win32_operatingsystem).name -notlike "*Windows 10*")
 {	
 	Write-Warning "Operating system is not Windows 10..."
-	Read-Host "Press ENTER to exit."
+	Read-Host "The script will now exit..."
 	Exit
 }$strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2"
