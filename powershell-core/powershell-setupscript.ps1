@@ -8,7 +8,6 @@ $myWindowsPrincipal=new-object System.Security.Principal.WindowsPrincipal($myWin
 $adminRole=[System.Security.Principal.WindowsBuiltInRole]::Administrator
 if($myWindowsPrincipal.IsInRole($adminRole))
 {	$Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + "(Elevated)"
-	#$Host.UI.RawUI.BackgroundColor = "DarkBlue"
 	clear-host
 }else
 {	$newProcess = new-object System.Diagnostics.ProcessStartInfo "PowerShell";
@@ -17,7 +16,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.9.7"
+$ver = "2.0.0"
 if((Get-WMIObject win32_operatingsystem).name -notlike "*Windows 10*")
 {	
 	Write-Warning "Operating system is not Windows 10..."
@@ -63,103 +62,87 @@ Set-Location "$($env:TEMP)\winstall-core"
 if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 {	
 	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/chocolist.txt') | Out-File "$($env:TEMP)\winstall-core\chocolist.txt" -force
-}while($initialsetting -ne "1" -and $initialsetting -ne "2" -and $initialsetting -ne "3" -and $initialsetting -ne "4")
+}while($initialsetting -ne "1" -and $initialsetting -ne "2")
 {	Clear-Host
 	header
 	if(([string]::IsNullOrEmpty($initialsetting)) -ne $true)
 	{	
-		if($initialsetting -ne "1" -and $initialsetting -ne "2" -and $initialsetting -ne "3" -and $initialsetting -ne "4")
+		if($initialsetting -ne "1" -and $initialsetting -ne "2")
 		{
 			Write-Warning "Invalid option"
 		}
 	}
 	Write-Host "  ----------------------------------------"
-	Write-Host " 1 - Basic SELECTIVE"
-	Write-Host " 2 - Basic ALL"
-	Write-Host " 3 - Full SELECTIVE"
-	Write-Host " 4 - Full ALL"
+	Write-Host " 1 - Basic"
+	Write-Host " 2 - Advanced"
 	Write-Host
 	$initialsetting = Read-Host -Prompt "Input option"
-}if($initialsetting -eq "2" -or $initialsetting -eq "4")
-{	$confirmationrename = "y"
-	$confirmationdomainjoin = "y"
-	$confirmationonedrive = "y"
-	$confirmationstartmenu = "y"
-	$confirmationpowersch = "y"
-	$confirmationappremoval = "y"
-	$confirmationchocoinstall = "y"
-}if($initialsetting -eq "4")
-{	
-	$confirmationonedrive = "y"
-	$confirmationwallpaperq = "y"
-	$confirmationshowfileex = "y"
-	$confirmationshowhiddenfiles = "y"
-	$confirmationrdp = "y"
-	$confirmationwol = "y"
-	$confirmationhostsadb = "y"
-}while($confirmationrename -ne "n" -and $confirmationrename -ne "y")
-{	
-	if($initialsetting -eq "2")
-	{
-		$confirmationrename = "y"
-	}
-	$confirmationrename = Read-Host "Rename this PC? [y/n]"
-	if($confirmationrename -eq "y")
-	{
-		while((![string]::IsNullOrEmpty($pcname)) -ne $true)
+}if(!$env:USERDNSDOMAIN)
+{	while($confirmationrename -ne "n" -and $confirmationrename -ne "y")
+	{	
+		if($initialsetting -eq "2")
 		{
-			$pcname = Read-Host "Type the new name for this PC"
+			$confirmationrename = "y"
 		}
-	}
-}while($confirmationdomainjoin -ne "n" -and $confirmationdomainjoin -ne "y")
-{	$confirmationdomainjoin = Read-Host "Join PC to domain? [y/n]"
-}if($confirmationdomainjoin -eq "y")
-{	while($confirmationdomainjoin2 -ne "n")
-	{
-		try
+		$confirmationrename = Read-Host "Rename this PC? [y/n]"
+		if($confirmationrename -eq "y")
 		{
-			$fqdn = Read-Host "Enter the FQDN for the domain"	
-			if($fqdn -notlike "*.*")
+			while((![string]::IsNullOrEmpty($pcname)) -ne $true)
 			{
-				Write-Error "Invalid FQDN"
+				$pcname = Read-Host "Type the new name for this PC"
 			}
-			$dn = $fqdn.Substring($fqdn.IndexOf(".") + 1)
-			Write-Host "Test ping FQDN..."
-			if (Test-Connection -ComputerName $fqdn -Quiet)
+		}
+	}while($confirmationdomainjoin -ne "n" -and $confirmationdomainjoin -ne "y")
+	{	$confirmationdomainjoin = Read-Host "Join PC to domain? [y/n]"
+	}if($confirmationdomainjoin -eq "y")
+	{	while($confirmationdomainjoin2 -ne "n")
+		{
+			try
 			{
-				Write-Host "FQDN ping successful" -foregroundcolor green
-				Add-Computer -DomainName $fqdn
-			}
-			else
-			{
-				Write-Host "FQDN ping unsuccessful" -foregroundcolor red
-				
-				while($confirmationmanconfig -ne "n" -and $confirmationmanconfig -ne "y")
+				$fqdn = Read-Host "Enter the FQDN for the domain"	
+				if($fqdn -notlike "*.*")
 				{
-					$confirmationmanconfig = Read-Host "Manually configure DNS? Answering no will skip domain join. [y/n]"
+					Write-Error "Invalid FQDN"
 				}
-				if($confirmationmanconfig -eq "y")
+				$dn = $fqdn.Substring($fqdn.IndexOf(".") + 1)
+				Write-Host "Test ping FQDN..."
+				if (Test-Connection -ComputerName $fqdn -Quiet)
 				{
+					Write-Host "FQDN ping successful" -foregroundcolor green
+					Add-Computer -DomainName $fqdn
 					$confirmationdomainjoin2 = "n"
-					[ipaddress]$serverip = Read-Host "Enter the IP address of the DNS server for manual configuration"
-					$adap = Get-NetAdapter
-					$adapter = $adap.ifIndex | Select-Object -last 1
-					Set-DnsClientServerAddress -InterfaceIndex $adapter -ServerAddresses ($serverip,"1.1.1.1")
-					Add-Computer -DomainName $dn
-					
 				}
 				else
 				{
-					$confirmationdomainjoin2 = "n"
-					Write-Host "Skipping domain join..." -foregroundcolor yellow
+					Write-Host "FQDN ping unsuccessful" -foregroundcolor red
+					
+					while($confirmationmanconfig -ne "n" -and $confirmationmanconfig -ne "y")
+					{
+						$confirmationmanconfig = Read-Host "Manually configure DNS? Answering no will skip domain join. [y/n]"
+					}
+					if($confirmationmanconfig -eq "y")
+					{
+						$confirmationdomainjoin2 = "n"
+						[ipaddress]$serverip = Read-Host "Enter the IP address of the DNS server for manual configuration"
+						$adap = Get-NetAdapter
+						$adapter = $adap.ifIndex | Select-Object -last 1
+						Set-DnsClientServerAddress -InterfaceIndex $adapter -ServerAddresses ($serverip,"1.1.1.1")
+						Add-Computer -DomainName $dn
+						
+					}
+					else
+					{
+						$confirmationdomainjoin2 = "n"
+						Write-Host "Skipping domain join..." -foregroundcolor yellow
+					}
 				}
+				
 			}
-			
-		}
-		catch
-		{	
-			$confirmationdomainjoin2 = ""
-			$confirmationdomainjoin2 = Read-Host "Domain join failed or DNS IP address invalid. Retry domain join? Answering no will skip domain join. [y/n]"
+			catch
+			{	
+				$confirmationdomainjoin2 = ""
+				$confirmationdomainjoin2 = Read-Host "Domain join failed or DNS IP address invalid. Retry domain join? Answering no will skip domain join. [y/n]"
+			}
 		}
 	}
 }while($confirmationpowersch -ne "n" -and $confirmationpowersch -ne "y")
@@ -172,7 +155,7 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 	}
 }while($confirmationchocoinstall -ne "n" -and $confirmationchocoinstall -ne "y")
 {	$confirmationchocoinstall = Read-Host "Install Chocolatey and choose packages? [y/n]"
-}if($initialsetting -eq "3")
+}if($initialsetting -eq "2")
 {	
 	while($confirmationonedrive -ne "n" -and $confirmationonedrive -ne "y")
 	{
@@ -212,13 +195,14 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 	Read-Host "Press ENTER to continue after the chocolist.txt file has been saved"
 }$chocolist = [IO.File]::ReadAllText("$($env:TEMP)\winstall-core\chocolist.txt")
 Write-Host
-Write-Host "Rename PC: [$($confirmationrename)]"
-Write-Host "Domain Join: [$($confirmationdomainjoin)]"
-Write-Host "Maximum PowerScheme: [$($confirmationpowersch)]"
+if(!$env:USERDNSDOMAIN)
+{	Write-Host "Rename PC: [$($confirmationrename)]"
+	Write-Host "Domain Join: [$($confirmationdomainjoin)]"
+}Write-Host "Maximum PowerScheme: [$($confirmationpowersch)]"
 Write-Host "Unpin All Icons: [$($confirmationstartmenu)]"
 Write-Host "App Removal: [$($confirmationappremoval)]"
 Write-Host "Choco install: [$($confirmationchocoinstall)]"
-if($initialsetting -eq "3" -or $initialsetting -eq "4")
+if($initialsetting -eq "2")
 {Write-Host "OneDrive Removal: [$($confirmationonedrive)]"	
 	Write-Host "Wallpaper Max Quality: [$($confirmationwallpaperq)]"
 	Write-Host "Show File Extensions: [$($confirmationshowfileex)]"
@@ -228,7 +212,6 @@ if($initialsetting -eq "3" -or $initialsetting -eq "4")
 	Write-Host "MVPS hosts File: [$($confirmationhostsadb)]"
 }Write-Host
 Write-Host "Windows 10 Setup Script will now run"
-Write-Host "explorer.exe will taskkill while running and restart when finished..."
 Write-Host
 while($confirmationfull -ne "n" -and $confirmationfull -ne "y")
 {	$confirmationfull = Read-Host "Continue? [y/n]"
@@ -238,10 +221,6 @@ while($confirmationfull -ne "n" -and $confirmationfull -ne "y")
 }if($confirmationrename -eq "y")
 {	Rename-Computer -NewName $pcname
 }###########################################################################
-# Kill explorer.exe
-##########################################################################
-Invoke-Expression "taskkill /f /im explorer.exe"
-###########################################################################
 # Disable Windows Store automatic install service
 ##########################################################################
 Write-host "Disabling automatic app reinstall services..." -foregroundcolor yellow
@@ -517,7 +496,7 @@ if($initialsetting -eq "3")
 # Remove all Windows store apps except WindowsStore, Calculator and Photos
 ##########################################################################
 if($confirmationappremoval -eq "y")
-{Write-Host "Removing all Windows store apps expect Windows Store, Calculator and Photos..." -foregroundcolor yellow
+{Write-Host "Removing all Windows store apps except the Windows Store, Calculator and Photos..." -foregroundcolor yellow
 	Get-AppxPackage -AllUsers | where-object {$_.name -notlike "*Microsoft.WindowsStore*"} | where-object {$_.name -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.name -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxPackage -erroraction 'silentlycontinue'
 	Get-AppxProvisionedPackage -online | where-object {$_.packagename -notlike "*Microsoft.WindowsStore*"} | where-object {$_.packagename -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.packagename -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxProvisionedPackage -online | Out-Null
 }###########################################################################
@@ -708,10 +687,8 @@ if($confirmationonedrive -eq "y")
 	Copy-Item "$($env:SystemRoot)\System32\drivers\etc\hosts" -Destination "$($env:SystemRoot)\System32\drivers\etc\hosts.bak"
 	(New-Object Net.WebClient).DownloadString('http://winhelp2002.mvps.org/hosts.txt') | out-file "$($env:SystemRoot)\System32\drivers\etc\hosts" -force
 }###########################################################################
-# Start explorer.exe
+# Finalize
 ##########################################################################
-Write-Host "Restarting explorer.exe..." -foregroundcolor yellow
-Invoke-Expression "start explorer.exe"
 $rebootpending = Test-PendingReboot | Select-Object -Property IsRebootPending | Format-Wide
 if($rebootpending = "True")
 {	Write-Host

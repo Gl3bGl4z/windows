@@ -8,7 +8,6 @@ $myWindowsPrincipal=new-object System.Security.Principal.WindowsPrincipal($myWin
 $adminRole=[System.Security.Principal.WindowsBuiltInRole]::Administrator
 if ($myWindowsPrincipal.IsInRole($adminRole))
 {	$Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + "(Elevated)"
-	$Host.UI.RawUI.BackgroundColor = "DarkBlue"
 	clear-host
 }else
 {	$newProcess = new-object System.Diagnostics.ProcessStartInfo "PowerShell";
@@ -17,7 +16,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0.8"
+$ver = "1.0.9"
 try
 {	$data = netsh wlan show profile
 	$datePattern = [Regex]::new("(?<=All User Profile     : ).*\S")

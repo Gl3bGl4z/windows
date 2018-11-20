@@ -8,7 +8,6 @@ $myWindowsPrincipal=new-object System.Security.Principal.WindowsPrincipal($myWin
 $adminRole=[System.Security.Principal.WindowsBuiltInRole]::Administrator
 if($myWindowsPrincipal.IsInRole($adminRole))
 {	$Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + "(Elevated)"
-	$Host.UI.RawUI.BackgroundColor = "DarkBlue"
 	Clear-Host
 }else
 {	$newProcess = new-object System.Diagnostics.ProcessStartInfo "PowerShell";
@@ -17,7 +16,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }#####
-$ver = "1.1.1"
+$ver = "1.1.2"
 Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name Hidden -Value 1
 Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name ShowSuperHidden -Value 1
 Stop-Process -processName: Explorer
