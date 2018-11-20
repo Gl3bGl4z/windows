@@ -3,20 +3,8 @@
 #	Creator:	Ad3t0	                 #
 #	Date:		10/20/2018             	 #
 ##########################################
-$myWindowsID=[System.Security.Principal.WindowsIdentity]::GetCurrent()
-$myWindowsPrincipal=new-object System.Security.Principal.WindowsPrincipal($myWindowsID)
-$adminRole=[System.Security.Principal.WindowsBuiltInRole]::Administrator
-if($myWindowsPrincipal.IsInRole($adminRole))
-{	$Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + "(Elevated)"
-	clear-host
-}else
-{	$newProcess = new-object System.Diagnostics.ProcessStartInfo "PowerShell";
-	$newProcess.Arguments = $myInvocation.MyCommand.Definition;
-	$newProcess.Verb = "runas";
-	[System.Diagnostics.Process]::Start($newProcess);
-	exit
-}##############
-$ver = "2.0.0"
+##############
+$ver = "2.0.1"
 if((Get-WMIObject win32_operatingsystem).name -notlike "*Windows 10*")
 {	
 	Write-Warning "Operating system is not Windows 10..."
@@ -90,6 +78,7 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 			while((![string]::IsNullOrEmpty($pcname)) -ne $true)
 			{
 				$pcname = Read-Host "Type the new name for this PC"
+				Rename-Computer -NewName $pcname
 			}
 		}
 	}while($confirmationdomainjoin -ne "n" -and $confirmationdomainjoin -ne "y")
@@ -195,10 +184,7 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 	Read-Host "Press ENTER to continue after the chocolist.txt file has been saved"
 }$chocolist = [IO.File]::ReadAllText("$($env:TEMP)\winstall-core\chocolist.txt")
 Write-Host
-if(!$env:USERDNSDOMAIN)
-{	Write-Host "Rename PC: [$($confirmationrename)]"
-	Write-Host "Domain Join: [$($confirmationdomainjoin)]"
-}Write-Host "Maximum PowerScheme: [$($confirmationpowersch)]"
+Write-Host "Maximum PowerScheme: [$($confirmationpowersch)]"
 Write-Host "Unpin All Icons: [$($confirmationstartmenu)]"
 Write-Host "App Removal: [$($confirmationappremoval)]"
 Write-Host "Choco install: [$($confirmationchocoinstall)]"
@@ -218,8 +204,6 @@ while($confirmationfull -ne "n" -and $confirmationfull -ne "y")
 }if($confirmationfull -ne "y")
 {	Clear-Host
 	exit
-}if($confirmationrename -eq "y")
-{	Rename-Computer -NewName $pcname
 }###########################################################################
 # Disable Windows Store automatic install service
 ##########################################################################
