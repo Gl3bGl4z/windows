@@ -16,7 +16,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0.1"
+$ver = "1.0.2"
 
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2"
@@ -78,7 +78,7 @@ if($inputOption -eq 1)
 		Write-Host "Event log Windows Backup abnormality detected" -foregroundcolor red
 		Write-Host
 	}
-	if($vssStatus -like "*Failed*" -or -like "*Stuck*" -or -like "*Unstable*" )
+	if($vssStatus -like "*Failed*" -like "*Stuck*" -like "*Unstable*" )
 	{
 		$vssStatus
 		$vssStatusConfirmed = "True"
@@ -102,10 +102,11 @@ if($inputOption -eq 1)
 
 if($inputOption -eq 2)
 {
+	New-Item -Path "HKLM:\Software\" -Name BackupCheck
 	$regPath = "HKLM:\Software\BackupCheck\"
 	$SMTPServer = Read-Host "SMTP Server"
 	$SMTPPort = Read-Host "SMTP Port"
-	$From = Read-Host "SMTP Sending Address"
+	$smtpUser = Read-Host "SMTP Sending Address"
 	
 	
 	
@@ -113,6 +114,8 @@ if($inputOption -eq 2)
 	Set-ItemProperty -Path $regPath -Name "secureHash" -Value $secureHash -Force
 	$intHash = Get-ItemProperty $regPath -Name "secureHash"
 	$password = $intHash.secureHash | ConvertTo-SecureString
+	$Credentials = New-Object System.Management.Automation.PSCredential -ArgumentList $smtpUser, $smtpPassword
+	#$mycredentials = Get-Credential
 	
 	$To = Read-Host "SMTP Receiving Address"
 	$Cc = Read-Host "Secondary SMTP Receiving Address (Optional)"
@@ -125,15 +128,24 @@ if($inputOption -eq 2)
 	$Body = "This is what I want to say"
 	
 	
-	Send-MailMessage -From $From -to $To -Subject $Subject -Body $Body -SmtpServer $SMTPServer -port $SMTPPort -UseSsl -Credential $password -DeliveryNotificationOption OnSuccess
-	#Send-MailMessage -From $From -to $To -Cc $Cc -Subject $Subject -Body $Body -SmtpServer $SMTPServer -port $SMTPPort -UseSsl -Credential $password –DeliveryNotificationOption OnSuccess
+	
+	
+	#$secpasswd = ConvertTo-SecureString "PlainTextPassword" -AsPlainText -Force
+	#$mycreds = New-Object System.Management.Automation.PSCredential ("username", $secpasswd)
+	
+	
+	
+	
+	
+	Send-MailMessage -From $smtpUser -to $To -Subject $Subject -Body $Body -SmtpServer $SMTPServer -port $SMTPPort -UseSsl -Credential $Credentials -DeliveryNotificationOption OnSuccess
+	#Send-MailMessage -From $From -to $To -Cc $Cc -Subject $Subject -Body $Body -SmtpServer $SMTPServer -port $SMTPPort -UseSsl -Credential $password -DeliveryNotificationOption OnSuccess
 	Read-Host "Mail sent press ENTER to exit"
 	
 	
-	New-Item -Path "HKLM:\Software\" -Name BackupCheck
+
 	New-ItemProperty -Path $regPath -Name "SMTPServer" -Value $SMTPServer
 	New-ItemProperty -Path $regPath -Name "SMTPPort" -Value $SMTPPort
-	New-ItemProperty -Path $regPath -Name "From" -Value $From
+	New-ItemProperty -Path $regPath -Name "smtpUser" -Value $smtpUser
 	New-ItemProperty -Path $regPath -Name "To" -Value $To
 	New-ItemProperty -Path $regPath -Name "Cc" -Value $Cc
 	
