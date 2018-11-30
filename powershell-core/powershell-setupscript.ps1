@@ -16,7 +16,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "2.0.4"
+$ver = "2.0.5"
 if((Get-WMIObject win32_operatingsystem).name -notlike "*Windows 10*")
 {	
 	Write-Warning "Operating system is not Windows 10..."
@@ -488,7 +488,7 @@ if($initialsetting -eq "3")
 if($confirmationappremoval -eq "y")
 {Write-Host "Removing all Windows store apps except the Windows Store, Calculator and Photos..." -foregroundcolor yellow
 	Get-AppxPackage -AllUsers | where-object {$_.name -notlike "*Microsoft.WindowsStore*"} | where-object {$_.name -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.name -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | where-object {$_.name -notlike "*Sticky*"} | Remove-AppxPackage -erroraction 'silentlycontinue'
-	Get-AppxProvisionedPackage -online | where-object {$_.packagename -notlike "*Microsoft.WindowsStore*"} | where-object {$_.packagename -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.packagename -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | where-object {$_.name -notlike "*Sticky*"} | Remove-AppxProvisionedPackage -online | Out-Null
+	Get-AppxProvisionedPackage -online | where-object {$_.packagename -notlike "*Microsoft.WindowsStore*"} | where-object {$_.packagename -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.packagename -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | where-object {$_.name -notlike "*Sticky*"} | Remove-AppxProvisionedPackage -online | Out-Null -erroraction 'silentlycontinue'
 }###########################################################################
 # Pinapp function
 ##########################################################################

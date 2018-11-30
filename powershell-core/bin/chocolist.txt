@@ -1,1 +1,1 @@
-vcredist-all;googlechrome;adobereader;bleachbit;windirstat;geekuninstaller;malwarebytes;procexp
+googlechrome;adobereader;bleachbit;windirstat;geekuninstaller;malwarebytes;procexp
