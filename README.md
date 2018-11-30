@@ -13,9 +13,9 @@ Each option can be selected individually within the script
   - Disable Cortana, Ink Space and 3D Objects folder
   - Disable ALL Windows Telemetry and Online Tips/Ads
   - Disable Wi-Fi Sense (Removed in 1803)
-  - Remove/Unpin all Startmenu and default Taskbar icons
+  - Remove/Unpin all Startmenu icons
   - Remove the People and Taskview icons
-  - Delete all Windows Store apps (except the Calculator, Photos, and the Windows Store)
+  - Delete all Windows Store apps (except the Calculator, Photos, StickyNotes, and the Windows Store)
   - Install [Chocolatey](https://chocolatey.org/) and defined packages
   - Install all available [VCRedist Visual C++](https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads) versions (via Chocolatey)
 - Full
