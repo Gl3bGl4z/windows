@@ -16,7 +16,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "2.0.2"
+$ver = "2.0.3"
 if((Get-WMIObject win32_operatingsystem).name -notlike "*Windows 10*")
 {	
 	Write-Warning "Operating system is not Windows 10..."
@@ -51,12 +51,6 @@ function header
 	Write-Host $env:USERDNSDOMAIN -foregroundcolor white
 	Write-Host
 }header
-Write-host "Please wait loading modules..." -foregroundcolor green
-Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -confirm:$false
-Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
-Install-Module -Name PendingReboot -confirm:$false
-Clear-Host
-header
 New-Item -Path $env:TEMP -Name "winstall-core" -ItemType "directory" -Force >$null 2>&1
 Set-Location "$($env:TEMP)\winstall-core"
 if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
@@ -100,22 +94,22 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 		{
 			try
 			{
-				$fqdn = Read-Host "Enter the FQDN for the domain"	
+				$fqdn = Read-Host "Enter the domain controller FQDN for the domain"	
 				if($fqdn -notlike "*.*")
 				{
-					Write-Error "Invalid FQDN"
+					Write-Error "Invalid domain controller FQDN"
 				}
 				$dn = $fqdn.Substring($fqdn.IndexOf(".") + 1)
-				Write-Host "Test ping FQDN..."
+				Write-Host "Test ping domain controller FQDN..."
 				if (Test-Connection -ComputerName $fqdn -Quiet)
 				{
-					Write-Host "FQDN ping successful" -foregroundcolor green
+					Write-Host "Domain controller FQDN ping successful" -foregroundcolor green
 					Add-Computer -DomainName $fqdn
 					$confirmationdomainjoin2 = "n"
 				}
 				else
 				{
-					Write-Host "FQDN ping unsuccessful" -foregroundcolor red
+					Write-Host "Domain controller FQDN ping unsuccessful" -foregroundcolor red
 					
 					while($confirmationmanconfig -ne "n" -and $confirmationmanconfig -ne "y")
 					{
@@ -152,7 +146,7 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 {	$confirmationstartmenu = Read-Host "Unpin all startmenu and taskbar icons? [y/n]"
 	while($confirmationappremoval -ne "n" -and $confirmationappremoval -ne "y")
 	{	
-		$confirmationappremoval = Read-Host "Remove all Windows Store apps except the Calculator, Photos, and the Windows Store? [y/n]"
+		$confirmationappremoval = Read-Host "Remove all Windows Store apps except the Calculator, Photos, StickyNotes, and the Windows Store? [y/n]"
 	}
 }while($confirmationchocoinstall -ne "n" -and $confirmationchocoinstall -ne "y")
 {	$confirmationchocoinstall = Read-Host "Install Chocolatey and choose packages? [y/n]"
@@ -197,7 +191,7 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 }$chocolist = [IO.File]::ReadAllText("$($env:TEMP)\winstall-core\chocolist.txt")
 Write-Host
 Write-Host "Maximum PowerScheme: [$($confirmationpowersch)]"
-Write-Host "Unpin All Icons: [$($confirmationstartmenu)]"
+Write-Host "Unpin All StartMenu Icons: [$($confirmationstartmenu)]"
 Write-Host "App Removal: [$($confirmationappremoval)]"
 Write-Host "Choco install: [$($confirmationchocoinstall)]"
 if($initialsetting -eq "2")
@@ -246,7 +240,7 @@ if($confirmationpowersch -eq "y")
 ##########################################################################
 if($confirmationchocoinstall -eq "y")
 {	
-	Write-Host "Installing Chocolatey, and all .NET Framework versions and all VCRedist Visual C++ versions..." -foregroundcolor yellow
+	Write-Host "Installing Chocolatey, and all VCRedist Visual C++ versions..." -foregroundcolor yellow
 	Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 	choco feature enable -n=allowGlobalconfirmation
 	choco feature disable -n=checksumFiles
@@ -489,122 +483,13 @@ if($initialsetting -eq "3")
 		foreach($Adapter in $Adapters){$Adapter.enablewakeonmagicpacketonly = "$True"}
 	}else{$Adapters.enablewakeonmagicpacketonly = "$True"}
 }###########################################################################
-# Remove all Windows store apps except WindowsStore, Calculator and Photos
+# Remove all Windows store apps except WindowsStore, Calculator Photos and StickyNotes
 ##########################################################################
 if($confirmationappremoval -eq "y")
 {Write-Host "Removing all Windows store apps except the Windows Store, Calculator and Photos..." -foregroundcolor yellow
-	Get-AppxPackage -AllUsers | where-object {$_.name -notlike "*Microsoft.WindowsStore*"} | where-object {$_.name -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.name -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxPackage -erroraction 'silentlycontinue'
-	Get-AppxProvisionedPackage -online | where-object {$_.packagename -notlike "*Microsoft.WindowsStore*"} | where-object {$_.packagename -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.packagename -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | Remove-AppxProvisionedPackage -online | Out-Null
+	Get-AppxPackage -AllUsers | where-object {$_.name -notlike "*Microsoft.WindowsStore*"} | where-object {$_.name -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.name -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | where-object {$_.name -notlike "*Sticky*"} | Remove-AppxPackage -erroraction 'silentlycontinue'
+	Get-AppxProvisionedPackage -online | where-object {$_.packagename -notlike "*Microsoft.WindowsStore*"} | where-object {$_.packagename -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.packagename -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | where-object {$_.name -notlike "*Sticky*"} | Remove-AppxProvisionedPackage -online | Out-Null
 }###########################################################################
-# Taskbar pin app function
-##########################################################################
-Write-Host "Unpinning all default Task Bar icons" -foregroundcolor yellow
-if($confirmationstartmenu -eq "y")
-{	
-	function findTheNeedle ($needle, $haystack, $startIndexInHaystack=0, $needlePartsThatDontMatter=@())
-	{
-		$haystackLastIndex = ($haystack.Length - 1)
-		$needleLastIndex = ($needle.Length - 1)
-		$needleCurrentIndex = 0
-		$haystackCurrentIndex = $startIndexInHaystack
-		while($haystackCurrentIndex -lt $haystackLastIndex)
-		{
-			if($haystack[$haystackCurrentIndex] -eq $needle[$needleCurrentIndex] -or ($needleCurrentIndex -in $needlePartsThatDontMatter))
-			{
-				$startIndex = $haystackCurrentIndex
-				while($haystack[$haystackCurrentIndex] -eq $needle[$needleCurrentIndex] -or ($needleCurrentIndex -in $needlePartsThatDontMatter))
-				{
-					$needleCurrentIndex += 1
-					$haystackCurrentIndex += 1
-				}
-				if(($needleCurrentIndex - 1) -eq $needleLastIndex)
-				{
-					return ($startIndex + 1)
-				}
-				$needleCurrentIndex = 0
-				$haystackCurrentIndex = $startIndex
-			}
-			$haystackCurrentIndex += 1
-		}
-		return -1
-	}
-	function findTheNeedleReverse ($needle, $haystack, $startIndexInHaystack=0, $needlePartsThatDontMatter=@())
-	{
-		$needleLastIndex = ($needle.Length - 1)
-		$needleCurrentIndex = $needleLastIndex
-		$haystackCurrentIndex = $startIndexInHaystack
-		while($haystackCurrentIndex -gt 0)
-		{
-			if($haystack[$haystackCurrentIndex] -eq $needle[$needleCurrentIndex]  -or ($needleCurrentIndex -in $needlePartsThatDontMatter))
-			{
-				$startIndex = $haystackCurrentIndex
-				while($haystack[$haystackCurrentIndex] -eq $needle[$needleCurrentIndex] -or ($needleCurrentIndex -in $needlePartsThatDontMatter))
-				{
-					$needleCurrentIndex -= 1
-					$haystackCurrentIndex -= 1
-				}
-				if(($needleCurrentIndex + 1) -eq 0)
-				{
-					return ($haystackCurrentIndex + 1)
-				}
-				$needleCurrentIndex = $needleLastIndex
-				$haystackCurrentIndex = $startIndex
-			}
-			$haystackCurrentIndex -= 1
-		}
-		return -1
-	}
-	$taskbarEntryHeaderBytes = @(0,51,6,0,0,20,0,31,128,155,212,52);
-	$taskbarEntryHeaderBytesThatDontMatter = @(0,1,2,5,9,10);
-	$taskbarEntryTrailerBytes = @(34,0,0,0,30,0,239,190,2,0,85,0,115,0,101,0,114,0,80,0,105,0,110,0,110,0,101,0,100,0,0,0,59,5,0,0);
-	$taskbarEntryTrailerBytesThatDontMatter = @(32,33);
-	$apps = @(
-	@{
-		"appName" = "Microsoft Edge"
-		"appThumbprint" = @(38,0,0,0,77,0,105,0,99,0,114,0,111,0,115,0,111,0,102,0,116,0,46,0,77,0,105,0,99,0,114,0,111,0,115,0,111,0,102,0,116,0,69,0,100,0,103,0,101);
-		"taskbarEntryHeaderBytes" = $taskbarEntryHeaderBytes
-		"taskbarEntryHeaderBytesThatDontMatter" = $taskbarEntryHeaderBytesThatDontMatter
-		"taskbarEntryTrailerBytes" = $taskbarEntryTrailerBytes
-		"taskbarEntryTrailerBytesThatDontMatter" = $taskbarEntryTrailerBytesThatDontMatter
-	}
-	@{
-		"appName" = "Microsoft Windows Store"
-		"appThumbprint" = @(37,0,0,0,77,0,105,0,99,0,114,0,111,0,115,0,111,0,102,0,116,0,46,0,87,0,105,0,110,0,100,0,111,0,119,0,115,0,83,0,116,0,111,0,114,0,101);
-		"taskbarEntryHeaderBytes" = $taskbarEntryHeaderBytes
-		"taskbarEntryHeaderBytesThatDontMatter" = $taskbarEntryHeaderBytesThatDontMatter
-		"taskbarEntryTrailerBytes" = $taskbarEntryTrailerBytes
-		"taskbarEntryTrailerBytesThatDontMatter" = $taskbarEntryTrailerBytesThatDontMatter
-	}
-	)
-	$atLeastOneAppIsPinned = $false
-	foreach ($app in $apps)
-	{
-		$haystack = (Get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Taskband" -Name "Favorites").Favorites
-		$needleStart = findTheNeedle $app["appThumbprint"] $haystack
-		if($needleStart -ne -1)
-		{
-			$firstIndexAfterNeedle = $needleStart + $app["appThumbprint"].Length
-			$lastIndexOfEntry = (findTheNeedle $app["taskbarEntryTrailerBytes"] $haystack $firstIndexAfterNeedle $app["taskbarEntryTrailerBytesThatDontMatter"]) + ($app["taskbarEntryTrailerBytes"].Length - 1)
-			if(($lastIndexOfEntry) -ne -1)
-			{
-				$firstIndexOfEntry = findTheNeedleReverse $app["taskbarEntryHeaderBytes"] $haystack $needleStart $app["taskbarEntryHeaderBytesThatDontMatter"]
-				if(($firstIndexOfEntry) -ne -1)
-				{
-					$atLeastOneAppIsPinned = $true
-					if($firstIndexOfEntry -eq 0)
-					{
-						$newArray = $haystack[$lastIndexOfEntry..($haystack.Length)]
-					}
-					else
-					{
-						$newArray = $haystack[0..($firstIndexOfEntry - 1)] + $haystack[$lastIndexOfEntry..($haystack.Length)]
-					}
-					New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Taskband" -Name "Favorites" -Value $newArray -PropertyType Binary -Force | Out-Null
-				}
-			}
-		}
-	}	
-###########################################################################
 # Pinapp function
 ##########################################################################
 	Write-Host "Unpinning all Start Menu apps"	-foregroundcolor yellow
@@ -635,11 +520,6 @@ if($confirmationstartmenu -eq "y")
 # Unpin everything from the start menu
 ##########################################################################
 	Get-StartApps | ForEach-Object { Pin-App $_.name -unpin }
-###########################################################################
-# Delete all desktop icons
-##########################################################################
-	Write-Host "Removing default desktop icons"	
-	Remove-Item "C:\Users\*\Desktop\Microsoft Edge.lnk" -force
 }###########################################################################
 # Turn Off All Windows 10 Telemetry
 ##########################################################################
@@ -685,26 +565,13 @@ if($confirmationonedrive -eq "y")
 }###########################################################################
 # Finalize
 ##########################################################################
-$rebootpending = Test-PendingReboot | Select-Object -Property IsRebootPending | Format-Wide
-if($rebootpending = "True")
-{	Write-Host
-	Write-Host "Complete" -foregroundcolor green
-	Write-Host
-	Write-Warning "Reboot Required"
-	Write-Host
-	while($confirmationreboot -ne "n" -and $confirmationreboot -ne "y")
-	{
-		$confirmationreboot = Read-Host "Reboot is pending reboot this PC now? [y/n]"
-	}
-	if($confirmationreboot -eq "y")
-	{	
-		Restart-Computer
-	}
-}else
-{	Write-Host
-	Write-Host
-	Write-Host "Complete" -foregroundcolor green
-	Write-Host
-	Write-Host "No Reboot Required" -foregroundcolor yellow
-	Read-Host "Press ENTER to exit"
-}Exit
+while($confirmationreboot -ne "n" -and $confirmationreboot -ne "y")
+{
+	$confirmationreboot = Read-Host "Reboot is recommended reboot this PC now? [y/n]"
+}
+if($confirmationreboot -eq "y")
+{	
+	Restart-Computer
+}
+
+
