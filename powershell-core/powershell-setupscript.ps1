@@ -16,7 +16,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "2.0.5"
+$ver = "2.0.6"
 if((Get-WMIObject win32_operatingsystem).name -notlike "*Windows 10*")
 {	
 	Write-Warning "Operating system is not Windows 10..."
@@ -240,11 +240,11 @@ if($confirmationpowersch -eq "y")
 ##########################################################################
 if($confirmationchocoinstall -eq "y")
 {	
-	Write-Host "Installing Chocolatey, and all VCRedist Visual C++ versions..." -foregroundcolor yellow
+	Write-Host "Installing Chocolatey, specified packages, and all VCRedist Visual C++ versions..." -foregroundcolor yellow
 	Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 	choco feature enable -n=allowGlobalconfirmation
 	choco feature disable -n=checksumFiles
-	$chocotobeinstalled = "$($chocolist);vcredist-all".replace(' ', ';').replace(';;', ';')
+	$chocotobeinstalled = "vcredist-all;$($chocolist)".replace(' ', ';').replace(';;', ';')
 	choco install $chocotobeinstalled
 }###########################################################################
 # Registry changes
@@ -293,13 +293,7 @@ If ([System.Environment]::OSVersion.Version.Build -eq 10240) {
 	}
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization" -Name "DODownloadMode" -Type DWord -Value 100
 }############
-Write-Host "Disabling Xbox features..." -foregroundcolor yellow
-Get-AppxPackage "Microsoft.XboxApp" | Remove-AppxPackage
-Get-AppxPackage "Microsoft.XboxIdentityProvider" | Remove-AppxPackage -ErrorAction SilentlyContinue
-Get-AppxPackage "Microsoft.XboxSpeechToTextOverlay" | Remove-AppxPackage
-Get-AppxPackage "Microsoft.XboxGameOverlay" | Remove-AppxPackage
-Get-AppxPackage "Microsoft.XboxGamingOverlay" | Remove-AppxPackage
-Get-AppxPackage "Microsoft.Xbox.TCUI" | Remove-AppxPackage
+Write-Host "Disabling Xbox and Windows game features..." -foregroundcolor yellow
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\GameDVR" -Name "AppCaptureEnabled" -Type DWord -Value 0
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSyncProviderNotifications" -Type DWord -Value 0
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SoftLandingEnabled" -Type DWord -Value 0
@@ -411,14 +405,14 @@ If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search")) {
 	New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Force | Out-Null
 }Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "DisableWebSearch" -Type DWord -Value 1
 ############
-Write-Host "Disabling Windows Ink Space" -foregroundcolor yellow
+Write-Host "Disabling Windows Ink Space..." -foregroundcolor yellow
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\WindowsInkWorkspace" -Name "AllowWindowsInkWorkspace" -Type DWord -Value 0 -erroraction 'silentlycontinue'
 ############
-Write-Host "Disabling Online Tips/Ads" -foregroundcolor yellow
+Write-Host "Disabling Online Tips/Ads..." -foregroundcolor yellow
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "AllowOnlineTips" -Type DWord -Value 0
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "ConnectedSearchUseWeb" -Type DWord -Value 0
 ############
-Write-Host "Disabling all Windows telemetry" -foregroundcolor yellow
+Write-Host "Disabling all Windows telemetry..." -foregroundcolor yellow
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0
@@ -450,7 +444,7 @@ If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\PhishingFilter"
 	New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\PhishingFilter" -Force | Out-Null
 }Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\PhishingFilter" -Name "EnabledV9" -Type DWord -Value 0
 ############
-Write-Host "Disabling 3D Objects folder in File Explorer" -foregroundcolor yellow
+Write-Host "Disabling 3D Objects folder in File Explorer..." -foregroundcolor yellow
 Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}"
 Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}"
 ############
@@ -459,20 +453,20 @@ if($initialsetting -eq "3")
 	Write-Host " Full Advanced Settings" -foregroundcolor yellow
 	Write-Host " ----------------------------------------" -foregroundcolor cyan
 }if($confirmationwallpaperq -eq "y")
-{	Write-Host "Increasing wallpaper compression quality to 100" -foregroundcolor yellow
+{	Write-Host "Disabling wallpaper quality compression..." -foregroundcolor yellow
 	Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "JPEGImportQuality" -Type DWord -Value 100
 }if($confirmationshowfileex -eq "y")
-{	Write-Host "Enabling show file extensions" -foregroundcolor yellow
+{	Write-Host "Enabling show file extensions..." -foregroundcolor yellow
 	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Type DWord -Value 0
 }if($confirmationshowhiddenfiles -eq "y")
-{	Write-Host "Enabling show hidden files" -foregroundcolor yellow
+{	Write-Host "Enabling show hidden files..." -foregroundcolor yellow
 	Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name Hidden -Value 1
 }if($confirmationrdp -eq "y")
-{	Write-Host "Enabling Allow Remote Desktop Connection" -foregroundcolor yellow
+{	Write-Host "Enabling Allow Remote Desktop Connection..." -foregroundcolor yellow
 	(Get-WmiObject Win32_TerminalServiceSetting -Namespace root\cimv2\TerminalServices).SetAllowTsConnections(1,1) | Out-Null
 	(Get-WmiObject -Class "Win32_TSGeneralSetting" -Namespace root\cimv2\TerminalServices -Filter "TerminalName='RDP-tcp'").SetUserAuthenticationRequired(0) | Out-Null
 	Get-NetFirewallRule -DisplayName "Remote Desktop*" | Set-NetFirewallRule -enabled true
-}if($confirmationrdp -eq "y")
+}if($confirmationwol -eq "y")
 {	Write-Host "Enabling Allow Wake On LAN" -foregroundcolor yellow
 	$Adapters = gwmi MSPower_DeviceWakeEnable -namespace 'root\wmi'
 	if($Adapters.count -gt 0){
@@ -486,13 +480,13 @@ if($initialsetting -eq "3")
 # Remove all Windows store apps except WindowsStore, Calculator Photos and StickyNotes
 ##########################################################################
 if($confirmationappremoval -eq "y")
-{Write-Host "Removing all Windows store apps except the Windows Store, Calculator and Photos..." -foregroundcolor yellow
+{Write-Host "Removing all Windows store apps except the Windows Store, Calculator, SitckyNotes, and Photos..." -foregroundcolor yellow
 	Get-AppxPackage -AllUsers | where-object {$_.name -notlike "*Microsoft.WindowsStore*"} | where-object {$_.name -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.name -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | where-object {$_.name -notlike "*Sticky*"} | Remove-AppxPackage -erroraction 'silentlycontinue'
 	Get-AppxProvisionedPackage -online | where-object {$_.packagename -notlike "*Microsoft.WindowsStore*"} | where-object {$_.packagename -notlike "*Microsoft.WindowsCalculator*"} | where-object {$_.packagename -notlike "*Microsoft.Windows.Photos*"} | where-object {$_.name -notlike "*.NET*"} | where-object {$_.name -notlike "*.VCLibs*"} | where-object {$_.name -notlike "*Sticky*"} | Remove-AppxProvisionedPackage -online | Out-Null -erroraction 'silentlycontinue'
 }###########################################################################
 # Pinapp function
 ##########################################################################
-Write-Host "Unpinning all Start Menu apps"	-foregroundcolor yellow
+Write-Host "Unpinning all Start Menu apps..."	-foregroundcolor yellow
 function Pin-App
 {	param(
 	[string]$appname,
@@ -521,7 +515,7 @@ Get-StartApps | ForEach-Object { Pin-App $_.name -unpin }
 ###########################################################################
 # Turn Off All Windows 10 Telemetry
 ##########################################################################
-Write-Host "Turning off all Windows telemetry and ads" -foregroundcolor yellow
+Write-Host "Turning off all Windows telemetry and ads..." -foregroundcolor yellow
 (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/hahndorf/Set-Privacy/master/Set-Privacy.ps1') | out-file .\set-privacy.ps1 -force
 .\set-privacy.ps1 -Strong -admin
 ###########################################################################
@@ -529,29 +523,29 @@ Write-Host "Turning off all Windows telemetry and ads" -foregroundcolor yellow
 ##########################################################################
 if($confirmationonedrive -eq "y")
 {	
-	Write-Host "Disabling and removing OneDrive" -foregroundcolor yellow
+	Write-Host "Disabling and removing OneDrive..." -foregroundcolor yellow
 	taskkill.exe /F /IM "OneDrive.exe"
-	Write-Host "Remove OneDrive"
+	Write-Host "Remove OneDrive..."
 	if(Test-Path "$env:systemroot\System32\OneDriveSetup.exe") {
 		& "$env:systemroot\System32\OneDriveSetup.exe" /uninstall
 	}
 	if(Test-Path "$env:systemroot\SysWOW64\OneDriveSetup.exe") {
 		& "$env:systemroot\SysWOW64\OneDriveSetup.exe" /uninstall
 	}
-	Write-Host "Disable OneDrive via Group Policies"
+	Write-Host "Disable OneDrive via Group Policies..."
 	sp "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\OneDrive" "DisableFileSyncNGSC" 1 -erroraction 'silentlycontinue'
-	Write-Host "Removing OneDrive leftovers"
+	Write-Host "Removing OneDrive leftovers..."
 	rm -Recurse -Force -ErrorAction SilentlyContinue "$env:localappdata\Microsoft\OneDrive"
 	rm -Recurse -Force -ErrorAction SilentlyContinue "$env:programdata\Microsoft OneDrive"
 	rm -Recurse -Force -ErrorAction SilentlyContinue "C:\OneDriveTemp"
-	Write-Host "Removing OneDrive from explorer sidebar"
+	Write-Host "Removing OneDrive from explorer sidebar..."
 	New-PSDrive -PSProvider "Registry" -Root "HKEY_CLASSES_ROOT" -Name "HKCR"
 	mkdir -Force "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}"
 	sp "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" "System.IsPinnedToNameSpaceTree" 0
 	mkdir -Force "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}"
 	sp "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" "System.IsPinnedToNameSpaceTree" 0
 	Remove-PSDrive "HKCR"
-	Write-Host "Removing OneDrive run option for new users"
+	Write-Host "Removing OneDrive run option for new users..."
 	reg load "hku\Default" "C:\Users\Default\NTUSER.DAT"
 }###########################################################################
 # Download MVPS hosts file and backup current hosts file
