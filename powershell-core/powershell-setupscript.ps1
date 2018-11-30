@@ -16,7 +16,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "2.0.3"
+$ver = "2.0.4"
 if((Get-WMIObject win32_operatingsystem).name -notlike "*Windows 10*")
 {	
 	Write-Warning "Operating system is not Windows 10..."
@@ -492,35 +492,33 @@ if($confirmationappremoval -eq "y")
 }###########################################################################
 # Pinapp function
 ##########################################################################
-	Write-Host "Unpinning all Start Menu apps"	-foregroundcolor yellow
-	function Pin-App
+Write-Host "Unpinning all Start Menu apps"	-foregroundcolor yellow
+function Pin-App
+{	param(
+	[string]$appname,
+	[switch]$unpin
+	)
+	try
 	{
-		param(
-		[string]$appname,
-		[switch]$unpin
-		)
-		try
-		{
-			if($unpin.IsPresent){
-				((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.replace('&','') -match 'Von "Start" lösen|Unpin from Start'} | %{$_.DoIt()}
-				return "App '$appname' unpinned from Start"
-			}
-			else
-			{
-				((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.replace('&','') -match 'An "Start" anheften|Pin to Start'} | %{$_.DoIt()}
-				return "App '$appname' pinned to Start"
-			}
+		if($unpin.IsPresent){
+			((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.replace('&','') -match 'Von "Start" lösen|Unpin from Start'} | %{$_.DoIt()}
+			return "App '$appname' unpinned from Start"
 		}
-		catch
+		else
 		{
-			Write-Host
+			((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.replace('&','') -match 'An "Start" anheften|Pin to Start'} | %{$_.DoIt()}
+			return "App '$appname' pinned to Start"
 		}
 	}
-###########################################################################
+	catch
+	{
+		Write-Host
+	}
+}###########################################################################
 # Unpin everything from the start menu
 ##########################################################################
-	Get-StartApps | ForEach-Object { Pin-App $_.name -unpin }
-}###########################################################################
+Get-StartApps | ForEach-Object { Pin-App $_.name -unpin }
+###########################################################################
 # Turn Off All Windows 10 Telemetry
 ##########################################################################
 Write-Host "Turning off all Windows telemetry and ads" -foregroundcolor yellow
@@ -566,12 +564,8 @@ if($confirmationonedrive -eq "y")
 # Finalize
 ##########################################################################
 while($confirmationreboot -ne "n" -and $confirmationreboot -ne "y")
-{
-	$confirmationreboot = Read-Host "Reboot is recommended reboot this PC now? [y/n]"
-}
-if($confirmationreboot -eq "y")
+{	$confirmationreboot = Read-Host "Reboot is recommended reboot this PC now? [y/n]"
+}if($confirmationreboot -eq "y")
 {	
 	Restart-Computer
 }
-
-
