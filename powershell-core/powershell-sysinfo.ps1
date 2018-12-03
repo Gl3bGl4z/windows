@@ -16,7 +16,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0.8"
+$ver = "1.0.9"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $strComputer
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId"
@@ -50,8 +50,11 @@ function header
 		Write-Host $env:COMPUTERNAME -foregroundcolor white
 		Write-Host " Username: " -foregroundcolor yellow -NoNewLine
 		Write-Host $env:USERNAME -foregroundcolor white
-		Write-Host " Domain: " -foregroundcolor yellow -NoNewLine
-		Write-Host $env:USERDNSDOMAIN -foregroundcolor white
+		if($env:USERDNSDOMAIN)
+		{
+			Write-Host " Domain: " -foregroundcolor yellow -NoNewLine
+			Write-Host $env:USERDNSDOMAIN -foregroundcolor white
+		}
 		Write-Host " Manufacturer: " -foregroundcolor yellow -NoNewLine
 		Write-Host $mobomanu.BaseBoardManufacturer -foregroundcolor white
 		Write-Host " Motherboard: " -foregroundcolor yellow -NoNewLine
