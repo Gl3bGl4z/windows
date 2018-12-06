@@ -16,7 +16,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }#####
-$ver = "1.1.2"
+$ver = "1.1.3"
 Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name Hidden -Value 1
 Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name ShowSuperHidden -Value 1
 Stop-Process -processName: Explorer
@@ -74,7 +74,7 @@ function header
 	Write-Host " 4 - Exit"
 	Write-Host "Restarting explorer.exe to show hidden files and folders." -foreground "yellow" | Out-Null
 	Write-Host
-	while($runs -lt 5 -and -ne 0)
+	while($runs -ne 1 -and $runs -ne 2 -and $runs -ne 3 -and $runs -ne 4)
 	{
 		$runs = Read-Host -Prompt "Input option"
 	}
