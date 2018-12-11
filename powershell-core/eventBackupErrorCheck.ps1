@@ -32,32 +32,16 @@ else
 }
 
 
-New-Item -Path "HKLM:\Software\" -Name BackupCheck
-$regPath = "HKLM:\Software\BackupCheck\"
-$emailFrom = Get-ItemProperty $regPath -Name "emailFrom"
-
-
-$empass | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString | Out-File "$($env:ProgramData)\winstall-core\empasshash"
-
-$emailFrom = Read-Host "Enter SMTP email"
-
-if(!$emailFrom)
-{
-	New-ItemProperty -Path $regPath -Name "emailFrom" -Value $emailFrom
-}
-
-if(!(Test-Path -Path "$($env:ProgramData)\winstall-core\empasshash" ))
-{	$empass = Read-Host "Enter SMTP email password"
-}
-
-$emailTo = Read-Host "Enter the receiving email"
-
 $empassFile = "$($env:ProgramData)\winstall-core\empasshash"
 
+$User = Read-Host "Enter the SMTP email account"
+
+$empass = Read-Host "Enter SMTP email password"
+
+$empass | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString | Out-File $empassFile
+
+$To = Read-Host "Enter the receiving email address"
 
 $cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $User, (Get-Content $empassFile | ConvertTo-SecureString)
 
-
-
-
-Send-MailMessage -From $emailFrom -To $emailTo -Subject "subject" -Body "body" -SmtpServer "smtp.gmail.com" -Port "587" -UseSsl -Credential $cred -DeliveryNotificationOption OnSuccess
+Send-MailMessage -From $User -To $To -Subject "subject" -Body "body" -SmtpServer "smtp.gmail.com" -Port "587" -UseSsl -Credential $cred -DeliveryNotificationOption OnSuccess
