@@ -16,16 +16,35 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }#####
-$ver = "1.0.0"
-[System.Reflection.Assembly]::LoadWithPartialName("System.windows.forms")
+$ver = "1.0.1"
+
+Write-Host "Name list format example:"
+Write-Host
+Write-Host "Firstname Lastname" -foregroundcolor yellow
+Write-Host "John Doe" -foregroundcolor yellow
+Write-Host "Jane Doe" -foregroundcolor yellow
+Write-Host
+Read-Host "Press ENTER to continue"
+
+[System.Reflection.Assembly]::LoadWithPartialName("System.windows.forms") | Out-Null
 $forfs = "OpenFileDialog"
 $filen = "FileName"
 $objForm = New-Object System.Windows.Forms.$($forfs)
 $show = $objForm.ShowDialog()
 $modPath = $objForm.$($filen)
-while($initialPassConfirm -ne "n" -and $initialPassConfirm -ne "y")
+Write-Host "Selected file containing users is:"
+	Write-Host
+	Write-Host $modPath -foregroundcolor yellow
+	Write-Host
+while($initialPassConfirm -ne "y")
 {	
 	$initialPass = Read-Host "Enter initial default password for all users"
-	Write-Host "Initial default password will be: $($initialPass)"
+	Write-Host "Initial default password will be:"
+	Write-Host
+	Write-Host $initialPass -foregroundcolor yellow
+	Write-Host
 	$initialPassConfirm = Read-Host "Is this correct? [y/n]"
-}Get-Content $modPath | ForEach-Object {$Split = $_.Split(" "); $given=$Split[0]; $sur=$Split[1]; New-ADUser -GivenName $given -Surname $sur -Name ($given + " " + $sur) -UserPrincipalName (($sur + "@" + "$env:userdnsdomain")).ToLower() -SamAccountName ($sur).ToLower() -AccountPassword (ConvertTo-SecureString -AsPlainText $initialPass -Force) -Enabled $true -ChangePasswordAtLogon $true -Verbose}
+}
+
+
+Get-Content $modPath | ForEach-Object {$Split = $_.Split(" "); $given=$Split[0]; $sur=$Split[1]; New-ADUser -GivenName $given -Surname $sur -Name ($given + " " + $sur) -UserPrincipalName (($sur + "@" + "$env:userdnsdomain")).ToLower() -SamAccountName ($sur).ToLower() -AccountPassword (ConvertTo-SecureString -AsPlainText $initialPass -Force) -Enabled $true -ChangePasswordAtLogon $false -Verbose}
