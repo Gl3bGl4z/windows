@@ -16,16 +16,15 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }#####
-$ver = "1.0.1"
-
-Write-Host "Name list format example:"
+$ver = "1.0.2"
+Write-Host "Name list format should match:"
 Write-Host
 Write-Host "Firstname Lastname" -foregroundcolor yellow
 Write-Host "John Doe" -foregroundcolor yellow
 Write-Host "Jane Doe" -foregroundcolor yellow
 Write-Host
+Write-Host "A file selection dialog will open next. Choose the file containing the names of users to be added."
 Read-Host "Press ENTER to continue"
-
 [System.Reflection.Assembly]::LoadWithPartialName("System.windows.forms") | Out-Null
 $forfs = "OpenFileDialog"
 $filen = "FileName"
@@ -33,9 +32,9 @@ $objForm = New-Object System.Windows.Forms.$($forfs)
 $show = $objForm.ShowDialog()
 $modPath = $objForm.$($filen)
 Write-Host "Selected file containing users is:"
-	Write-Host
-	Write-Host $modPath -foregroundcolor yellow
-	Write-Host
+Write-Host
+Write-Host $modPath -foregroundcolor yellow
+Write-Host
 while($initialPassConfirm -ne "y")
 {	
 	$initialPass = Read-Host "Enter initial default password for all users"
@@ -44,7 +43,4 @@ while($initialPassConfirm -ne "y")
 	Write-Host $initialPass -foregroundcolor yellow
 	Write-Host
 	$initialPassConfirm = Read-Host "Is this correct? [y/n]"
-}
-
-
-Get-Content $modPath | ForEach-Object {$Split = $_.Split(" "); $given=$Split[0]; $sur=$Split[1]; New-ADUser -GivenName $given -Surname $sur -Name ($given + " " + $sur) -UserPrincipalName (($sur + "@" + "$env:userdnsdomain")).ToLower() -SamAccountName ($given + "." + $sur).ToLower() -AccountPassword (ConvertTo-SecureString -AsPlainText $initialPass -Force) -Enabled $true -ChangePasswordAtLogon $false -Verbose}
+}Get-Content $modPath | ForEach-Object {$Split = $_.Split(" "); $given=$Split[0]; $sur=$Split[1]; New-ADUser -GivenName $given -Surname $sur -Name ($given + " " + $sur) -UserPrincipalName (($given + "." + $sur + "@" + "$env:userdnsdomain")).ToLower() -SamAccountName ($given + "." + $sur).ToLower() -AccountPassword (ConvertTo-SecureString -AsPlainText $initialPass -Force) -Enabled $true -ChangePasswordAtLogon $false -Verbose}
