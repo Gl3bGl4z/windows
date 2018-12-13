@@ -16,7 +16,9 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0.4"
+$ver = "1.0.5"
+$vssStatusConfirmed = $null
+$eventLogStatusConfirmed = $null
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2"
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId" -ErrorAction SilentlyContinue
@@ -24,7 +26,7 @@ $productname = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\Curre
 $infoMessageBody = ("###############################################`nCPU Model: " + $colItems.Name + "`nSystem: " + $productname.ProductName + $currentversion.ReleaseId + "`nHostname: " + $env:COMPUTERNAME + "`nUsername: " + $env:USERNAME + "`nDomain: " + $env:USERDNSDOMAIN + "`n###############################################")
 $empassFile = "$($env:ProgramData)\winstall-core\empasshash"
 if(!(Test-Path -Path "$($env:ProgramData)\winstall-core\" ))
-{	New-Item -Path $env:ProgramData -Name "winstall-core" -ItemType "directory" -Force #>$null 2>&1
+{	New-Item -Path $env:ProgramData -Name "winstall-core" -ItemType "directory" -Force >$null 2>&1
 }if(!(Test-Path -Path "$($env:ProgramData)\winstall-core\user" ))
 {	$user = Read-Host "Enter the SMTP email account" | Out-File "$($env:ProgramData)\winstall-core\user"
 }else
@@ -37,18 +39,21 @@ if(!(Test-Path -Path "$($env:ProgramData)\winstall-core\to" ))
 {	$to = Read-Host "Enter the receiving email address" | Out-File "$($env:ProgramData)\winstall-core\to"
 }else
 {$to = Get-Content "$($env:ProgramData)\winstall-core\to"
-}$eventLogStatus = Get-EventLog -LogName "Application" -Message "*backup*" -EntryType Error
+}$eventLogStatus = Get-EventLog -LogName "Application" -Message "*shadow*" -EntryType Error
 $vssStatus = vssadmin list writers
 if($eventLogStatus)
 {	$eventLogStatus
 	$eventLogStatusConfirmed = "True"
 	Write-Host "Event log Windows Backup abnormality detected" -foregroundcolor red
 	Write-Host
-	$errorMessageBody = ""
 	$eventRep = 0
+	$errorMessageBody = $null
 	foreach ($event in $eventLogStatus) {
-		$errorMessageBody = $errorMessageBody + ("###############################################`n" + $eventLogStatus.Source[$eventRep] + "`n" + $eventLogStatus.TimeGenerated[$eventRep] + "`n" + $eventLogStatus.Message[$eventRep] + "`n###############################################")
-		$eventRep =+ 1
+		if($eventRep -lt 5)
+		{
+			$errorMessageBody = $errorMessageBody + ("###############################################`n" + $eventLogStatus.Source[$eventRep] + "`n" + $eventLogStatus.TimeGenerated[$eventRep] + "`n" + $eventLogStatus.Message[$eventRep] + "`n###############################################")
+		}
+		$eventRep = $eventRep + 1
 	}
 	Send-MailMessage -From $user -To $to -Subject "Event log Windows Backup abnormality detected" -Body ($infoMessageBody + $errorMessageBody) -SmtpServer "smtp.gmail.com" -Port "587" -UseSsl -Credential $cred -DeliveryNotificationOption OnSuccess
 }if($vssStatus -like "*Failed*" -like "*Stuck*" -like "*Unstable*" )
