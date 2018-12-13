@@ -16,7 +16,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }#####
-$ver = "1.0.2"
+$ver = "1.0.3"
 Write-Host "Name list format should match:"
 Write-Host
 Write-Host "Firstname Lastname" -foregroundcolor yellow
@@ -43,4 +43,7 @@ while($initialPassConfirm -ne "y")
 	Write-Host $initialPass -foregroundcolor yellow
 	Write-Host
 	$initialPassConfirm = Read-Host "Is this correct? [y/n]"
-}Get-Content $modPath | ForEach-Object {$Split = $_.Split(" "); $given=$Split[0]; $sur=$Split[1]; New-ADUser -GivenName $given -Surname $sur -Name ($given + " " + $sur) -UserPrincipalName (($given + "." + $sur + "@" + "$env:userdnsdomain")).ToLower() -SamAccountName ($given + "." + $sur).ToLower() -AccountPassword (ConvertTo-SecureString -AsPlainText $initialPass -Force) -Enabled $true -ChangePasswordAtLogon $false -Verbose}
+}
+Get-Content $modPath | ForEach-Object {$Split = $_.Split(" "); $given=$Split[0]; $sur=$Split[1]; New-Item -Path ("C:\Shares\Users\" + ($given + "." + $sur).ToLower()) -ItemType "directory"}
+Get-Content $modPath | ForEach-Object {$Split = $_.Split(" "); $given=$Split[0]; $sur=$Split[1]; New-ADUser -GivenName $given -Surname $sur -Name ($given + " " + $sur) -UserPrincipalName (($given + "." + $sur + "@" + "$env:USERDNSDOMAIN")).ToLower() -SamAccountName ($given + "." + $sur).ToLower() -AccountPassword (ConvertTo-SecureString -AsPlainText $initialPass -Force) -Enabled $true -ChangePasswordAtLogon $false -HomeDrive "U:" -HomeDirectory ("\\$($env:COMPUTERNAME)\Users\" + ($given + "." + $sur).ToLower())  -Verbose}
+New-SMBShare -Name "Users" -Path "C:\Shares\Users\" #-FullAccess "home.home\Domain Users"
