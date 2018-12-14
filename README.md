@@ -28,9 +28,11 @@ Each option can be selected individually within the script
   - Download [MVPS](http://winhelp2002.mvps.org/hosts.txt) hosts file for system wide ad blocking
 ## powershell-adBatchAdd
 #### Batch add Active Directory users into a new OU named Employees and create home directories from a text file formatted like
+```
 John Snow
 Elon Musk
 Jason Bourne
+```
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/powershell-adBatchAdd.ps1'))
 ```
