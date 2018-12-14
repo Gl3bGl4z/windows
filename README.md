@@ -26,6 +26,14 @@ Each option can be selected individually within the script
   - Enable Remote Desktop Connection
   - Enable Wake On LAN
   - Download [MVPS](http://winhelp2002.mvps.org/hosts.txt) hosts file for system wide ad blocking
+## powershell-adBatchAdd
+#### Batch add Active Directory users into a new OU named Employees and create home directories from a text file formatted like
+John Snow
+Elon Musk
+Jason Bourne
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/powershell-adBatchAdd.ps1'))
+```
 ## powershell-sysInfo
 #### Run a small Windows 10 script to display important system information
 ```powershell
@@ -35,11 +43,6 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.We
 #### Installs ProcessExplorer, GeekUninstaller, and BleachBit (via [Chocolatey](https://chocolatey.org/))
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/powershell-essentialUtils.ps1'))
-```
-## powershell-adBatchAdd
-#### Batch add Active Directory users from a text file formatted by Firstname Lastname on each line
-```powershell
-Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/powershell-adBatchAdd.ps1'))
 ```
 ## powershell-benchMark
 #### Run a quick and simple Windows multi-thread benchMark
