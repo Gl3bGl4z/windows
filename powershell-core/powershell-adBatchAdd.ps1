@@ -16,7 +16,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }#####
-$ver = "1.0.3"
+$ver = "1.0.4"
 Write-Host "Name list format should match:"
 Write-Host
 Write-Host "Firstname Lastname" -foregroundcolor yellow
@@ -45,5 +45,6 @@ while($initialPassConfirm -ne "y")
 	$initialPassConfirm = Read-Host "Is this correct? [y/n]"
 }
 Get-Content $modPath | ForEach-Object {$Split = $_.Split(" "); $given=$Split[0]; $sur=$Split[1]; New-Item -Path ("C:\Shares\Users\" + ($given + "." + $sur).ToLower()) -ItemType "directory"}
-Get-Content $modPath | ForEach-Object {$Split = $_.Split(" "); $given=$Split[0]; $sur=$Split[1]; New-ADUser -GivenName $given -Surname $sur -Name ($given + " " + $sur) -UserPrincipalName (($given + "." + $sur + "@" + "$env:USERDNSDOMAIN")).ToLower() -SamAccountName ($given + "." + $sur).ToLower() -AccountPassword (ConvertTo-SecureString -AsPlainText $initialPass -Force) -Enabled $true -ChangePasswordAtLogon $false -HomeDrive "U:" -HomeDirectory ("\\$($env:COMPUTERNAME)\Users\" + ($given + "." + $sur).ToLower())  -Verbose}
-New-SMBShare -Name "Users" -Path "C:\Shares\Users\" #-FullAccess "home.home\Domain Users"
+Get-Content $modPath | ForEach-Object {$Split = $_.Split(" "); $given=$Split[0]; $sur=$Split[1]; New-ADUser -GivenName $given -Surname $sur -Name ($given + " " + $sur) -UserPrincipalName (($given + "." + $sur + "@" + "$env:USERDNSDOMAIN")).ToLower() -SamAccountName ($given + "." + $sur).ToLower() -AccountPassword (ConvertTo-SecureString -AsPlainText $initialPass -Force) -Enabled $true -ChangePasswordAtLogon $false -HomeDrive "U:" -HomeDirectory ("\\$($env:COMPUTERNAME)\" + ($given + "." + $sur).ToLower() + "$") -ScriptPath "drives.bat" -Verbose}
+Get-Content $modPath | ForEach-Object {$Split = $_.Split(" "); $given=$Split[0]; $sur=$Split[1]; New-SMBShare -Name (($given + "." + $sur).ToLower() + "$") -Path ("C:\Shares\Users\" + ($given + "." + $sur).ToLower()) -ChangeAccess ((($given + "." + $sur).ToLower() + "@" + $env:USERDNSDOMAIN))}
+Get-Content $modPath | ForEach-Object {$Split = $_.Split(" "); $given=$Split[0]; $sur=$Split[1]; $acl = Get-Acl ("C:\Shares\Users\" + ($given + "." + $sur).ToLower()); $AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule((($given + "." + $sur).ToLower() + "@" + $env:USERDNSDOMAIN),"Modify","Allow"); $acl.SetAccessRule($AccessRule); $acl | Set-Acl ("C:\Shares\Users\" + ($given + "." + $sur).ToLower())}
