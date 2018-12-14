@@ -16,7 +16,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0.5"
+$ver = "1.0.7"
 $vssStatusConfirmed = $null
 $eventLogStatusConfirmed = $null
 $strComputer = "."
@@ -39,13 +39,15 @@ if(!(Test-Path -Path "$($env:ProgramData)\winstall-core\to" ))
 {	$to = Read-Host "Enter the receiving email address" | Out-File "$($env:ProgramData)\winstall-core\to"
 }else
 {$to = Get-Content "$($env:ProgramData)\winstall-core\to"
+}if(!(Test-Path -Path "$($env:ProgramData)\winstall-core\companyName" ))
+{	$companyName = Read-Host "Enter the company name or a subject for the email" | Out-File "$($env:ProgramData)\winstall-core\companyName"
+}else
+{$companyName = Get-Content "$($env:ProgramData)\winstall-core\companyName"
 }$eventLogStatus = Get-EventLog -LogName "Application" -Message "*shadow*" -EntryType Error
 $vssStatus = vssadmin list writers
 if($eventLogStatus)
 {	$eventLogStatus
 	$eventLogStatusConfirmed = "True"
-	Write-Host "Event log Windows Backup abnormality detected" -foregroundcolor red
-	Write-Host
 	$eventRep = 0
 	$errorMessageBody = $null
 	foreach ($event in $eventLogStatus) {
@@ -55,17 +57,16 @@ if($eventLogStatus)
 		}
 		$eventRep = $eventRep + 1
 	}
-	Send-MailMessage -From $user -To $to -Subject "Event log Windows Backup abnormality detected" -Body ($infoMessageBody + $errorMessageBody) -SmtpServer "smtp.gmail.com" -Port "587" -UseSsl -Credential $cred -DeliveryNotificationOption OnSuccess
+	Send-MailMessage -From $user -To $to -Subject ("BackupCheck: " + $companyName) -Body ($infoMessageBody + $errorMessageBody) -SmtpServer "smtp.gmail.com" -Port "587" -UseSsl -Credential $cred -DeliveryNotificationOption OnSuccess
 }if($vssStatus -like "*Failed*" -like "*Stuck*" -like "*Unstable*" )
 {	$vssStatus
 	$vssStatusConfirmed = "True"
-	Write-Host "VSS Writer abnormality detected" -foregroundcolor red
-	Write-Host
-	Send-MailMessage -From $user -To $to -Subject "VSS Writer abnormality detected" -Body ($infoMessageBody + $vssStatus) -SmtpServer "smtp.gmail.com" -Port "587" -UseSsl -Credential $cred -DeliveryNotificationOption OnSuccess
-}if($vssStatusConfirmed -or $eventLogStatusConfirmed)
-{	Write-Warning "Backup errors were detected"
-	Write-Host
-}else
-{	Write-Host "No Errors detected" -foregroundcolor green
-	Write-Host
+	Send-MailMessage -From $user -To $to -Subject ("BackupCheck: " + $companyName) -Body ($infoMessageBody + $vssStatus) -SmtpServer "smtp.gmail.com" -Port "587" -UseSsl -Credential $cred -DeliveryNotificationOption OnSuccess
+}if(!(Test-Path -Path "$($env:ProgramData)\winstall-core\taskInstalled" ))
+{	$taskInstalled = Get-Content "$($env:ProgramData)\winstall-core\taskInstalled"
+}if($taskInstalled -ne "1")
+{$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument '-NoProfile -WindowStyle Hidden -command "& {iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/eventBackupErrorCheck.ps1'))}"'
+	$trigger =  New-ScheduledTaskTrigger -Daily -At 8pm
+	Register-ScheduledTask -Action $action -Trigger $trigger -TaskName "BackupCheck" -Description "Daily Backup Check"
+	$taskInstalled = "1" | Out-File "$($env:ProgramData)\winstall-core\taskInstalled"
 }
