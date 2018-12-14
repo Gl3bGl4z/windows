@@ -1,5 +1,5 @@
-# Windows 10 PowerShell Scripts
-### **Paste links into a PowerShell window**
+# Windows 10 and Windows Server PowerShell Scripts
+### **Paste links into PowerShell**
 ## powershell-setupScript
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/powershell-setupScript.ps1'))
