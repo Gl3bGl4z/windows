@@ -16,7 +16,36 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }#####
-$ver = "1.0.5"
+$ver = "1.0.6"
+$strComputer = "."
+$colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2"
+$currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId" -ErrorAction SilentlyContinue
+$productname = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ProductName" -ErrorAction SilentlyContinue
+function header
+{	Write-host " #####################################"
+	Write-Host " #                                   #"
+	Write-host " #       " -NoNewLine
+	Write-host "Active Directory Batch Add User" -foregroundcolor yellow -NoNewLine
+	Write-host "  #"
+	Write-host " #          " -NoNewLine
+	Write-host "Version: " -foregroundcolor yellow -NoNewLine
+	Write-host $ver -foregroundcolor cyan -NoNewLine
+	Write-host "           #"
+	Write-host " #                                   #"
+	Write-host " #####################################"
+	Write-host
+	Write-Host " CPU Model: " -foregroundcolor yellow -NoNewLine
+	Write-Host $colItems.Name -foregroundcolor white	
+	Write-Host " System: " -foregroundcolor yellow -NoNewLine
+	Write-Host $productname.ProductName $currentversion.ReleaseId -foregroundcolor white
+	Write-Host " PC Name: " -foregroundcolor yellow -NoNewLine
+	Write-Host $env:COMPUTERNAME -foregroundcolor white
+	Write-Host " Username: " -foregroundcolor yellow -NoNewLine
+	Write-Host $env:USERNAME -foregroundcolor white
+	Write-Host " Domain: " -foregroundcolor yellow -NoNewLine
+	Write-Host $env:USERDNSDOMAIN -foregroundcolor white
+	Write-Host
+}header
 Write-Host "Name list format should match:"
 Write-Host
 Write-Host "Firstname Lastname" -foregroundcolor yellow
