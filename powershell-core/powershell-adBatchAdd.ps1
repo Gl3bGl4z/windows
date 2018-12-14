@@ -16,7 +16,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }#####
-$ver = "1.0.4"
+$ver = "1.0.5"
 Write-Host "Name list format should match:"
 Write-Host
 Write-Host "Firstname Lastname" -foregroundcolor yellow
