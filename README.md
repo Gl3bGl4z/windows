@@ -27,7 +27,7 @@ Each option can be selected individually within the script
   - Enable Wake On LAN
   - Download [MVPS](http://winhelp2002.mvps.org/hosts.txt) hosts file for system wide ad blocking
 ## powershell-adBatchAdd
-#### Batch add Active Directory users into a new OU named Employees and create home directories from a text file formatted like
+#### Batch add Active Directory users into a new Organizational Unit named Employees and create private home directories from a text file formatted like
 ```
 John Snow
 Elon Musk
