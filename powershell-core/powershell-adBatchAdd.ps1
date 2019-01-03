@@ -16,7 +16,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }#####
-$ver = "1.0.7"
+$ver = "1.0.8"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2"
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId" -ErrorAction SilentlyContinue
@@ -49,8 +49,9 @@ function header
 Write-Host "Name list format should match:"
 Write-Host
 Write-Host "Firstname Lastname" -foregroundcolor yellow
-Write-Host "John Doe" -foregroundcolor yellow
-Write-Host "Jane Doe" -foregroundcolor yellow
+Write-Host "John Snow" -foregroundcolor yellow
+Write-Host "Elon Musk" -foregroundcolor yellow
+Write-Host "Jason Bourne" -foregroundcolor yellow
 Write-Host
 Write-Host "A file selection dialog will open next. Choose the file containing the names of users to be added."
 Read-Host "Press ENTER to continue"
@@ -72,7 +73,13 @@ while($initialPassConfirm -ne "y")
 	Write-Host $initialPass -foregroundcolor yellow
 	Write-Host
 	$initialPassConfirm = Read-Host "Is this correct? [y/n]"
-}Get-Content $modPath | ForEach-Object {$Split = $_.Split(" "); $given=$Split[0]; $sur=$Split[1]; New-Item -Path ("C:\Shares\Users\" + ($given + "." + $sur).ToLower()) -ItemType "directory"}
+}Write-Host "Drive letter U: will be used as the mapped home drive for all users"
+Write-Host "Home drive shares will be created under C:\Shares\Users\"
+Write-Host "An OU named Employees will be created and all added uses will be put in this OU"
+Write-Host "Each user will have drives.bat as their logon script"
+Write-Host
+Read-Host "The script will now run press ENTER to continue"
+Get-Content $modPath | ForEach-Object {$Split = $_.Split(" "); $given=$Split[0]; $sur=$Split[1]; New-Item -Path ("C:\Shares\Users\" + ($given + "." + $sur).ToLower()) -ItemType "directory"}
 New-ADOrganizationalUnit -Name "Employees"
 $domainName = $env:USERDNSDOMAIN.Split(".")
 Get-Content $modPath | ForEach-Object {$Split = $_.Split(" "); $given=$Split[0]; $sur=$Split[1]; New-ADUser -Path ("ou=Employees,dc=" + $domainName[0] + ",dc=" + $domainName[1]) -GivenName $given -Surname $sur -Name ($given + " " + $sur) -UserPrincipalName (($given + "." + $sur + "@" + $env:USERDNSDOMAIN)).ToLower() -SamAccountName ($given + "." + $sur).ToLower() -AccountPassword (ConvertTo-SecureString -AsPlainText $initialPass -Force) -Enabled $true -ChangePasswordAtLogon $false -HomeDrive "U:" -HomeDirectory ("\\$($env:COMPUTERNAME)\" + ($given + "." + $sur).ToLower() + "$") -ScriptPath "drives.bat" -Verbose}
