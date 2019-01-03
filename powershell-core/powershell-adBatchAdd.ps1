@@ -16,7 +16,7 @@ if($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }#####
-$ver = "1.0.8"
+$ver = "1.0.9"
 $strComputer = "."
 $colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2"
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId" -ErrorAction SilentlyContinue
@@ -24,7 +24,7 @@ $productname = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\Curre
 function header
 {	Write-host " #####################################"
 	Write-Host " #                                   #"
-	Write-host " #       " -NoNewLine
+	Write-host " #   " -NoNewLine
 	Write-host "Active Directory Batch Add User" -foregroundcolor yellow -NoNewLine
 	Write-host "  #"
 	Write-host " #          " -NoNewLine
@@ -73,7 +73,8 @@ while($initialPassConfirm -ne "y")
 	Write-Host $initialPass -foregroundcolor yellow
 	Write-Host
 	$initialPassConfirm = Read-Host "Is this correct? [y/n]"
-}Write-Host "Drive letter U: will be used as the mapped home drive for all users"
+}Write-Host
+Write-Host "Drive letter U: will be used as the mapped home drive for all users"
 Write-Host "Home drive shares will be created under C:\Shares\Users\"
 Write-Host "An OU named Employees will be created and all added uses will be put in this OU"
 Write-Host "Each user will have drives.bat as their logon script"
