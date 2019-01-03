@@ -16,7 +16,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "2.0.6"
+$ver = "2.0.7"
 if((Get-WMIObject win32_operatingsystem).name -notlike "*Windows 10*")
 {	
 	Write-Warning "Operating system is not Windows 10..."
@@ -143,7 +143,7 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 }while($confirmationpowersch -ne "n" -and $confirmationpowersch -ne "y")
 {	$confirmationpowersch = Read-Host "Set PowerScheme to maximum performance? [y/n]"
 }while($confirmationstartmenu -ne "n" -and $confirmationstartmenu -ne "y")
-{	$confirmationstartmenu = Read-Host "Unpin all startmenu and taskbar icons? [y/n]"
+{	$confirmationstartmenu = Read-Host "Unpin all StartMenu icons? [y/n]"
 	while($confirmationappremoval -ne "n" -and $confirmationappremoval -ne "y")
 	{	
 		$confirmationappremoval = Read-Host "Remove all Windows Store apps except the Calculator, Photos, StickyNotes, and the Windows Store? [y/n]"
@@ -486,27 +486,30 @@ if($confirmationappremoval -eq "y")
 }###########################################################################
 # Pinapp function
 ##########################################################################
-Write-Host "Unpinning all Start Menu apps..."	-foregroundcolor yellow
-function Pin-App
-{	param(
-	[string]$appname,
-	[switch]$unpin
-	)
-	try
-	{
-		if($unpin.IsPresent){
-			((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.replace('&','') -match 'Von "Start" lösen|Unpin from Start'} | %{$_.DoIt()}
-			return "App '$appname' unpinned from Start"
-		}
-		else
+if ($confirmationstartmenu = "y")
+{
+	Write-Host "Unpinning all StartMenu apps..."	-foregroundcolor yellow
+	function Pin-App
+	{	param(
+		[string]$appname,
+		[switch]$unpin
+		)
+		try
 		{
-			((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.replace('&','') -match 'An "Start" anheften|Pin to Start'} | %{$_.DoIt()}
-			return "App '$appname' pinned to Start"
+			if($unpin.IsPresent){
+				((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.replace('&','') -match 'Von "Start" lösen|Unpin from Start'} | %{$_.DoIt()}
+				return "App '$appname' unpinned from Start"
+			}
+			else
+			{
+				((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.replace('&','') -match 'An "Start" anheften|Pin to Start'} | %{$_.DoIt()}
+				return "App '$appname' pinned to Start"
+			}
 		}
-	}
-	catch
-	{
-		Write-Host
+		catch
+		{
+			Write-Host
+		}
 	}
 }###########################################################################
 # Unpin everything from the start menu
