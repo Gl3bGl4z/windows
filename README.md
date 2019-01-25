@@ -18,7 +18,7 @@ Each option can be selected individually within the script
   - Delete all Windows Store apps (except the Calculator, Photos, StickyNotes, and the Windows Store)
   - Install [Chocolatey](https://chocolatey.org/) and defined packages
   - Install all available [VCRedist Visual C++](https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads) versions (via Chocolatey)
-- Full
+- Advanced
   - Remove OneDrive
   - Increase wallpaper to max compression quality at no additional resource cost
   - Enable Show File Extension in File Explorer
