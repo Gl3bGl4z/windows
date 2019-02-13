@@ -46,12 +46,11 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.We
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/powershell-essentialUtils.ps1'))
 ```
-## powershell-benchMark
-#### Run a quick and simple Windows multi-thread benchMark
+## powershell-pcAudit
+#### Run a quick and simple Windows PC Audit script. This uses [ProduKey](https://www.nirsoft.net/utils/product_cd_key_viewer.html) to display installed software license keys.
 ```powershell
-Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/powershell-benchMark.ps1'))
+Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/powershell-pcAudit.ps1'))
 ```
-- Intel(R) Core(TM) i7-7700K CPU @ 4.20GHz = 1879.400024 ms
 ## powershell-wifiQr
 #### Create a iOS camera readable Wi-Fi connect QR code using information from the currently connected Wi-Fi network
 ```powershell
