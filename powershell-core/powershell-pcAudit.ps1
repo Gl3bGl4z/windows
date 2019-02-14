@@ -450,6 +450,6 @@ $url = "https://github.com/Ad3t0/windows/raw/master/powershell-core/bin/ProduKey
 				$Filename = ".\" + $Target + "_" + $date.Hour + $date.Minute + "_" + $Date.Day + "-" + $Date.Month + "-" + $Date.Year + ".htm"
 $MyReport | out-file -encoding ASCII -filepath $Filename
 $Filename = $Filename -split "\"
-Write "Audit saved as $($env:TEMP)\winstall-core$($Filename)"
+Write $Filename
 }
 Read-Host "Press ENTER to exit"
