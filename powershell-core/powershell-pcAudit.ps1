@@ -161,6 +161,9 @@ Foreach ($Target in $Targets){
 	$Keyboards = Get-WmiObject -computername $Target Win32_Keyboard
 	$SchedTasks = Get-WmiObject -computername $Target Win32_ScheduledJob
 	$BootINI = $OperatingSystems.SystemDrive + "boot.ini"
+	
+	$colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $env:COMPUTERNAME
+	
 	$RecoveryOptions = Get-WmiObject -computername $Target Win32_OSRecoveryConfiguration
 	switch ($ComputerRole){
 		"Member Workstation" { $CompType = "Computer Domain"; break }
@@ -247,6 +250,9 @@ Foreach ($Target in $Targets){
 	$MyReport += Get-HTMLDetail "Computer Role" ($ComputerRole)
 	$MyReport += Get-HTMLDetail $CompType ($ComputerSystem.Domain)
 	$MyReport += Get-HTMLDetail "Operating System" ($OperatingSystems.Caption)
+	foreach ($objItem in $colItems) {
+	$MyReport += Get-HTMLDetail "Processor Model" ($objItem.Name)
+	}
 	$MyReport += Get-HTMLDetail "Service Pack" ($OperatingSystems.CSDVersion)
 	$MyReport += Get-HTMLDetail "System Root" ($OperatingSystems.SystemDrive)
 	$MyReport += Get-HTMLDetail "Manufacturer" ($ComputerSystem.Manufacturer)
@@ -449,7 +455,6 @@ $url = "https://github.com/Ad3t0/windows/raw/master/powershell-core/bin/ProduKey
 				$Date = Get-Date
 				$Filename = ".\" + $Target + "_" + $date.Hour + $date.Minute + "_" + $Date.Day + "-" + $Date.Month + "-" + $Date.Year + ".htm"
 $MyReport | out-file -encoding ASCII -filepath $Filename
-$Filename = $Filename -split "\"
-Write $Filename
+
+Invoke-Item $Filename
 }
-Read-Host "Press ENTER to exit"
