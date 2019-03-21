@@ -21,3 +21,5 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.We
 choco feature enable -n=allowGlobalConfirmation
 choco feature disable -n=checksumFiles
 choco install procexp geekuninstaller bleachbit
+Remove-Item "$($env:USERPROFILE)\Desktop\BleachBit.lnk" >$null 2>&1
+geek

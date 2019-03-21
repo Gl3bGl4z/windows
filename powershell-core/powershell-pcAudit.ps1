@@ -446,7 +446,9 @@ $url = "https://github.com/Ad3t0/windows/raw/master/powershell-core/bin/ProduKey
 				foreach ($Key in $LKeys) {
 					$LKeysE = $LKeys[$KeyP] -split ","
 					$MyReport += Get-HTMLDetail $LKeysE[0] ($LKeysE[2])
-					$KeyP =+ 1
+					$KeyP + 1
+					$LKeys[$KeyP]
+					Write-Host $KeyP
 				}
 				$MyReport += Get-CustomHeaderClose
 				$MyReport += Get-CustomHeader0Close
@@ -455,6 +457,6 @@ $url = "https://github.com/Ad3t0/windows/raw/master/powershell-core/bin/ProduKey
 				$Date = Get-Date
 				$Filename = ".\" + $Target + "_" + $date.Hour + $date.Minute + "_" + $Date.Day + "-" + $Date.Month + "-" + $Date.Year + ".htm"
 $MyReport | out-file -encoding ASCII -filepath $Filename
-
 Invoke-Item $Filename
+Read-Host
 }
