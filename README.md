@@ -51,6 +51,11 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.We
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/powershell-pcAudit.ps1'))
 ```
+## powershell-loadTest
+#### Load bar test
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/powershell-loadTest.ps1'))
+```
 ## powershell-wifiQr
 #### Create a iOS camera readable Wi-Fi connect QR code using information from the currently connected Wi-Fi network
 ```powershell
