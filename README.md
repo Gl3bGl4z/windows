@@ -36,10 +36,10 @@ Jason Bourne
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/powershell-adBatchAdd.ps1'))
 ```
-## powershell-sysInfo
-#### Run a small Windows 10 script to display important system information
+## powershell-hOVPN
+#### Private OVPN
 ```powershell
-Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/powershell-sysInfo.ps1'))
+Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/powershell-hOVPN.ps1'))
 ```
 ## powershell-essentialUtils
 #### Installs ProcessExplorer, GeekUninstaller, and BleachBit (via [Chocolatey](https://chocolatey.org/))
