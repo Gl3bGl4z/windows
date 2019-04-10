@@ -16,12 +16,12 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0.1"
+$ver = "1.0.2"
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 choco feature enable -n=allowGlobalConfirmation
 choco feature disable -n=checksumFiles
 choco install openvpn
-
+Remove-Item "C:\Users\Public\Desktop\OpenVPN GUI.lnk"
 if(!(Test-Path -Path "$($env:TEMP)\winstall-core\" ))
 {New-Item -Path $env:TEMP -Name "winstall-core" -ItemType "directory" -Force >$null 2>&1
 }Set-Location "$($env:TEMP)\winstall-core"
