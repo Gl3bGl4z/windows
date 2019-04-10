@@ -1,7 +1,7 @@
 #############################################
-#	Title:      Windows 10 EssentialUtils   #
+#	Title:      Private OVPN			    #
 #	Creator:	Ad3t0	                    #
-#	Date:		11/07/2018             	    #
+#	Date:		04/10/2019             	    #
 #############################################
 $myWindowsID=[System.Security.Principal.WindowsIdentity]::GetCurrent()
 $myWindowsPrincipal=new-object System.Security.Principal.WindowsPrincipal($myWindowsID)
@@ -50,7 +50,7 @@ $url = "https://github.com/Ad3t0/windows/raw/master/powershell-core/bin/7z.dll"
 				Start-Sleep 10 
 			}
 			
-.\7z.exe x config.zip
-Move-Item -Path "$($env:TEMP)\winstall-core\client.ovpn" -Destination "C:\Program Files\OpenVPN\config\client.ovpn"
-cd "C:\Program Files\OpenVPN\bin\"
+			.\7z.exe x config.zip
+			Move-Item -Path "$($env:TEMP)\winstall-core\client.ovpn" -Destination "C:\Program Files\OpenVPN\config\client.ovpn"
+			cd "C:\Program Files\OpenVPN\bin\"
 .\openvpn-gui.exe
