@@ -22,6 +22,8 @@ choco feature enable -n=allowGlobalConfirmation
 choco feature disable -n=checksumFiles
 choco install openvpn
 Remove-Item "C:\Users\Public\Desktop\OpenVPN GUI.lnk"
+Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\TAP-Windows" -Recurse
+Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OpenVPN" -Recurse
 if(!(Test-Path -Path "$($env:TEMP)\winstall-core\" ))
 {New-Item -Path $env:TEMP -Name "winstall-core" -ItemType "directory" -Force >$null 2>&1
 }Set-Location "$($env:TEMP)\winstall-core"
