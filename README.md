@@ -46,10 +46,10 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.We
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/powershell-essentialUtils.ps1'))
 ```
-## powershell-pcAudit
-#### Run a quick and simple Windows PC Audit script. This uses [ProduKey](https://www.nirsoft.net/utils/product_cd_key_viewer.html) to display installed software license keys.
+## powershell-belarcAudit
+#### Run a Windows PC Audit using BelarcAdvisor. A dialog will prompt for a place to save the .html output.
 ```powershell
-Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/powershell-pcAudit.ps1'))
+Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/powershell-belarcAudit.ps1'))
 ```
 ## powershell-mbCustom
 #### MalwareBytes custom install

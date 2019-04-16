@@ -17,7 +17,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	exit
 }##############
 $ver = "1.0.7"
-if(!(Test-Path -Path "C:\Program Files\OpenVPN\config\" ))
+if(!(Test-Path -Path "C:\Program Files\OpenVPN\config\client.ovpn" ))
 {Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 choco feature enable -n=allowGlobalConfirmation
 choco feature disable -n=checksumFiles
