@@ -16,8 +16,9 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0.6"
-Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+$ver = "1.0.7"
+if(!(Test-Path -Path "C:\Program Files\OpenVPN\config\" ))
+{Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 choco feature enable -n=allowGlobalConfirmation
 choco feature disable -n=checksumFiles
 choco install openvpn megatools
@@ -27,8 +28,11 @@ Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OpenVPN" -Recu
 $user = Read-Host "Username"
 $pass = Read-Host "Password"
 megaget --path "C:\Program Files\OpenVPN\config" -u $user -p $pass "/Root/MEGAsync/VPN/Home/client.ovpn"
+Write-Host "VPN install completed exiting in 10 seconds..." -ForegroundColor Green
 .'C:\Program Files\OpenVPN\bin\openvpn-gui.exe' --connect client.ovpn
 .'C:\Windows\System32\mstsc.exe' /multimon
-Write-Host "VPN install completed exiting in 10 seconds..." -ForegroundColor Green
 Start-Sleep -s 10
-Exit
+}else
+{.'C:\Program Files\OpenVPN\bin\openvpn-gui.exe' --connect client.ovpn
+.'C:\Windows\System32\mstsc.exe' /multimon
+}Exit
