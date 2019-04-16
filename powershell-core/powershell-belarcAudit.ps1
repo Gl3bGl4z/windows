@@ -16,7 +16,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0.0"
+$ver = "1.0.1"
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 choco feature enable -n=allowGlobalConfirmation
 choco feature disable -n=checksumFiles
@@ -30,4 +30,4 @@ $modpath = $objForm.SelectedPath
 $output = "C:\Program Files (x86)\Belarc\BelarcAdvisor\System\tmp\(" + $env:COMPUTERNAME + ").html"
 while (!(Test-Path $output)) {
 	Start-Sleep 100
-}Copy-Item "C:\Program Files (x86)\Belarc\BelarcAdvisor\System\tmp\(" + $env:COMPUTERNAME + ").html" $modpath
+}Copy-Item "C:\Program Files (x86)\Belarc\BelarcAdvisor\System\tmp\(" + $env:COMPUTERNAME + ").html" -Destination $modpath
