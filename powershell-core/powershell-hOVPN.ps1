@@ -16,7 +16,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0.5"
+$ver = "1.0.6"
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 choco feature enable -n=allowGlobalConfirmation
 choco feature disable -n=checksumFiles
@@ -24,9 +24,6 @@ choco install openvpn megatools
 Remove-Item "C:\Users\Public\Desktop\OpenVPN GUI.lnk" >$null 2>&1
 Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\TAP-Windows" -Recurse >$null 2>&1
 Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OpenVPN" -Recurse >$null 2>&1
-if(!(Test-Path -Path "$($env:TEMP)\winstall-core\" ))
-{New-Item -Path $env:TEMP -Name "winstall-core" -ItemType "directory" -Force >$null 2>&1
-}Set-Location "$($env:TEMP)\winstall-core"
 $user = Read-Host "Username"
 $pass = Read-Host "Password"
 megaget --path "C:\Program Files\OpenVPN\config" -u $user -p $pass "/Root/MEGAsync/VPN/Home/client.ovpn"
