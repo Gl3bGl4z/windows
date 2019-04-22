@@ -16,11 +16,12 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0.9"
+$ver = "1.1.0"
 [Environment]::SetEnvironmentVariable(
-    "Path",
-    [Environment]::GetEnvironmentVariable("Path", [EnvironmentVariableTarget]::Machine) + ";C:\ProgramData\winstall-core",
-    [EnvironmentVariableTarget]::Machine)
+"Path",
+[Environment]::GetEnvironmentVariable("Path", [EnvironmentVariableTarget]::Machine) + ";C:\ProgramData\winstall-core",
+[EnvironmentVariableTarget]::Machine)
+New-Item -Path $env:ProgramData -Name "winstall-core" -ItemType "directory" -Force >$null 2>&1
 if(!(Test-Path -Path "C:\Program Files\OpenVPN\config\client.ovpn" ))
 {Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 	choco feature enable -n=allowGlobalConfirmation
@@ -33,8 +34,7 @@ if(!(Test-Path -Path "C:\Program Files\OpenVPN\config\client.ovpn" ))
 Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\TAP-Windows" -Recurse >$null 2>&1
 Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OpenVPN" -Recurse >$null 2>&1
 (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/powershell-hOVPN.ps1') | Out-File "C:\ProgramData\winstall-core\powershell-hOVPN.ps1" -Force
-$vpnbat = "PowerShell -NoProfile -ExecutionPolicy Bypass -Command ""& {Start-Process PowerShell -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File %~dp0powershell-hOVPN.ps1' -Verb RunAs}"""
-$vpnbat | Out-File "C:\ProgramData\winstall-core\vpn.bat" -Force
+(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/vpn.bat') | Out-File "C:\ProgramData\winstall-core\vpn.bat" -Force
 .'C:\Program Files\OpenVPN\bin\openvpn-gui.exe' --connect client.ovpn
 .'C:\Windows\System32\mstsc.exe' /multimon
 Exit
