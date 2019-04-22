@@ -21,12 +21,16 @@ $ver = "1.0.2"
 $objForm = New-Object System.Windows.Forms.FolderBrowserDialog
 $Show = $objForm.ShowDialog()
 $modpath = $objForm.SelectedPath
-Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-choco feature enable -n=allowGlobalConfirmation
-choco feature disable -n=checksumFiles
-choco install belarcadvisor autohotkey
-Remove-Item "C:\Users\Public\Desktop\Belarc Advisor.lnk" >$null 2>&1
-$output = "C:\Program Files (x86)\Belarc\BelarcAdvisor\System\tmp\($($env:COMPUTERNAME)).html"
+$belarcloc = "C:\Program Files (x86)\Belarc\BelarcAdvisor\BelarcAdvisor.exe"
+if(Test-Path $belarcloc)
+{	. $belarcloc
+}else
+{	Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+	choco feature enable -n=allowGlobalConfirmation
+	choco feature disable -n=checksumFiles
+	choco install belarcadvisor autohotkey
+	Remove-Item "C:\Users\Public\Desktop\Belarc Advisor.lnk" >$null 2>&1
+}$output = "C:\Program Files (x86)\Belarc\BelarcAdvisor\System\tmp\($($env:COMPUTERNAME)).html"
 while (!(Test-Path $output)) {
 	Start-Sleep 100
 }Copy-Item $output -Destination $modpath

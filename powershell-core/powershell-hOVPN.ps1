@@ -16,23 +16,18 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0.7"
+$ver = "1.0.8"
 if(!(Test-Path -Path "C:\Program Files\OpenVPN\config\client.ovpn" ))
 {Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-choco feature enable -n=allowGlobalConfirmation
-choco feature disable -n=checksumFiles
-choco install openvpn megatools
-Remove-Item "C:\Users\Public\Desktop\OpenVPN GUI.lnk" >$null 2>&1
+	choco feature enable -n=allowGlobalConfirmation
+	choco feature disable -n=checksumFiles
+	choco install openvpn megatools
+	$user = Read-Host "Username"
+	$pass = Read-Host "Password"
+	megaget --path "C:\Program Files\OpenVPN\config" -u $user -p $pass "/Root/MEGAsync/VPN/Home/client.ovpn"
+}Remove-Item "C:\Users\Public\Desktop\OpenVPN GUI.lnk" >$null 2>&1
 Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\TAP-Windows" -Recurse >$null 2>&1
 Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OpenVPN" -Recurse >$null 2>&1
-$user = Read-Host "Username"
-$pass = Read-Host "Password"
-megaget --path "C:\Program Files\OpenVPN\config" -u $user -p $pass "/Root/MEGAsync/VPN/Home/client.ovpn"
-Write-Host "VPN install completed exiting in 10 seconds..." -ForegroundColor Green
 .'C:\Program Files\OpenVPN\bin\openvpn-gui.exe' --connect client.ovpn
 .'C:\Windows\System32\mstsc.exe' /multimon
-Start-Sleep -s 10
-}else
-{.'C:\Program Files\OpenVPN\bin\openvpn-gui.exe' --connect client.ovpn
-.'C:\Windows\System32\mstsc.exe' /multimon
-}Exit
+Exit
