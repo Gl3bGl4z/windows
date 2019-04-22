@@ -16,7 +16,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0.2"
+$ver = "1.0.3"
 [System.Reflection.Assembly]::LoadWithPartialName("System.windows.forms") | Out-Null
 $objForm = New-Object System.Windows.Forms.FolderBrowserDialog
 $Show = $objForm.ShowDialog()
@@ -28,7 +28,7 @@ if(Test-Path $belarcloc)
 {	Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 	choco feature enable -n=allowGlobalConfirmation
 	choco feature disable -n=checksumFiles
-	choco install belarcadvisor autohotkey
+	choco install belarcadvisor
 	Remove-Item "C:\Users\Public\Desktop\Belarc Advisor.lnk" >$null 2>&1
 }$output = "C:\Program Files (x86)\Belarc\BelarcAdvisor\System\tmp\($($env:COMPUTERNAME)).html"
 while (!(Test-Path $output)) {

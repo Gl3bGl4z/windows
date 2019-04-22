@@ -26,16 +26,6 @@ Each option can be selected individually within the script
   - Enable Remote Desktop Connection
   - Enable Wake On LAN
   - Download [MVPS](http://winhelp2002.mvps.org/hosts.txt) hosts file for system wide ad blocking
-## powershell-adBatchAdd
-#### Batch add Active Directory users into a new Organizational Unit named Employees and create private home directories from a text file formatted like
-```
-John Snow
-Elon Musk
-Jason Bourne
-```
-```powershell
-Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/powershell-adBatchAdd.ps1'))
-```
 ## powershell-hOVPN
 #### Private OVPN
 ```powershell
@@ -50,6 +40,16 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.We
 #### Run a Windows PC Audit using BelarcAdvisor. A dialog will prompt for a place to save the .html output.
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/powershell-belarcAudit.ps1'))
+```
+## powershell-adBatchAdd
+#### Batch add Active Directory users into a new Organizational Unit named Employees and create private home directories from a text file formatted like
+```
+John Snow
+Elon Musk
+Jason Bourne
+```
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/powershell-adBatchAdd.ps1'))
 ```
 ## powershell-mbCustom
 #### MalwareBytes custom install
