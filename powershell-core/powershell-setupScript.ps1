@@ -16,7 +16,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "2.0.7"
+$ver = "2.0.8"
 if((Get-WMIObject win32_operatingsystem).name -notlike "*Windows 10*")
 {	
 	Write-Warning "Operating system is not Windows 10..."
@@ -51,11 +51,11 @@ function header
 	Write-Host $env:USERDNSDOMAIN -foregroundcolor white
 	Write-Host
 }header
-New-Item -Path $env:TEMP -Name "winstall-core" -ItemType "directory" -Force >$null 2>&1
-Set-Location "$($env:TEMP)\winstall-core"
-if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
+New-Item -Path $env:TEMP -Name "powershell-bin" -ItemType "directory" -Force >$null 2>&1
+Set-Location "$($env:TEMP)\powershell-bin"
+if(!(Test-Path -Path "$($env:TEMP)\powershell-bin\chocolist.txt" ))
 {	
-	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/chocolist.txt') | Out-File "$($env:TEMP)\winstall-core\chocolist.txt" -force
+	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/chocolist.txt') | Out-File "$($env:TEMP)\powershell-bin\chocolist.txt" -force
 }while($initialsetting -ne "1" -and $initialsetting -ne "2")
 {	Clear-Host
 	header
@@ -186,9 +186,9 @@ if(!(Test-Path -Path "$($env:TEMP)\winstall-core\chocolist.txt" ))
 	Write-Host "edit, save and close the file separating each package name with a semicolon"
 	Write-Host
 	Read-Host "Press ENTER to open the chocolist.txt file"
-	notepad.exe "$($env:TEMP)\winstall-core\chocolist.txt"
+	notepad.exe "$($env:TEMP)\powershell-bin\chocolist.txt"
 	Read-Host "Press ENTER to continue after the chocolist.txt file has been saved"
-}$chocolist = [IO.File]::ReadAllText("$($env:TEMP)\winstall-core\chocolist.txt")
+}$chocolist = [IO.File]::ReadAllText("$($env:TEMP)\powershell-bin\chocolist.txt")
 Write-Host
 Write-Host "Maximum PowerScheme: [$($confirmationpowersch)]"
 Write-Host "Unpin All StartMenu Icons: [$($confirmationstartmenu)]"
