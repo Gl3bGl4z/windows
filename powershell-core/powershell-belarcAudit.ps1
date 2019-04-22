@@ -16,18 +16,20 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0.1"
-Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-choco feature enable -n=allowGlobalConfirmation
-choco feature disable -n=checksumFiles
-choco install belarcadvisor
-Remove-Item "C:\Users\Public\Desktop\Belarc Advisor.lnk" >$null 2>&1
-."C:\Program Files (x86)\Belarc\BelarcAdvisor\BelarcAdvisor.exe"
+$ver = "1.0.2"
 [System.Reflection.Assembly]::LoadWithPartialName("System.windows.forms") | Out-Null
 $objForm = New-Object System.Windows.Forms.FolderBrowserDialog
 $Show = $objForm.ShowDialog()
 $modpath = $objForm.SelectedPath
-$output = "C:\Program Files (x86)\Belarc\BelarcAdvisor\System\tmp\(" + $env:COMPUTERNAME + ").html"
+Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+choco feature enable -n=allowGlobalConfirmation
+choco feature disable -n=checksumFiles
+choco install belarcadvisor autohotkey
+Remove-Item "C:\Users\Public\Desktop\Belarc Advisor.lnk" >$null 2>&1
+$output = "C:\Program Files (x86)\Belarc\BelarcAdvisor\System\tmp\($($env:COMPUTERNAME)).html"
 while (!(Test-Path $output)) {
 	Start-Sleep 100
-}Copy-Item "C:\Program Files (x86)\Belarc\BelarcAdvisor\System\tmp\(" + $env:COMPUTERNAME + ").html" -Destination $modpath
+}Copy-Item $output -Destination $modpath
+Write-Host "Audit Complete Exiting in 10 Seconds..." -ForegroundColor Green
+Start-Sleep -s 10
+Exit
