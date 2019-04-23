@@ -16,10 +16,10 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0.1"
+$ver = "1.0.2"
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 choco feature enable -n=allowGlobalConfirmation
 choco feature disable -n=checksumFiles
-choco install procexp geekuninstaller bleachbit
+choco install geekuninstaller bleachbit
 Remove-Item "$($env:USERPROFILE)\Desktop\BleachBit.lnk" >$null 2>&1
 geek

@@ -16,12 +16,10 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.1.3"
-[Environment]::SetEnvironmentVariable(
-"Path",
-[Environment]::GetEnvironmentVariable("Path", [EnvironmentVariableTarget]::Machine) + ";C:\ProgramData\powershell-bin",
-[EnvironmentVariableTarget]::Machine)
-New-Item -Path $env:ProgramData -Name "powershell-bin" -ItemType "directory" -Force >$null 2>&1
+$ver = "1.1.4"
+if($env:Path -notlike "*;C:\ProgramData\powershell-bin*")
+{	[Environment]::SetEnvironmentVariable("Path", [Environment]::GetEnvironmentVariable("Path", [EnvironmentVariableTarget]::Machine) + ";C:\ProgramData\powershell-bin", [EnvironmentVariableTarget]::Machine)
+}New-Item -Path $env:ProgramData -Name "powershell-bin" -ItemType "directory" -Force >$null 2>&1
 if(!(Test-Path -Path "C:\Program Files\OpenVPN\config\client.ovpn" ))
 {Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 	choco feature enable -n=allowGlobalConfirmation
