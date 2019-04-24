@@ -16,22 +16,24 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 } ##############
-$ver = "1.1.0"
+$ver = "1.1.1"
 $user = Read-Host "Username"
 $pass = Read-Host "Password"
 $folderOrganize = Read-Host "Enter sub-folder name"
 $output = "C:\Program Files (x86)\Belarc\BelarcAdvisor\System\tmp\($($env:COMPUTERNAME)).html"
+$belarcinstall = "C:\Program Files (x86)\Belarc\BelarcAdvisor\BelarcAdvisor.exe"
 Remove-Item $output > $null 2>&1
 Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 choco feature enable -n=allowGlobalConfirmation
 choco feature disable -n=checksumFiles
-choco install belarcadvisor megatools
-Remove-Item "C:\Users\Public\Desktop\Belarc Advisor.lnk" > $null 2>&1
-$belarcinstall = "C:\Program Files (x86)\Belarc\BelarcAdvisor\BelarcAdvisor.exe"
 if (Test-Path $belarcinstall)
-{	.$belarcinstall
-}while (!(Test-Path $output)) {
+{.$belarcinstall
+} else {
+	choco install belarcadvisor
+} choco install megatools
+Remove-Item "C:\Users\Public\Desktop\Belarc Advisor.lnk" > $null 2>&1
+while (!(Test-Path $output)) {
 	Start-Sleep 10
-}megamkdir "/Root/MEGAsync/Audit/$($folderOrganize)" -u $user -p $pass
+} megamkdir "/Root/MEGAsync/Audit/$($folderOrganize)" -u $user -p $pass
 megaput --path "/Root/MEGAsync/Audit/$($folderOrganize)" -u $user -p $pass $output
 exit
