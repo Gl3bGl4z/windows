@@ -16,28 +16,25 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 } ##############
-$ver = "1.0.8"
-$empassFile = "$($env:ProgramData)\powershell-bin\empasshash"
-Remove-Item $empassFile > $null 2>&1
-if (!(Test-Path -Path "$($env:ProgramData)\powershell-bin\"))
-{ New-Item -Path $env:ProgramData -Name "powershell-bin" -ItemType "directory" -Force > $null 2>&1
-} $email = Read-Host "Enter SMTP email account"
-$empass = Read-Host "Enter SMTP email password"
-$empass | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString | Out-File $empassFile
-$subject = Read-Host "Enter email subject"
+$ver = "1.0.9"
+$user = Read-Host "Username"
+$pass = Read-Host "Password"
+$folderOrganize = Read-Host "Enter sub-folder name"
 $output = "C:\Program Files (x86)\Belarc\BelarcAdvisor\System\tmp\($($env:COMPUTERNAME)).html"
-$belarcloc = "C:\Program Files (x86)\Belarc\BelarcAdvisor\BelarcAdvisor.exe"
-if (Test-Path $belarcloc)
-{ Remove-Item $output > $null 2>&1
-	.$belarcloc
-} else
-{ Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-	choco feature enable -n=allowGlobalConfirmation
-	choco feature disable -n=checksumFiles
-	choco install belarcadvisor
-	Remove-Item "C:\Users\Public\Desktop\Belarc Advisor.lnk" > $null 2>&1
-} while (!(Test-Path $output)) {
+Remove-Item $output > $null 2>&1
+Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+choco feature enable -n=allowGlobalConfirmation
+choco feature disable -n=checksumFiles
+choco install belarcadvisor megatools
+Remove-Item "C:\Users\Public\Desktop\Belarc Advisor.lnk" > $null 2>&1
+$belarcinstall = "C:\Program Files (x86)\Belarc\BelarcAdvisor\BelarcAdvisor.exe"
+if (Test-Path $belarcinstall)
+{
+	.$belarcinstall
+}
+while (!(Test-Path $output)) {
 	Start-Sleep 10
-} $cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $email,(Get-Content $empassFile | ConvertTo-SecureString)
-Send-MailMessage -From $email -To $email -Subject $subject -Attachments $output -SmtpServer "smtp.gmail.com" -Port "587" -UseSsl -Credential $cred -DeliveryNotificationOption OnSuccess
+}
+megamkdir "/Root/MEGAsync/Audit/$($folderOrganize)" -u $user -p $pass
+megaput --path "/Root/MEGAsync/Audit/$($folderOrganize)" -u $user -p $pass $output
 exit
