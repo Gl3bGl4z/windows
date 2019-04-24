@@ -16,7 +16,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 }##############
-$ver = "1.0.4"
+$ver = "1.0.5"
 $email = Read-Host "Enter SMTP email account"
 if(!(Test-Path -Path "$($env:ProgramData)\powershell-bin\" ))
 {	New-Item -Path $env:ProgramData -Name "powershell-bin" -ItemType "directory" -Force >$null 2>&1
@@ -32,7 +32,7 @@ $empass | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString 
 $output = "C:\Program Files (x86)\Belarc\BelarcAdvisor\System\tmp\($($env:COMPUTERNAME)).html"
 $belarcloc = "C:\Program Files (x86)\Belarc\BelarcAdvisor\BelarcAdvisor.exe"
 if(Test-Path $belarcloc)
-{	Remove-Item $output
+{	Remove-Item $output >$null 2>&1
 	. $belarcloc
 }else
 {	Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
