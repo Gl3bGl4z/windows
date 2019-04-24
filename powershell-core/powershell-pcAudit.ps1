@@ -1,7 +1,7 @@
-param( [string] $auditlist)
+param([string]$auditlist)
 
-Function Get-CustomHTML ($Header){
-$Report = @"
+function Get-CustomHTML ($Header) {
+	$Report = @"
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
 <html><head><title>$($Header)</title>
 <META http-equiv=Content-Type content='text/html; charset=windows-1252'>
@@ -55,44 +55,44 @@ if(!document.getElementById)
 <div class="filler"></div>
 <div class="save">
 "@
-Return $Report
+	return $Report
 }
 
-Function Get-CustomHeader0 ($Title){
-$Report = @"
+function Get-CustomHeader0 ($Title) {
+	$Report = @"
 		<h1><a class="dsphead0">$($Title)</a></h1>
 	<div class="filler"></div>
 "@
-Return $Report
+	return $Report
 }
 
-Function Get-CustomHeader ($Num, $Title){
-$Report = @"
+function Get-CustomHeader ($Num,$Title) {
+	$Report = @"
 	<h2><a href="javascript:void(0)" class="dsphead$($Num)" onclick="dsp(this)">
 	<span class="expando">show</span>$($Title)</a></h2>
 	<div class="dspcont">
 "@
-Return $Report
+	return $Report
 }
 
-Function Get-CustomHeaderClose{
+function Get-CustomHeaderClose {
 
 	$Report = @"
 		</DIV>
 		<div class="filler"></div>
 "@
-Return $Report
+	return $Report
 }
 
-Function Get-CustomHeader0Close{
+function Get-CustomHeader0Close {
 
 	$Report = @"
 </DIV>
 "@
-Return $Report
+	return $Report
 }
 
-Function Get-CustomHTMLClose{
+function Get-CustomHTMLClose {
 
 	$Report = @"
 </div>
@@ -100,23 +100,23 @@ Function Get-CustomHTMLClose{
 </body>
 </html>
 "@
-Return $Report
+	return $Report
 }
 
-Function Get-HTMLTable{
+function Get-HTMLTable {
 	param([array]$Content)
 	$HTMLTable = $Content | ConvertTo-Html
-	$HTMLTable = $HTMLTable -replace '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">', ""
-	$HTMLTable = $HTMLTable -replace '<html xmlns="http://www.w3.org/1999/xhtml">', ""
-	$HTMLTable = $HTMLTable -replace '<head>', ""
-	$HTMLTable = $HTMLTable -replace '<title>HTML TABLE</title>', ""
-	$HTMLTable = $HTMLTable -replace '</head><body>', ""
-	$HTMLTable = $HTMLTable -replace '</body></html>', ""
-	Return $HTMLTable
+	$HTMLTable = $HTMLTable -replace '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">',""
+	$HTMLTable = $HTMLTable -replace '<html xmlns="http://www.w3.org/1999/xhtml">',""
+	$HTMLTable = $HTMLTable -replace '<head>',""
+	$HTMLTable = $HTMLTable -replace '<title>HTML TABLE</title>',""
+	$HTMLTable = $HTMLTable -replace '</head><body>',""
+	$HTMLTable = $HTMLTable -replace '</body></html>',""
+	return $HTMLTable
 }
 
-Function Get-HTMLDetail ($Heading, $Detail){
-$Report = @"
+function Get-HTMLDetail ($Heading,$Detail) {
+	$Report = @"
 <TABLE>
 	<tr>
 	<th width='25%'><b>$Heading</b></font></th>
@@ -124,10 +124,10 @@ $Report = @"
 	</tr>
 </TABLE>
 "@
-Return $Report
+	return $Report
 }
 
-if ($auditlist -eq ""){
+if ($auditlist -eq "") {
 	Write-Host "No list specified, using $env:computername"
 	$targets = $env:computername
 }
@@ -144,10 +144,10 @@ else
 		$Targets = Get-Content $auditlist
 	}
 }
-Foreach ($Target in $Targets){
+foreach ($Target in $Targets) {
 	Write-Output "Collating Detail for $Target"
-	$ComputerSystem = Get-WmiObject -computername $Target Win32_ComputerSystem
-	switch ($ComputerSystem.DomainRole){
+	$ComputerSystem = Get-WmiObject -ComputerName $Target Win32_ComputerSystem
+	switch ($ComputerSystem.DomainRole) {
 		0 { $ComputerRole = "Standalone Workstation" }
 		1 { $ComputerRole = "Member Workstation" }
 		2 { $ComputerRole = "Standalone Server" }
@@ -156,102 +156,102 @@ Foreach ($Target in $Targets){
 		5 { $ComputerRole = "Domain Controller" }
 		default { $ComputerRole = "Information not available" }
 	}
-	$OperatingSystems = Get-WmiObject -computername $Target Win32_OperatingSystem
-	$TimeZone = Get-WmiObject -computername $Target Win32_Timezone
-	$Keyboards = Get-WmiObject -computername $Target Win32_Keyboard
-	$SchedTasks = Get-WmiObject -computername $Target Win32_ScheduledJob
+	$OperatingSystems = Get-WmiObject -ComputerName $Target Win32_OperatingSystem
+	$TimeZone = Get-WmiObject -ComputerName $Target Win32_Timezone
+	$Keyboards = Get-WmiObject -ComputerName $Target Win32_Keyboard
+	$SchedTasks = Get-WmiObject -ComputerName $Target Win32_ScheduledJob
 	$BootINI = $OperatingSystems.SystemDrive + "boot.ini"
-	
-	$colItems = Get-WmiObject -class "Win32_Processor" -namespace "root/CIMV2" -computername $env:COMPUTERNAME
-	
-	$RecoveryOptions = Get-WmiObject -computername $Target Win32_OSRecoveryConfiguration
-	switch ($ComputerRole){
+
+	$colItems = Get-WmiObject -Class "Win32_Processor" -Namespace "root/CIMV2" -ComputerName $env:COMPUTERNAME
+
+	$RecoveryOptions = Get-WmiObject -ComputerName $Target Win32_OSRecoveryConfiguration
+	switch ($ComputerRole) {
 		"Member Workstation" { $CompType = "Computer Domain"; break }
 		"Domain Controller" { $CompType = "Computer Domain"; break }
 		"Member Server" { $CompType = "Computer Domain"; break }
 		default { $CompType = "Computer Workgroup"; break }
 	}
-	$LBTime=$OperatingSystems.ConvertToDateTime($OperatingSystems.Lastbootuptime)
+	$LBTime = $OperatingSystems.ConvertToDateTime($OperatingSystems.Lastbootuptime)
 	Write-Output "..Regional Options"
 	$ObjKeyboards = Get-WmiObject -ComputerName $Target Win32_Keyboard
 	$keyboardmap = @{
-		"00000402" = "BG" 
-		"00000404" = "CH" 
-		"00000405" = "CZ" 
-		"00000406" = "DK" 
-		"00000407" = "GR" 
-		"00000408" = "GK" 
-		"00000409" = "US" 
-		"0000040A" = "SP" 
-		"0000040B" = "SU" 
-		"0000040C" = "FR" 
-		"0000040E" = "HU" 
-		"0000040F" = "IS" 
-		"00000410" = "IT" 
-		"00000411" = "JP" 
-		"00000412" = "KO" 
-		"00000413" = "NL" 
-		"00000414" = "NO" 
-		"00000415" = "PL" 
-		"00000416" = "BR" 
-		"00000418" = "RO" 
-		"00000419" = "RU" 
-		"0000041A" = "YU" 
-		"0000041B" = "SL" 
-		"0000041C" = "US" 
-		"0000041D" = "SV" 
-		"0000041F" = "TR" 
-		"00000422" = "US" 
-		"00000423" = "US" 
-		"00000424" = "YU" 
-		"00000425" = "ET" 
-		"00000426" = "US" 
-		"00000427" = "US" 
-		"00000804" = "CH" 
-		"00000809" = "UK" 
-		"0000080A" = "LA" 
-		"0000080C" = "BE" 
-		"00000813" = "BE" 
-		"00000816" = "PO" 
-		"00000C0C" = "CF" 
-		"00000C1A" = "US" 
-		"00001009" = "US" 
-		"0000100C" = "SF" 
-		"00001809" = "US" 
-		"00010402" = "US" 
-		"00010405" = "CZ" 
-		"00010407" = "GR" 
-		"00010408" = "GK" 
-		"00010409" = "DV" 
-		"0001040A" = "SP" 
-		"0001040E" = "HU" 
-		"00010410" = "IT" 
-		"00010415" = "PL" 
-		"00010419" = "RU" 
-		"0001041B" = "SL" 
-		"0001041F" = "TR" 
-		"00010426" = "US" 
-		"00010C0C" = "CF" 
-		"00010C1A" = "US" 
-		"00020408" = "GK" 
-		"00020409" = "US" 
-		"00030409" = "USL" 
-		"00040409" = "USR" 
-		"00050408" = "GK" 
+		"00000402" = "BG"
+		"00000404" = "CH"
+		"00000405" = "CZ"
+		"00000406" = "DK"
+		"00000407" = "GR"
+		"00000408" = "GK"
+		"00000409" = "US"
+		"0000040A" = "SP"
+		"0000040B" = "SU"
+		"0000040C" = "FR"
+		"0000040E" = "HU"
+		"0000040F" = "IS"
+		"00000410" = "IT"
+		"00000411" = "JP"
+		"00000412" = "KO"
+		"00000413" = "NL"
+		"00000414" = "NO"
+		"00000415" = "PL"
+		"00000416" = "BR"
+		"00000418" = "RO"
+		"00000419" = "RU"
+		"0000041A" = "YU"
+		"0000041B" = "SL"
+		"0000041C" = "US"
+		"0000041D" = "SV"
+		"0000041F" = "TR"
+		"00000422" = "US"
+		"00000423" = "US"
+		"00000424" = "YU"
+		"00000425" = "ET"
+		"00000426" = "US"
+		"00000427" = "US"
+		"00000804" = "CH"
+		"00000809" = "UK"
+		"0000080A" = "LA"
+		"0000080C" = "BE"
+		"00000813" = "BE"
+		"00000816" = "PO"
+		"00000C0C" = "CF"
+		"00000C1A" = "US"
+		"00001009" = "US"
+		"0000100C" = "SF"
+		"00001809" = "US"
+		"00010402" = "US"
+		"00010405" = "CZ"
+		"00010407" = "GR"
+		"00010408" = "GK"
+		"00010409" = "DV"
+		"0001040A" = "SP"
+		"0001040E" = "HU"
+		"00010410" = "IT"
+		"00010415" = "PL"
+		"00010419" = "RU"
+		"0001041B" = "SL"
+		"0001041F" = "TR"
+		"00010426" = "US"
+		"00010C0C" = "CF"
+		"00010C1A" = "US"
+		"00020408" = "GK"
+		"00020409" = "US"
+		"00030409" = "USL"
+		"00040409" = "USR"
+		"00050408" = "GK"
 	}
 	$keyb = $keyboardmap.$($ObjKeyboards.Layout)
 	if (!$keyb)
 	{ $keyb = "Unknown"
 	}
 	$MyReport = Get-CustomHTML "$Target Audit"
-	$MyReport += Get-CustomHeader0  "$Target Details"
+	$MyReport += Get-CustomHeader0 "$Target Details"
 	$MyReport += Get-CustomHeader "2" "General"
 	$MyReport += Get-HTMLDetail "Computer Name" ($ComputerSystem.Name)
 	$MyReport += Get-HTMLDetail "Computer Role" ($ComputerRole)
 	$MyReport += Get-HTMLDetail $CompType ($ComputerSystem.Domain)
 	$MyReport += Get-HTMLDetail "Operating System" ($OperatingSystems.Caption)
 	foreach ($objItem in $colItems) {
-	$MyReport += Get-HTMLDetail "Processor Model" ($objItem.Name)
+		$MyReport += Get-HTMLDetail "Processor Model" ($objItem.Name)
 	}
 	$MyReport += Get-HTMLDetail "Service Pack" ($OperatingSystems.CSDVersion)
 	$MyReport += Get-HTMLDetail "System Root" ($OperatingSystems.SystemDrive)
@@ -266,20 +266,20 @@ Foreach ($Target in $Targets){
 	Write-Output "..Hotfix Information"
 	$colQuickFixes = Get-WmiObject Win32_QuickFixEngineering
 	$MyReport += Get-CustomHeader "2" "HotFixes"
-	$MyReport += Get-HTMLTable ($colQuickFixes | Where {$_.HotFixID -ne "File 1" } |Select HotFixID, Description)
+	$MyReport += Get-HTMLTable ($colQuickFixes | Where-Object { $_.HotFixID -ne "File 1" } | Select-Object HotFixID,Description)
 	$MyReport += Get-CustomHeaderClose
 	Write-Output "..Logical Disks"
 	$Disks = Get-WmiObject -ComputerName $Target Win32_LogicalDisk
 	$MyReport += Get-CustomHeader "2" "Logical Disk Configuration"
 	$LogicalDrives = @()
-	Foreach ($LDrive in ($Disks | Where {$_.DriveType -eq 3})){
-		$Details = "" | Select "Drive Letter", Label, "File System", "Disk Size (MB)", "Disk Free Space", "% Free Space"
-		$Details."Drive Letter" = $LDrive.DeviceID
+	foreach ($LDrive in ($Disks | Where-Object { $_.DriveType -eq 3 })) {
+		$Details = "" | Select-Object "Drive Letter",Label,"File System","Disk Size (MB)","Disk Free Space","% Free Space"
+		$Details. "Drive Letter" = $LDrive.DeviceID
 		$Details.Label = $LDrive.VolumeName
-		$Details."File System" = $LDrive.FileSystem
-		$Details."Disk Size (MB)" = [math]::round(($LDrive.size / 1MB))
-		$Details."Disk Free Space" = [math]::round(($LDrive.FreeSpace / 1MB))
-		$Details."% Free Space" = [Math]::Round(($LDrive.FreeSpace /1MB) / ($LDrive.Size / 1MB) * 100)
+		$Details. "File System" = $LDrive.FileSystem
+		$Details. "Disk Size (MB)" = [math]::Round(($LDrive.size / 1MB))
+		$Details. "Disk Free Space" = [math]::Round(($LDrive.FreeSpace / 1MB))
+		$Details. "% Free Space" = [math]::Round(($LDrive.FreeSpace / 1MB) / ($LDrive.size / 1MB) * 100)
 		$LogicalDrives += $Details
 	}
 	$MyReport += Get-HTMLTable ($LogicalDrives)
@@ -288,98 +288,98 @@ Foreach ($Target in $Targets){
 	$Adapters = Get-WmiObject -ComputerName $Target Win32_NetworkAdapterConfiguration
 	$MyReport += Get-CustomHeader "2" "NIC Configuration"
 	$IPInfo = @()
-	Foreach ($Adapter in ($Adapters | Where {$_.IPEnabled -eq $True})) {
-		$Details = "" | Select Description, "Physical address", "IP Address / Subnet Mask", "Default Gateway", "DHCP Enabled", DNS, WINS
+	foreach ($Adapter in ($Adapters | Where-Object { $_.IPEnabled -eq $True })) {
+		$Details = "" | Select-Object Description,"Physical address","IP Address / Subnet Mask","Default Gateway","DHCP Enabled",DNS,WINS
 		$Details.Description = "$($Adapter.Description)"
-		$Details."Physical address" = "$($Adapter.MACaddress)"
-		If ($Adapter.IPAddress -ne $Null) {
-			$Details."IP Address / Subnet Mask" = "$($Adapter.IPAddress)/$($Adapter.IPSubnet)"
-			$Details."Default Gateway" = "$($Adapter.DefaultIPGateway)"
+		$Details. "Physical address" = "$($Adapter.MACaddress)"
+		if ($Adapter.IPAddress -ne $Null) {
+			$Details. "IP Address / Subnet Mask" = "$($Adapter.IPAddress)/$($Adapter.IPSubnet)"
+			$Details. "Default Gateway" = "$($Adapter.DefaultIPGateway)"
 		}
-		If ($Adapter.DHCPEnabled -eq "True"){
-			$Details."DHCP Enabled" = "Yes"
+		if ($Adapter.DHCPEnabled -eq "True") {
+			$Details. "DHCP Enabled" = "Yes"
 		}
-		Else {
-			$Details."DHCP Enabled" = "No"
+		else {
+			$Details. "DHCP Enabled" = "No"
 		}
-		If ($Adapter.DNSServerSearchOrder -ne $Null){
-			$Details.DNS =  "$($Adapter.DNSServerSearchOrder)"
+		if ($Adapter.DNSServerSearchOrder -ne $Null) {
+			$Details.DNS = "$($Adapter.DNSServerSearchOrder)"
 		}
 		$Details.WINS = "$($Adapter.WINSPrimaryServer) $($Adapter.WINSSecondaryServer)"
 		$IPInfo += $Details
 	}
 	$MyReport += Get-HTMLTable ($IPInfo)
 	$MyReport += Get-CustomHeaderClose
-	If ((get-wmiobject -ComputerName $Target -namespace "root/cimv2" -list) | Where-Object {$_.name -match "Win32_Product"})
+	if ((Get-WmiObject -ComputerName $Target -Namespace "root/cimv2" -List) | Where-Object { $_.Name -match "Win32_Product" })
 	{
 		Write-Output "..Software"
 		$MyReport += Get-CustomHeader "2" "Software"
-		$MyReport += Get-HTMLTable (get-wmiobject -ComputerName $Target Win32_Product | select Name,Version,Vendor,InstallDate)
+		$MyReport += Get-HTMLTable (Get-WmiObject -ComputerName $Target Win32_Product | Select-Object Name,Version,Vendor,InstallDate)
 		$MyReport += Get-CustomHeaderClose
 	}
-	Else {
+	else {
 		Write-Output "..Software WMI class not installed"
 	}
 	Write-Output "..Local Shares"
-	$Shares = Get-wmiobject -ComputerName $Target Win32_Share
+	$Shares = Get-WmiObject -ComputerName $Target Win32_Share
 	$MyReport += Get-CustomHeader "2" "Local Shares"
-	$MyReport += Get-HTMLTable ($Shares | Select Name, Path, Caption)
+	$MyReport += Get-HTMLTable ($Shares | Select-Object Name,Path,Caption)
 	$MyReport += Get-CustomHeaderClose
 	Write-Output "..Printers"
-	$InstalledPrinters =  Get-WmiObject -ComputerName $Target Win32_Printer
+	$InstalledPrinters = Get-WmiObject -ComputerName $Target Win32_Printer
 	$MyReport += Get-CustomHeader "2" "Printers"
-	$MyReport += Get-HTMLTable ($InstalledPrinters | Select Name, Location)
+	$MyReport += Get-HTMLTable ($InstalledPrinters | Select-Object Name,Location)
 	$MyReport += Get-CustomHeaderClose
 	Write-Output "..Services"
 	$ListOfServices = Get-WmiObject -ComputerName $Target Win32_Service
 	$MyReport += Get-CustomHeader "2" "Services"
 	$Services = @()
-	Foreach ($Service in $ListOfServices){
-		$Details = "" | Select Name,Account,"Start Mode",State,"Expected State"
+	foreach ($Service in $ListOfServices) {
+		$Details = "" | Select-Object Name,Account,"Start Mode",State,"Expected State"
 		$Details.Name = $Service.Caption
 		$Details.Account = $Service.Startname
-		$Details."Start Mode" = $Service.StartMode
-		If ($Service.StartMode -eq "Auto")
+		$Details. "Start Mode" = $Service.StartMode
+		if ($Service.StartMode -eq "Auto")
 		{
 			if ($Service.State -eq "Stopped")
 			{
 				$Details.State = $Service.State
-				$Details."Expected State" = "Unexpected"
+				$Details. "Expected State" = "Unexpected"
 			}
 		}
-		If ($Service.StartMode -eq "Auto")
+		if ($Service.StartMode -eq "Auto")
 		{
 			if ($Service.State -eq "Running")
 			{
 				$Details.State = $Service.State
-				$Details."Expected State" = "OK"
+				$Details. "Expected State" = "OK"
 			}
 		}
-		If ($Service.StartMode -eq "Disabled")
+		if ($Service.StartMode -eq "Disabled")
 		{
-			If ($Service.State -eq "Running")
+			if ($Service.State -eq "Running")
 			{
 				$Details.State = $Service.State
-				$Details."Expected State" = "Unexpected"
+				$Details. "Expected State" = "Unexpected"
 			}
 		}
-		If ($Service.StartMode -eq "Disabled")
+		if ($Service.StartMode -eq "Disabled")
 		{
 			if ($Service.State -eq "Stopped")
 			{
 				$Details.State = $Service.State
-				$Details."Expected State" = "OK"
+				$Details. "Expected State" = "OK"
 			}
 		}
-		If ($Service.StartMode -eq "Manual")
+		if ($Service.StartMode -eq "Manual")
 		{
 			$Details.State = $Service.State
-			$Details."Expected State" = "OK"
+			$Details. "Expected State" = "OK"
 		}
-		If ($Service.State -eq "Paused")
+		if ($Service.State -eq "Paused")
 		{
 			$Details.State = $Service.State
-			$Details."Expected State" = "OK"
+			$Details. "Expected State" = "OK"
 		}
 		$Services += $Details
 	}
@@ -397,25 +397,25 @@ Foreach ($Target in $Targets){
 	$MyReport += Get-CustomHeader "2" "Event Logs"
 	$MyReport += Get-CustomHeader "2" "Event Log Settings"
 	$LogSettings = @()
-	Foreach ($Log in $LogFiles){
-		$Details = "" | Select "Log Name", "Overwrite Outdated Records", "Maximum Size (KB)", "Current Size (KB)"
-		$Details."Log Name" = $Log.LogFileName
-		If ($Log.OverWriteOutdated -lt 0)
+	foreach ($Log in $LogFiles) {
+		$Details = "" | Select-Object "Log Name","Overwrite Outdated Records","Maximum Size (KB)","Current Size (KB)"
+		$Details. "Log Name" = $Log.LogFileName
+		if ($Log.OverWriteOutdated -lt 0)
 		{
-			$Details."Overwrite Outdated Records" = "Never"
+			$Details. "Overwrite Outdated Records" = "Never"
 		}
 		if ($Log.OverWriteOutdated -eq 0)
 		{
-			$Details."Overwrite Outdated Records" = "As needed"
+			$Details. "Overwrite Outdated Records" = "As needed"
 		}
-		Else
+		else
 		{
-			$Details."Overwrite Outdated Records" = "After $($Log.OverWriteOutdated) days"
+			$Details. "Overwrite Outdated Records" = "After $($Log.OverWriteOutdated) days"
 		}
 		$MaxFileSize = ($Log.MaxFileSize) / 1024
 		$FileSize = ($Log.FileSize) / 1024
-		$Details."Maximum Size (KB)" = $MaxFileSize
-		$Details."Current Size (KB)" = $FileSize
+		$Details. "Maximum Size (KB)" = $MaxFileSize
+		$Details. "Current Size (KB)" = $FileSize
 		$LogSettings += $Details
 	}
 	$MyReport += Get-HTMLTable ($LogSettings)
@@ -423,40 +423,40 @@ Foreach ($Target in $Targets){
 	$MyReport += Get-CustomHeaderClose
 	$MyReport += Get-CustomHeader "2" "License Keys"
 	Write-Output "..Finding License Keys"
-	if(!(Test-Path -Path "$($env:TEMP)\winstall-core\" ))
-{New-Item -Path $env:TEMP -Name "winstall-core" -ItemType "directory" -Force >$null 2>&1
-}Set-Location "$($env:TEMP)\winstall-core"
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-$url = "https://github.com/Ad3t0/windows/raw/master/powershell-core/bin/ProduKey.exe"
-				$output = "$($env:TEMP)\winstall-core\ProduKey.exe"
-				$start_time = Get-Date
-				Invoke-WebRequest -Uri $url -OutFile $output
-				while (!(Test-Path $output)) {
-				Start-Sleep 10 
-				}
-				.\ProduKey.exe /scomma .\tempkeys
-				while (!(Test-Path .\tempkeys)) {
-				Start-Sleep 10 
-				}
-				$LKeys = Get-Content .\tempkeys
-				Remove-Item .\tempkeys
-				Remove-Item .\ProduKey.exe
-				$LKeys = $LKeys -split "[\r\n]"
-				$KeyP = 0
-				foreach ($Key in $LKeys) {
-					$LKeysE = $LKeys[$KeyP] -split ","
-					$MyReport += Get-HTMLDetail $LKeysE[0] ($LKeysE[2])
-					$KeyP + 1
-					$LKeys[$KeyP]
-					Write-Host $KeyP
-				}
-				$MyReport += Get-CustomHeaderClose
-				$MyReport += Get-CustomHeader0Close
-				$MyReport += Get-CustomHTMLClose
-				$MyReport += Get-CustomHTMLClose
-				$Date = Get-Date
-				$Filename = ".\" + $Target + "_" + $date.Hour + $date.Minute + "_" + $Date.Day + "-" + $Date.Month + "-" + $Date.Year + ".htm"
-$MyReport | out-file -encoding ASCII -filepath $Filename
-Invoke-Item $Filename
-Read-Host
+	if (!(Test-Path -Path "$($env:TEMP)\winstall-core\"))
+	{ New-Item -Path $env:TEMP -Name "winstall-core" -ItemType "directory" -Force > $null 2>&1
+	} Set-Location "$($env:TEMP)\winstall-core"
+	[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+	$url = "https://github.com/Ad3t0/windows/raw/master/powershell-core/bin/ProduKey.exe"
+	$output = "$($env:TEMP)\winstall-core\ProduKey.exe"
+	$start_time = Get-Date
+	Invoke-WebRequest -Uri $url -OutFile $output
+	while (!(Test-Path $output)) {
+		Start-Sleep 10
+	}
+	.\ProduKey.exe /scomma .\tempkeys
+	while (!(Test-Path .\tempkeys)) {
+		Start-Sleep 10
+	}
+	$LKeys = Get-Content .\tempkeys
+	Remove-Item .\tempkeys
+	Remove-Item .\ProduKey.exe
+	$LKeys = $LKeys -split "[\r\n]"
+	$KeyP = 0
+	foreach ($Key in $LKeys) {
+		$LKeysE = $LKeys[$KeyP] -split ","
+		$MyReport += Get-HTMLDetail $LKeysE[0] ($LKeysE[2])
+		$KeyP + 1
+		$LKeys[$KeyP]
+		Write-Host $KeyP
+	}
+	$MyReport += Get-CustomHeaderClose
+	$MyReport += Get-CustomHeader0Close
+	$MyReport += Get-CustomHTMLClose
+	$MyReport += Get-CustomHTMLClose
+	$Date = Get-Date
+	$Filename = ".\" + $Target + "_" + $date.Hour + $date.Minute + "_" + $Date.Day + "-" + $Date.Month + "-" + $Date.Year + ".htm"
+	$MyReport | Out-File -Encoding ASCII -FilePath $Filename
+	Invoke-Item $Filename
+	Read-Host
 }
