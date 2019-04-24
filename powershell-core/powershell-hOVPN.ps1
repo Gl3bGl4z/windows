@@ -16,7 +16,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 } ##############
-$ver = "1.1.9"
+$ver = "1.2.0"
 $killProcess = Get-Process "openvpn-gui" -ErrorAction SilentlyContinue
 if ($killProcess) {
 	Write-Host "Killing Processes..." -ForegroundColor red
@@ -24,7 +24,7 @@ if ($killProcess) {
 	Start-Sleep -s 2
 	. 'C:\Program Files\OpenVPN\bin\openvpn-gui.exe' --command exit
 	Stop-Process -Name "mstsc"
-	Start-Sleep -s 5
+	Start-Sleep -s 3
 } else
 { if ($env:Path -notlike "*;C:\ProgramData\powershell-bin*")
 	{ [Environment]::SetEnvironmentVariable("Path",[Environment]::GetEnvironmentVariable("Path",[EnvironmentVariableTarget]::Machine) + ";C:\ProgramData\powershell-bin",[EnvironmentVariableTarget]::Machine)
@@ -34,6 +34,9 @@ if ($killProcess) {
 		choco feature enable -n=allowGlobalConfirmation
 		choco feature disable -n=checksumFiles
 		choco install openvpn megatools
+		Remove-Item "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\OpenVPN" -Recurse $null 2>&1
+		Remove-Item "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\TAP-Windows" -Recurse $null 2>&1
+		Remove-Item "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\GPG4Win" -Recurse $null 2>&1
 		$user = Read-Host "Username"
 		$pass = Read-Host "Password"
 		Clear-Host
@@ -45,5 +48,5 @@ if ($killProcess) {
 	Write-Host "Starting Processes..." -ForegroundColor green
 	. 'C:\Program Files\OpenVPN\bin\openvpn-gui.exe' --connect client.ovpn
 	. 'C:\Windows\System32\mstsc.exe' /multimon
-	Start-Sleep -s 5
+	Start-Sleep -s 3
 } exit
