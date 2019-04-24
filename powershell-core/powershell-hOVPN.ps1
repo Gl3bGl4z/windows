@@ -16,11 +16,12 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 } ##############
-$ver = "1.1.5"
+$ver = "1.1.6"
 $killProcess = Get-Process "openvpn-gui" -ErrorAction SilentlyContinue
 if ($killProcess) {
 	. 'C:\Program Files\OpenVPN\bin\openvpn-gui.exe' --command disconnect_all
 	. 'C:\Program Files\OpenVPN\bin\openvpn-gui.exe' --command exit
+	Stop-Process -Name "mstsc"
 } else
 { if ($env:Path -notlike "*;C:\ProgramData\powershell-bin*")
 	{ [Environment]::SetEnvironmentVariable("Path",[Environment]::GetEnvironmentVariable("Path",[EnvironmentVariableTarget]::Machine) + ";C:\ProgramData\powershell-bin",[EnvironmentVariableTarget]::Machine)
