@@ -16,10 +16,11 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 } ##############
-$ver = "1.2.0"
+$ver = "1.2.1"
 $killProcess = Get-Process "openvpn-gui" -ErrorAction SilentlyContinue
 if ($killProcess) {
 	Write-Host "Killing Processes..." -ForegroundColor red
+	Write-Host "Version: $($ver)" -ForegroundColor yellow
 	. 'C:\Program Files\OpenVPN\bin\openvpn-gui.exe' --command disconnect_all
 	Start-Sleep -s 2
 	. 'C:\Program Files\OpenVPN\bin\openvpn-gui.exe' --command exit
@@ -36,6 +37,7 @@ if ($killProcess) {
 		choco install openvpn megatools
 		Remove-Item "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\OpenVPN" -Recurse $null 2>&1
 		Remove-Item "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\TAP-Windows" -Recurse $null 2>&1
+		Remove-Item "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\GPG4Win" -Recurse $null 2>&1
 		Remove-Item "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\GPG4Win" -Recurse $null 2>&1
 		$user = Read-Host "Username"
 		$pass = Read-Host "Password"
@@ -46,6 +48,7 @@ if ($killProcess) {
 	Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OpenVPN" -Recurse > $null 2>&1
 	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/vpn.bat') | Out-File "C:\ProgramData\powershell-bin\vpn.bat" -Force -Encoding default
 	Write-Host "Starting Processes..." -ForegroundColor green
+	Write-Host "Version: $($ver)" -ForegroundColor yellow
 	. 'C:\Program Files\OpenVPN\bin\openvpn-gui.exe' --connect client.ovpn
 	. 'C:\Windows\System32\mstsc.exe' /multimon
 	Start-Sleep -s 3
