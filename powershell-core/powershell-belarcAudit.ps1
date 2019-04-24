@@ -16,13 +16,18 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 } ##############
-$ver = "1.1.1"
+$ver = "1.1.2"
 $user = Read-Host "Username"
 $pass = Read-Host "Password"
 $folderOrganize = Read-Host "Enter sub-folder name"
-$output = "C:\Program Files (x86)\Belarc\BelarcAdvisor\System\tmp\($($env:COMPUTERNAME)).html"
-$belarcinstall = "C:\Program Files (x86)\Belarc\BelarcAdvisor\BelarcAdvisor.exe"
-Remove-Item $output > $null 2>&1
+Clear-Host
+if ($env:PROCESSOR_ARCHITECTURE -eq "AMD64")
+{ $output = "C:\Program Files (x86)\Belarc\BelarcAdvisor\System\tmp\($($env:COMPUTERNAME)).html"
+	$belarcinstall = "C:\Program Files (x86)\Belarc\BelarcAdvisor\BelarcAdvisor.exe"
+} else
+{ $output = "C:\Program Files\Belarc\BelarcAdvisor\System\tmp\($($env:COMPUTERNAME)).html"
+	$belarcinstall = "C:\Program Files\Belarc\BelarcAdvisor\BelarcAdvisor.exe"
+} Remove-Item $output > $null 2>&1
 Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 choco feature enable -n=allowGlobalConfirmation
 choco feature disable -n=checksumFiles
