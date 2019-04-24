@@ -16,11 +16,12 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 } ##############
-$ver = "1.1.8"
+$ver = "1.1.9"
 $killProcess = Get-Process "openvpn-gui" -ErrorAction SilentlyContinue
 if ($killProcess) {
 	Write-Host "Killing Processes..." -ForegroundColor red
 	. 'C:\Program Files\OpenVPN\bin\openvpn-gui.exe' --command disconnect_all
+	Start-Sleep -s 2
 	. 'C:\Program Files\OpenVPN\bin\openvpn-gui.exe' --command exit
 	Stop-Process -Name "mstsc"
 	Start-Sleep -s 5
