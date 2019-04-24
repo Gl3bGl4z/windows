@@ -16,7 +16,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 } ##############
-$ver = "1.0.9"
+$ver = "1.1.0"
 $user = Read-Host "Username"
 $pass = Read-Host "Password"
 $folderOrganize = Read-Host "Enter sub-folder name"
@@ -29,12 +29,9 @@ choco install belarcadvisor megatools
 Remove-Item "C:\Users\Public\Desktop\Belarc Advisor.lnk" > $null 2>&1
 $belarcinstall = "C:\Program Files (x86)\Belarc\BelarcAdvisor\BelarcAdvisor.exe"
 if (Test-Path $belarcinstall)
-{
-	.$belarcinstall
-}
-while (!(Test-Path $output)) {
+{	.$belarcinstall
+}while (!(Test-Path $output)) {
 	Start-Sleep 10
-}
-megamkdir "/Root/MEGAsync/Audit/$($folderOrganize)" -u $user -p $pass
+}megamkdir "/Root/MEGAsync/Audit/$($folderOrganize)" -u $user -p $pass
 megaput --path "/Root/MEGAsync/Audit/$($folderOrganize)" -u $user -p $pass $output
 exit
