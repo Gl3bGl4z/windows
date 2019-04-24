@@ -16,7 +16,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 } ##############
-$ver = "1.0.6"
+$ver = "1.0.7"
 $empassFile = "$($env:ProgramData)\powershell-bin\empasshash"
 Remove-Item $empassFile > $null 2>&1
 if (!(Test-Path -Path "$($env:ProgramData)\powershell-bin\"))
@@ -47,8 +47,10 @@ while ($sendSuccess -ne 1) {
 		$sendSuccess = 1
 	} catch
 	{
-		Write-Host "Send failed try to input SMTP again"
-		SMTPPrompt
+		Write-Host "Send failed try to input SMTP again" -ForegroundColor red
+		$email = Read-Host "Enter SMTP email account"
+		$empass = Read-Host "Enter SMTP email password"
+		$empass | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString | Out-File $empassFile
 		$sendSuccess = 0
 	}
 } exit
