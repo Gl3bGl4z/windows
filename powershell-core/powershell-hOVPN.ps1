@@ -16,7 +16,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 } ##############
-$ver = "1.1.6"
+$ver = "1.1.7"
 $killProcess = Get-Process "openvpn-gui" -ErrorAction SilentlyContinue
 if ($killProcess) {
 	. 'C:\Program Files\OpenVPN\bin\openvpn-gui.exe' --command disconnect_all
@@ -37,7 +37,6 @@ if ($killProcess) {
 	} Remove-Item "C:\Users\Public\Desktop\OpenVPN GUI.lnk" > $null 2>&1
 	Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\TAP-Windows" -Recurse > $null 2>&1
 	Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OpenVPN" -Recurse > $null 2>&1
-	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/powershell-hOVPN.ps1') | Out-File "C:\ProgramData\powershell-bin\powershell-hOVPN.ps1" -Force -Encoding default
 	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/vpn.bat') | Out-File "C:\ProgramData\powershell-bin\vpn.bat" -Force -Encoding default
 	. 'C:\Program Files\OpenVPN\bin\openvpn-gui.exe' --connect client.ovpn
 	. 'C:\Windows\System32\mstsc.exe' /multimon
