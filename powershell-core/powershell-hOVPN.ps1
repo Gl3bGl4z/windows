@@ -16,16 +16,13 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 } ##############
-$ver = "1.2.4"
+$ver = "1.2.5"
 $killProcess = Get-Process "openvpn-gui" -ErrorAction SilentlyContinue
 if ($killProcess) {
-	Write-Host "Killing Processes..." -ForegroundColor red
-	Write-Host "Version: $($ver)" -ForegroundColor yellow
-	. 'C:\Program Files\OpenVPN\bin\openvpn-gui.exe' --command disconnect_all
-	Start-Sleep -s 10
-	. 'C:\Program Files\OpenVPN\bin\openvpn-gui.exe' --command exit
 	Stop-Process -Name "mstsc" > $null 2>&1
-	Start-Sleep -s 1
+	. 'C:\Program Files\OpenVPN\bin\openvpn-gui.exe' --command disconnect_all
+	Start-Sleep -s 25
+	. 'C:\Program Files\OpenVPN\bin\openvpn-gui.exe' --command exit
 } else
 { if ($env:Path -notlike "*;C:\ProgramData\powershell-bin*")
 	{ [Environment]::SetEnvironmentVariable("Path",[Environment]::GetEnvironmentVariable("Path",[EnvironmentVariableTarget]::Machine) + ";C:\ProgramData\powershell-bin",[EnvironmentVariableTarget]::Machine)
@@ -48,9 +45,6 @@ if ($killProcess) {
 	Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\GPG4Win" -Recurse > $null 2>&1
 	Remove-Item "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\GPG4Win" -Recurse > $null 2>&1
 	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/vpn.bat') | Out-File "C:\ProgramData\powershell-bin\vpn.bat" -Force -Encoding default
-	Write-Host "Starting Processes..." -ForegroundColor green
-	Write-Host "Version: $($ver)" -ForegroundColor yellow
 	. 'C:\Program Files\OpenVPN\bin\openvpn-gui.exe' --connect client.ovpn
 	. 'C:\Windows\System32\mstsc.exe' /multimon
-	Start-Sleep -s 2
 } exit
