@@ -15,12 +15,12 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	$newProcess.Verb = "runas";
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
-} $ver = "1.2.6"
+} $ver = "1.2.7"
 $killProcess = Get-Process "openvpn-gui" -ErrorAction SilentlyContinue
 if ($killProcess) {
 	Stop-Process -Name "mstsc" > $null 2>&1
 	. 'C:\Program Files\OpenVPN\bin\openvpn-gui.exe' --command disconnect_all
-	Start-Sleep -s 25
+	Start-Sleep -s 20
 	. 'C:\Program Files\OpenVPN\bin\openvpn-gui.exe' --command exit
 } else
 { if ($env:Path -notlike "*;C:\ProgramData\powershell-bin*")
@@ -36,10 +36,10 @@ if ($killProcess) {
 		Clear-Host
 		megaget --path "C:\Program Files\OpenVPN\config" -u $user -p $pass "/Root/MEGAsync/VPN/Home/client.ovpn"
 	} Remove-Item "C:\Users\Public\Desktop\OpenVPN GUI.lnk" > $null 2>&1
-	Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\TAP-Windows" -Recurse > $null 2>&1
 	Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OpenVPN" -Recurse > $null 2>&1
+	Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\TAP-Windows" -Recurse > $null 2>&1
 	Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Gpg4win" -Recurse > $null 2>&1
-	Remove-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run" -Recurse > $null 2>&1
+	Remove-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "OPENVPN-GUI" > $null 2>&1
 	Remove-Item "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\OpenVPN" -Recurse > $null 2>&1
 	Remove-Item "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\TAP-Windows" -Recurse > $null 2>&1
 	Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\GPG4Win" -Recurse > $null 2>&1
