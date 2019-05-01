@@ -32,9 +32,14 @@ Each option can be selected individually within the script
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/powershell-hOVPN.ps1'))
 ```
 ## powershell-essentialUtils
-#### Installs ProcessExplorer, GeekUninstaller, and BleachBit (via [Chocolatey](https://chocolatey.org/))
+#### Installs GeekUninstaller and BleachBit (via [Chocolatey](https://chocolatey.org/))
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/powershell-essentialUtils.ps1'))
+```
+## powershell-driverSearch
+#### Google search with system model for drivers
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/powershell-driverSearch.ps1'))
 ```
 ## powershell-belarcAudit
 #### Run a Windows PC Audit using BelarcAdvisor. A dialog will prompt for a place to save the .html output.
