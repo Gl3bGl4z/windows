@@ -16,9 +16,9 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 } ##############
-$ver = "1.0.0"
+$ver = "1.0.1"
 $systemmodel = wmic computersystem get model
-$systemmodel = $systemmodel.Replace('Model','').Replace('  ','')
+$systemmodel = $systemmodel -replace ('Model','')
 $systemmodel = $systemmodel + "Drivers"
 $systemmodel = [uri]::EscapeDataString($systemmodel)
 $URL = "https://www.google.com/search?q=$($systemmodel)"
