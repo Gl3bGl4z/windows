@@ -16,13 +16,13 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 } ##############
-$ver = "1.0.2"
+$ver = "1.0.3"
 $systemmodel = wmic computersystem get model
 $systemmodel = $systemmodel -replace ('Model','')
 $systemmodel = $systemmodel + "Drivers"
 $systemmodel = [uri]::EscapeDataString($systemmodel)
 $URL = "https://www.google.com/search?q=$($systemmodel)"
-$defaultbrowser = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice" -Name "Progid"
+$defaultbrowser = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice" -Name "Progid" > $null 2>&1
 if ($defaultbrowser.ProgID -like "Firefox*")
 { [System.Diagnostics.Process]::Start("firefox.exe"," $URL") | Out-Null
 } else

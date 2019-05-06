@@ -16,7 +16,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 } ##############
-$ver = "1.1.2"
+$ver = "1.1.3"
 $data = netsh wlan show interfaces | Select-String SSID
 if (!($data))
 { Write-Host "Not connected to wifi exiting..."
@@ -32,7 +32,7 @@ $matches2 = $datePattern2.Matches($data2)
 $wifikey = $matches2.Value.Split(' ')[0]
 $wifilink = "WIFI:S:$($wifiprofile);T:WPA;P:$($wifikey);;"
 $wifilink = [uri]::EscapeDataString($wifilink)
-$defaultbrowser = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice" -Name "Progid"
+$defaultbrowser = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice" -Name "Progid" > $null 2>&1
 $URL = "https://chart.googleapis.com/chart?chs=547x547&cht=qr&chld=H|4&choe=UTF-8&chl=$($wifilink)"
 if ($defaultbrowser.ProgID -like "Firefox*")
 { Write-Host
