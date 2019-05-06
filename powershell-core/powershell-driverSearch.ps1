@@ -16,7 +16,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 } ##############
-$ver = "1.0.1"
+$ver = "1.0.2"
 $systemmodel = wmic computersystem get model
 $systemmodel = $systemmodel -replace ('Model','')
 $systemmodel = $systemmodel + "Drivers"
@@ -25,8 +25,6 @@ $URL = "https://www.google.com/search?q=$($systemmodel)"
 $defaultbrowser = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice" -Name "Progid"
 if ($defaultbrowser.ProgID -like "Firefox*")
 { [System.Diagnostics.Process]::Start("firefox.exe"," $URL") | Out-Null
-} elseif ($defaultbrowser.ProgID -like "Chrome*")
-{ [System.Diagnostics.Process]::Start("chrome.exe"," $URL") | Out-Null
 } else
-{ start microsoft-edge:$($URL)
+{ [System.Diagnostics.Process]::Start("chrome.exe"," $URL") | Out-Null
 }
