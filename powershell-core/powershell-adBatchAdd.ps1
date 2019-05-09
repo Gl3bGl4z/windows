@@ -16,24 +16,25 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 } #####
-$ver = "1.0.9"
+$ver = "1.1.0"
 $strComputer = "."
 $colItems = Get-WmiObject -Class "Win32_Processor" -Namespace "root/CIMV2"
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId" -ErrorAction SilentlyContinue
 $productname = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ProductName" -ErrorAction SilentlyContinue
 function header
-{ Write-Host " #####################################"
-	Write-Host " #                                   #"
-	Write-Host " #   " -NoNewline
-	Write-Host "Active Directory Batch Add User" -ForegroundColor yellow -NoNewline
-	Write-Host "  #"
-	Write-Host " #          " -NoNewline
-	Write-Host "Version: " -ForegroundColor yellow -NoNewline
-	Write-Host $ver -ForegroundColor cyan -NoNewline
-	Write-Host "           #"
-	Write-Host " #                                   #"
-	Write-Host " #####################################"
-	Write-Host
+{ $text = @'
+     _       _ _____ _    ___
+    / \   __| |___ /| |_ / _ \
+   / _ \ / _` | |_ \| __| | | |
+  / ___ \ (_| |___) | |_| |_| |
+ /_/   \_\__,_|____/ \__|\___/
+
+ Active Directory Batch Add User	
+  
+----------------------------------------
+  
+'@
+	Write-Host $text
 	Write-Host " CPU Model: " -ForegroundColor yellow -NoNewline
 	Write-Host $colItems.Name -ForegroundColor white
 	Write-Host " System: " -ForegroundColor yellow -NoNewline
@@ -45,7 +46,11 @@ function header
 	Write-Host " Domain: " -ForegroundColor yellow -NoNewline
 	Write-Host $env:USERDNSDOMAIN -ForegroundColor white
 	Write-Host
+	Write-Host "----------------------------------------"
+	
+
 } header
+Write-Host
 Write-Host "Name list format should match:"
 Write-Host
 Write-Host "Firstname Lastname" -ForegroundColor yellow
@@ -74,7 +79,7 @@ while ($initialPassConfirm -ne "y")
 	Write-Host
 	$initialPassConfirm = Read-Host "Is this correct? [y/n]"
 } Write-Host
-Write-Host "Drive letter U: will be used as the mapped home drive for all users"
+Write-Host "Drive letter Z: will be used as the mapped home drive for all users"
 Write-Host "Home drive shares will be created under C:\Shares\Users\"
 Write-Host "An OU named Employees will be created and all added uses will be put in this OU"
 Write-Host "Each user will have drives.bat as their logon script"
@@ -83,5 +88,5 @@ Read-Host "The script will now run press ENTER to continue"
 Get-Content $modPath | ForEach-Object { $Split = $_.Split(" "); $given = $Split[0]; $sur = $Split[1]; New-Item -Path ("C:\Shares\Users\" + ($given + "." + $sur).ToLower()) -ItemType "directory" }
 New-ADOrganizationalUnit -Name "Employees" | Out-Null
 $domainName = $env:USERDNSDOMAIN.Split(".")
-Get-Content $modPath | ForEach-Object { $Split = $_.Split(" "); $given = $Split[0]; $sur = $Split[1]; New-ADUser -Path ("ou=Employees,dc=" + $domainName[0] + ",dc=" + $domainName[1]) -GivenName $given -Surname $sur -Name ($given + " " + $sur) -UserPrincipalName (($given + "." + $sur + "@" + $env:USERDNSDOMAIN)).ToLower() -SamAccountName ($given + "." + $sur).ToLower() -AccountPassword (ConvertTo-SecureString -AsPlainText $initialPass -Force) -Enabled $true -ChangePasswordAtLogon $false -HomeDrive "U:" -HomeDirectory ("\\$($env:COMPUTERNAME)\" + ($given + "." + $sur).ToLower() + "$") -ScriptPath "drives.bat" -Verbose }
+Get-Content $modPath | ForEach-Object { $Split = $_.Split(" "); $given = $Split[0]; $sur = $Split[1]; New-ADUser -Path ("ou=Employees,dc=" + $domainName[0] + ",dc=" + $domainName[1]) -GivenName $given -Surname $sur -Name ($given + " " + $sur) -UserPrincipalName (($given + "." + $sur + "@" + $env:USERDNSDOMAIN)).ToLower() -SamAccountName ($given + "." + $sur).ToLower() -AccountPassword (ConvertTo-SecureString -AsPlainText $initialPass -Force) -Enabled $true -ChangePasswordAtLogon $false -HomeDrive "Z:" -HomeDirectory ("\\$($env:COMPUTERNAME)\" + ($given + "." + $sur).ToLower() + "$") -ScriptPath "drives.bat" -Verbose }
 Get-Content $modPath | ForEach-Object { $Split = $_.Split(" "); $given = $Split[0]; $sur = $Split[1]; New-SmbShare -Name (($given + "." + $sur).ToLower() + "$") -Path ("C:\Shares\Users\" + ($given + "." + $sur).ToLower()) -ChangeAccess ((($given + "." + $sur).ToLower() + "@" + $env:USERDNSDOMAIN)) }

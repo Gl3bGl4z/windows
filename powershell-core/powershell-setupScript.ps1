@@ -16,7 +16,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 } ##############
-$ver = "2.0.8"
+$ver = "2.0.9"
 if ((Get-WmiObject win32_operatingsystem).Name -notlike "*Windows 10*")
 {
 	Write-Warning "Operating system is not Windows 10..."
@@ -27,18 +27,19 @@ $colItems = Get-WmiObject -Class "Win32_Processor" -Namespace "root/CIMV2"
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId" -ErrorAction SilentlyContinue
 $productname = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ProductName" -ErrorAction SilentlyContinue
 function header
-{ Write-Host " #####################################"
-	Write-Host " #                                   #"
-	Write-Host " #       " -NoNewline
-	Write-Host "Windows 10 Setup Script" -ForegroundColor yellow -NoNewline
-	Write-Host "     #"
-	Write-Host " #          " -NoNewline
-	Write-Host "Version: " -ForegroundColor yellow -NoNewline
-	Write-Host $ver -ForegroundColor cyan -NoNewline
-	Write-Host "           #"
-	Write-Host " #                                   #"
-	Write-Host " #####################################"
-	Write-Host
+{ $text = @'
+     _       _ _____ _    ___
+    / \   __| |___ /| |_ / _ \
+   / _ \ / _` | |_ \| __| | | |
+  / ___ \ (_| |___) | |_| |_| |
+ /_/   \_\__,_|____/ \__|\___/
+
+    Windows 10 Setup Script
+  
+----------------------------------------
+  
+'@
+	Write-Host $text
 	Write-Host " CPU Model: " -ForegroundColor yellow -NoNewline
 	Write-Host $colItems.Name -ForegroundColor white
 	Write-Host " System: " -ForegroundColor yellow -NoNewline
@@ -66,80 +67,12 @@ if (!(Test-Path -Path "$($env:TEMP)\powershell-bin\chocolist.txt"))
 			Write-Warning "Invalid option"
 		}
 	}
-	Write-Host "  ----------------------------------------"
+	Write-Host "----------------------------------------"
+	Write-Host
 	Write-Host " 1 - Basic"
 	Write-Host " 2 - Advanced"
 	Write-Host
 	$initialsetting = Read-Host -Prompt "Input option"
-} if (!$env:USERDNSDOMAIN)
-{ while ($confirmationrename -ne "n" -and $confirmationrename -ne "y")
-	{
-		if ($initialsetting -eq "2")
-		{
-			$confirmationrename = "y"
-		}
-		$confirmationrename = Read-Host "Rename this PC? [y/n]"
-		if ($confirmationrename -eq "y")
-		{
-			while ((![string]::IsNullOrEmpty($pcname)) -ne $true)
-			{
-				$pcname = Read-Host "Type the new name for this PC"
-				Rename-Computer -NewName $pcname
-			}
-		}
-	} while ($confirmationdomainjoin -ne "n" -and $confirmationdomainjoin -ne "y")
-	{ $confirmationdomainjoin = Read-Host "Join PC to domain? [y/n]"
-	} if ($confirmationdomainjoin -eq "y")
-	{ while ($confirmationdomainjoin2 -ne "n")
-		{
-			try
-			{
-				$fqdn = Read-Host "Enter the domain controller FQDN for the domain"
-				if ($fqdn -notlike "*.*")
-				{
-					Write-Error "Invalid domain controller FQDN"
-				}
-				$dn = $fqdn.Substring($fqdn.IndexOf(".") + 1)
-				Write-Host "Test ping domain controller FQDN..."
-				if (Test-Connection -ComputerName $fqdn -Quiet)
-				{
-					Write-Host "Domain controller FQDN ping successful" -ForegroundColor green
-					Add-Computer -DomainName $fqdn
-					$confirmationdomainjoin2 = "n"
-				}
-				else
-				{
-					Write-Host "Domain controller FQDN ping unsuccessful" -ForegroundColor red
-
-					while ($confirmationmanconfig -ne "n" -and $confirmationmanconfig -ne "y")
-					{
-						$confirmationmanconfig = Read-Host "Manually configure DNS? Answering no will skip domain join. [y/n]"
-					}
-					if ($confirmationmanconfig -eq "y")
-					{
-						$confirmationdomainjoin2 = "n"
-						[ipaddress]$serverip = Read-Host "Enter the IP address of the DNS server for manual configuration"
-						$adap = Get-NetAdapter
-						$adapter = $adap.ifIndex | Select-Object -Last 1
-						Set-DnsClientServerAddress -InterfaceIndex $adapter -ServerAddresses ($serverip,"1.1.1.1")
-						Add-Computer -DomainName $dn
-
-					}
-					else
-					{
-						$confirmationdomainjoin2 = "n"
-						Write-Host "Skipping domain join..." -ForegroundColor yellow
-					}
-				}
-
-			}
-			catch
-			{
-				$confirmationdomainjoin2 = ""
-				$confirmationdomainjoin2 = Read-Host "Domain join failed or DNS IP address invalid. Retry domain join? Answering no will skip domain join. [y/n]"
-			}
-		}
-	}
 } while ($confirmationpowersch -ne "n" -and $confirmationpowersch -ne "y")
 { $confirmationpowersch = Read-Host "Set PowerScheme to maximum performance? [y/n]"
 } while ($confirmationstartmenu -ne "n" -and $confirmationstartmenu -ne "y")
@@ -225,16 +158,10 @@ if ($confirmationpcdiscover -eq "y")
 # Change Windows PowerScheme to maximum performance
 ##########################################################################
 if ($confirmationpowersch -eq "y")
-{ $psguid = 'e9a42b02-d5df-448d-aa00-03f14749eb61'
-	$currScheme = POWERCFG -GETACTIVESCHEME
-	$cscheme = $currScheme.Split()
-	if ($cscheme[3] -eq $psguid) {
-		Write-Host -ForegroundColor yellow "Already set to the correct PowerScheme settings skipping..."
-	} else {
-		Write-Warning "Lower PowerScheme detected, changing PowerScheme to maximum performance..."
-		POWERCFG -SetActive $psguid
-		Write-Host -ForegroundColor Green "PowerScheme Successfully Applied"
-	}
+{ $currScheme = powercfg /LIST | Select-String "High performance"
+	$currScheme = $currScheme -split (" ")
+	$currScheme[3]
+	powercfg -SetActive $currScheme[3]
 } ###########################################################################
 # Chocolatey install
 ##########################################################################
