@@ -16,7 +16,20 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 } ##############
-$ver = "1.0.3"
+$ver = "1.0.4"
+$text = @'
+     _       _ _____ _    ___
+    / \   __| |___ /| |_ / _ \
+   / _ \ / _` | |_ \| __| | | |
+  / ___ \ (_| |___) | |_| |_| |
+ /_/   \_\__,_|____/ \__|\___/
+
+    Essential Utilities
+  
+----------------------------------------
+  
+'@
+Write-Host $text
 Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 choco feature enable -n=allowGlobalConfirmation
 choco feature disable -n=checksumFiles

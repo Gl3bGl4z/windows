@@ -16,7 +16,20 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 } ##############
-$ver = "1.1.2"
+$ver = "1.1.3"
+$text = @'
+     _       _ _____ _    ___
+    / \   __| |___ /| |_ / _ \
+   / _ \ / _` | |_ \| __| | | |
+  / ___ \ (_| |___) | |_| |_| |
+ /_/   \_\__,_|____/ \__|\___/
+
+    Belarc Audit Upload
+  
+----------------------------------------
+  
+'@
+Write-Host $text
 $user = Read-Host "Username"
 $pass = Read-Host "Password"
 $folderOrganize = Read-Host "Enter sub-folder name"

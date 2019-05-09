@@ -15,7 +15,20 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	$newProcess.Verb = "runas";
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
-} $ver = "1.2.8"
+} $ver = "1.2.9"
+$text = @'
+     _       _ _____ _    ___
+    / \   __| |___ /| |_ / _ \
+   / _ \ / _` | |_ \| __| | | |
+  / ___ \ (_| |___) | |_| |_| |
+ /_/   \_\__,_|____/ \__|\___/
+
+    VPN Setup Script
+  
+----------------------------------------
+  
+'@
+$text
 $killProcess = Get-Process "openvpn-gui" -ErrorAction SilentlyContinue
 if ($killProcess) {
 	Stop-Process -Name "mstsc" > $null 2>&1

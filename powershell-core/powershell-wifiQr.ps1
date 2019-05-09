@@ -16,7 +16,20 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 } ##############
-$ver = "1.1.5"
+$ver = "1.1.6"
+$text = @'
+     _       _ _____ _    ___
+    / \   __| |___ /| |_ / _ \
+   / _ \ / _` | |_ \| __| | | |
+  / ___ \ (_| |___) | |_| |_| |
+ /_/   \_\__,_|____/ \__|\___/
+
+    WiFi QR Code Generator
+  
+----------------------------------------
+  
+'@
+Write-Host $text
 $data = netsh wlan show interfaces | Select-String SSID
 if (!($data))
 { Write-Host "Not connected to wifi exiting..."
