@@ -24,10 +24,7 @@ $text = @'
   / ___ \ (_| |___) | |_| |_| |
  /_/   \_\__,_|____/ \__|\___/
 
-    Essential Utilities
-  
-----------------------------------------
-  
+    Essential Utilities 
 '@
 Write-Host $text
 Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))

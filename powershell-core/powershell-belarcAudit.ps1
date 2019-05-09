@@ -25,9 +25,6 @@ $text = @'
  /_/   \_\__,_|____/ \__|\___/
 
     Belarc Audit Upload
-  
-----------------------------------------
-  
 '@
 Write-Host $text
 $user = Read-Host "Username"

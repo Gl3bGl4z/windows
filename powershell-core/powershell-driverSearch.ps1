@@ -12,9 +12,6 @@ $text = @'
  /_/   \_\__,_|____/ \__|\___/
 
     Driver Update Google
-  
-----------------------------------------
-  
 '@
 Write-Host $text
 $systemmodel = wmic computersystem get model /VALUE

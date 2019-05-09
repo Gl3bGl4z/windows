@@ -25,9 +25,6 @@ $text = @'
  /_/   \_\__,_|____/ \__|\___/
 
     WiFi QR Code Generator
-  
-----------------------------------------
-  
 '@
 Write-Host $text
 $data = netsh wlan show interfaces | Select-String SSID
