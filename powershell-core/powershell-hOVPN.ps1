@@ -15,7 +15,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	$newProcess.Verb = "runas";
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
-} $ver = "1.3.2"
+} $ver = "1.3.3"
 $text = @'
      _       _ _____ _    ___
     / \   __| |___ /| |_ / _ \
@@ -62,10 +62,10 @@ if ($killProcess) {
 	Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\GPG4Win" -Recurse > $null 2>&1
 	Remove-Item "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\GPG4Win" -Recurse > $null 2>&1
 	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/vpn.bat') | Out-File "C:\ProgramData\powershell-bin\vpn.bat" -Force -Encoding default
-	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/vpn.ahk') | Out-File "$($env:USERPROFILE)\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\vpn.ahk" -Force -Encoding default
+	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/hkeys.ahk') | Out-File "$($env:USERPROFILE)\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\hkeys.ahk" -Force -Encoding default
 	$ahkProcess = Get-Process "AutoHotkey" -ErrorAction SilentlyContinue
 	if (!$ahkProcess) {
-		. "$($env:USERPROFILE)\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\vpn.ahk"
+		. "$($env:USERPROFILE)\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\hkeys.ahk"
 	}
 	. 'C:\Program Files\OpenVPN\bin\openvpn-gui.exe' --connect client.ovpn
 	. 'C:\Windows\System32\mstsc.exe' /multimon

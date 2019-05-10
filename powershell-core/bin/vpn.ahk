@@ -1,3 +1,0 @@
-#NoTrayIcon
-^!\::
-run vpn.bat

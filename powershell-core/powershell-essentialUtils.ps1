@@ -16,7 +16,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
 } ##############
-$ver = "1.0.4"
+$ver = "1.0.5"
 $text = @'
      _       _ _____ _    ___
     / \   __| |___ /| |_ / _ \
@@ -30,6 +30,11 @@ Write-Host $text
 Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 choco feature enable -n=allowGlobalConfirmation
 choco feature disable -n=checksumFiles
-choco install bleachbit geekuninstaller
+choco install bleachbit geekuninstaller autohotkey
+(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/hkeys.ahk') | Out-File "$($env:USERPROFILE)\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\hkeys.ahk" -Force -Encoding default
+$ahkProcess = Get-Process "AutoHotkey" -ErrorAction SilentlyContinue
+if (!$ahkProcess) {
+	. "$($env:USERPROFILE)\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\hkeys.ahk"
+}
 Remove-Item "$($env:USERPROFILE)\Desktop\BleachBit.lnk" > $null 2>&1
 geek
