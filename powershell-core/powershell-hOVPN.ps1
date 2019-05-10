@@ -15,26 +15,28 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	$newProcess.Verb = "runas";
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
-} $ver = "1.3.0"
+} $ver = "1.3.1"
 $text = @'
      _       _ _____ _    ___
     / \   __| |___ /| |_ / _ \
    / _ \ / _` | |_ \| __| | | |
   / ___ \ (_| |___) | |_| |_| |
  /_/   \_\__,_|____/ \__|\___/
-
+ 
     VPN Setup Script
 '@
 $text
 $killProcess = Get-Process "openvpn-gui" -ErrorAction SilentlyContinue
 if ($killProcess) {
 	Stop-Process -Name "mstsc" > $null 2>&1
+	Write-Host "Stopping VPN Processes..." -ForegroundColor Yellow
 	. 'C:\Program Files\OpenVPN\bin\openvpn-gui.exe' --command disconnect_all
 	Start-Sleep -s 20
 	. 'C:\Program Files\OpenVPN\bin\openvpn-gui.exe' --command exit
 } else
 { if ($env:Path -notlike "*;C:\ProgramData\powershell-bin*")
-	{ [Environment]::SetEnvironmentVariable("Path",[Environment]::GetEnvironmentVariable("Path",[EnvironmentVariableTarget]::Machine) + ";C:\ProgramData\powershell-bin",[EnvironmentVariableTarget]::Machine)
+	{ Write-Host "Starting VPN Processes..." -ForegroundColor Yellow
+		[Environment]::SetEnvironmentVariable("Path",[Environment]::GetEnvironmentVariable("Path",[EnvironmentVariableTarget]::Machine) + ";C:\ProgramData\powershell-bin",[EnvironmentVariableTarget]::Machine)
 	} New-Item -Path $env:ProgramData -Name "powershell-bin" -ItemType "directory" -Force > $null 2>&1
 	if (!(Test-Path -Path "C:\Program Files\OpenVPN\config\client.ovpn"))
 	{ $user = Read-Host "Username"
@@ -56,6 +58,10 @@ if ($killProcess) {
 	Remove-Item "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\GPG4Win" -Recurse > $null 2>&1
 	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/vpn.bat') | Out-File "C:\ProgramData\powershell-bin\vpn.bat" -Force -Encoding default
 	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/vpn.ahk') | Out-File "$($env:USERPROFILE)\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\vpn.ahk" -Force -Encoding default
+	$ahkProcess = Get-Process "AutoHotkey" -ErrorAction SilentlyContinue
+	if (!$ahkProcess) {
+		. "$($env:USERPROFILE)\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\vpn.ahk"
+	}
 	. 'C:\Program Files\OpenVPN\bin\openvpn-gui.exe' --connect client.ovpn
 	. 'C:\Windows\System32\mstsc.exe' /multimon
-} exit
+}
