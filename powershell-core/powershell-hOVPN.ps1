@@ -15,7 +15,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	$newProcess.Verb = "runas";
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
-} $ver = "1.3.1"
+} $ver = "1.3.2"
 $text = @'
      _       _ _____ _    ___
     / \   __| |___ /| |_ / _ \
@@ -45,9 +45,14 @@ if ($killProcess) {
 		Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 		choco feature enable -n=allowGlobalConfirmation
 		choco feature disable -n=checksumFiles
-		choco install openvpn megatools autohotkey
+		choco install openvpn megatools
 		megaget --path "C:\Program Files\OpenVPN\config" -u $user -p $pass "/Root/MEGAsync/VPN/Home/client.ovpn"
-	} Remove-Item "C:\Users\Public\Desktop\OpenVPN GUI.lnk" > $null 2>&1
+	}
+	if (!(Test-Path -Path "C:\Program Files\AutoHotkey\AutoHotkey.exe"))
+	{
+		choco install autohotkey
+	}
+	Remove-Item "C:\Users\Public\Desktop\OpenVPN GUI.lnk" > $null 2>&1
 	Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OpenVPN" -Recurse > $null 2>&1
 	Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\TAP-Windows" -Recurse > $null 2>&1
 	Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Gpg4win" -Recurse > $null 2>&1
