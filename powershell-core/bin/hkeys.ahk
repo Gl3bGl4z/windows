@@ -7,3 +7,6 @@ run vpn.bat
 return
 ^!3::
 run control system
+return
+^!4::
+run mstsc
