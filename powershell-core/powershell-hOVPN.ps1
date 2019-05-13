@@ -46,9 +46,9 @@ if ($killProcess) {
 		$pass = Read-Host "Password"
 		Clear-Host
 		Write-Host $text1
-Write-Host $text2 -ForegroundColor Yellow
-Write-Host $text3 -ForegroundColor Gray -NoNewline
-Write-Host $ver -ForegroundColor Green
+		Write-Host $text2 -ForegroundColor Yellow
+		Write-Host $text3 -ForegroundColor Gray -NoNewline
+		Write-Host $ver -ForegroundColor Green
 		Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 		choco feature enable -n=allowGlobalConfirmation
 		choco feature disable -n=checksumFiles
