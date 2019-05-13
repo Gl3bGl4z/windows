@@ -15,15 +15,14 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	$newProcess.Verb = "runas";
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
-} $ver = "1.3.4"
+} $ver = "1.3.5"
 $text = @'
      _       _ _____ _    ___
     / \   __| |___ /| |_ / _ \
    / _ \ / _` | |_ \| __| | | |
   / ___ \ (_| |___) | |_| |_| |
  /_/   \_\__,_|____/ \__|\___/
- 
-    VPN Setup Script
+       VPN Setup Script
 '@
 $text
 $killProcess = Get-Process "openvpn-gui" -ErrorAction SilentlyContinue
@@ -65,7 +64,11 @@ if ($killProcess) {
 	Remove-Item "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\GPG4Win" -Recurse > $null 2>&1
 	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/vpn.bat') | Out-File "C:\ProgramData\powershell-bin\vpn.bat" -Force -Encoding default
 	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/hkeys.ahk') | Out-File "C:\ProgramData\powershell-bin\hkeys.ahk" -Force -Encoding default
-	schtasks /Create /SC ONLOGON /TN hkeys /TR "C:\ProgramData\powershell-bin\hkeys.ahk" /RL HIGHEST
+	$taskQ = schtasks /Query /TN hkeys
+	if ($taskQ -notlike "*ERROR*")
+	{
+		schtasks /Create /SC ONLOGON /TN hkeys /TR "C:\ProgramData\powershell-bin\hkeys.ahk" /RL HIGHEST
+	}
 	$ahkProcess = Get-Process "AutoHotkey" -ErrorAction SilentlyContinue
 	if (!$ahkProcess) {
 		. "C:\ProgramData\powershell-bin\hkeys.ahk"
