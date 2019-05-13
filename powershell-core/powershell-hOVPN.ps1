@@ -15,7 +15,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	$newProcess.Verb = "runas";
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
-} $ver = "1.3.7"
+} $ver = "1.3.8"
 $text1 = @'
      _       _ _____ _    ___
     / \   __| |___ /| |_ / _ \
@@ -63,6 +63,7 @@ if ($killProcess) {
 	Remove-Item "$($env:ProgramData)\Microsoft\Windows\Start Menu\Programs\OpenVPN" -Recurse > $null 2>&1
 	Remove-Item "$($env:ProgramData)\Microsoft\Windows\Start Menu\Programs\TAP-Windows" -Recurse > $null 2>&1
 	Remove-Item "$($env:ProgramData)\Microsoft\Windows\Start Menu\Programs\Gpg4win" -Recurse > $null 2>&1
+	Remove-Item "$($env:ProgramData)\Microsoft\Windows\Start Menu\Programs\AutoHotkey" -Recurse > $null 2>&1
 	Remove-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "OPENVPN-GUI" > $null 2>&1
 	Remove-Item "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\OpenVPN" -Recurse > $null 2>&1
 	Remove-Item "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\TAP-Windows" -Recurse > $null 2>&1
