@@ -15,7 +15,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	$newProcess.Verb = "runas";
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
-} $ver = "1.3.3"
+} $ver = "1.3.4"
 $text = @'
      _       _ _____ _    ___
     / \   __| |___ /| |_ / _ \
@@ -42,6 +42,7 @@ if ($killProcess) {
 	{ $user = Read-Host "Username"
 		$pass = Read-Host "Password"
 		Clear-Host
+		$text
 		Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 		choco feature enable -n=allowGlobalConfirmation
 		choco feature disable -n=checksumFiles
@@ -52,6 +53,7 @@ if ($killProcess) {
 	{
 		choco install autohotkey
 	}
+	Remove-Item "$($env:USERPROFILE)\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\hkeys.ahk" > $null 2>&1
 	Remove-Item "C:\Users\Public\Desktop\OpenVPN GUI.lnk" > $null 2>&1
 	Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OpenVPN" -Recurse > $null 2>&1
 	Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\TAP-Windows" -Recurse > $null 2>&1
@@ -62,10 +64,11 @@ if ($killProcess) {
 	Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\GPG4Win" -Recurse > $null 2>&1
 	Remove-Item "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\GPG4Win" -Recurse > $null 2>&1
 	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/vpn.bat') | Out-File "C:\ProgramData\powershell-bin\vpn.bat" -Force -Encoding default
-	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/hkeys.ahk') | Out-File "$($env:USERPROFILE)\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\hkeys.ahk" -Force -Encoding default
+	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/hkeys.ahk') | Out-File "C:\ProgramData\powershell-bin\hkeys.ahk" -Force -Encoding default
+	schtasks /Create /SC ONLOGON /TN hkeys /TR "C:\ProgramData\powershell-bin\hkeys.ahk" /RL HIGHEST
 	$ahkProcess = Get-Process "AutoHotkey" -ErrorAction SilentlyContinue
 	if (!$ahkProcess) {
-		. "$($env:USERPROFILE)\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\hkeys.ahk"
+		. "C:\ProgramData\powershell-bin\hkeys.ahk"
 	}
 	. 'C:\Program Files\OpenVPN\bin\openvpn-gui.exe' --connect client.ovpn
 	. 'C:\Windows\System32\mstsc.exe' /multimon
