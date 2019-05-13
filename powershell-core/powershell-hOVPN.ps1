@@ -15,7 +15,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	$newProcess.Verb = "runas";
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
-} $ver = "1.3.8"
+} $ver = "1.3.9"
 $text1 = @'
      _       _ _____ _    ___
     / \   __| |___ /| |_ / _ \
@@ -23,7 +23,7 @@ $text1 = @'
   / ___ \ (_| |___) | |_| |_| |
  /_/   \_\__,_|____/ \__|\___/
 '@
-$text2 = '       VPN Setup Script'
+$text2 = "       VPN Setup Script"
 $text3 = "        Version: "
 Write-Host $text1
 Write-Host $text2 -ForegroundColor Yellow
@@ -32,9 +32,9 @@ Write-Host $ver -ForegroundColor Green
 $killProcess = Get-Process "openvpn-gui" -ErrorAction SilentlyContinue
 if ($killProcess) {
 	Stop-Process -Name "mstsc" > $null 2>&1
-	. '$($env:ProgramFiles)\OpenVPN\bin\openvpn-gui.exe' --command disconnect_all
+	. "$($env:ProgramFiles)\OpenVPN\bin\openvpn-gui.exe" --command disconnect_all
 	Start-Sleep -s 20
-	. '$($env:ProgramFiles)\OpenVPN\bin\openvpn-gui.exe' --command exit
+	. "$($env:ProgramFiles)\OpenVPN\bin\openvpn-gui.exe" --command exit
 } else
 { if ($env:Path -notlike "*;$($env:ProgramData)\powershell-bin*")
 	{ Write-Host "Starting VPN Processes..." -ForegroundColor Yellow
@@ -76,6 +76,6 @@ if ($killProcess) {
 	if (!$ahkProcess) {
 		. "$($env:ProgramData)\powershell-bin\hkeys.ahk"
 	}
-	. '$($env:ProgramFiles)\OpenVPN\bin\openvpn-gui.exe' --connect client.ovpn
-	. 'C:\Windows\System32\mstsc.exe' /multimon
+	. "$($env:ProgramFiles)\OpenVPN\bin\openvpn-gui.exe" --connect client.ovpn
+	. "C:\Windows\System32\mstsc.exe" /multimon
 }
