@@ -15,7 +15,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	$newProcess.Verb = "runas";
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
-} $ver = "2.1.0"
+} $ver = "2.1.1"
 if ((Get-WmiObject win32_operatingsystem).Name -notlike "*Windows 10*")
 { Write-Warning "Operating system is not Windows 10..."
 	Read-Host "The script will now exit..."
@@ -140,9 +140,8 @@ while ($confirmationfull -ne "n" -and $confirmationfull -ne "y")
 } if ($confirmationfull -ne "y")
 { Clear-Host
 	exit
-} ###########################################################################
+}
 # Disable Windows Store automatic install service
-##########################################################################
 Write-Host "Disabling automatic app reinstall services..." -ForegroundColor yellow
 cmd /c net stop InstallService
 cmd /c Set-Content config InstallService start= disabled
@@ -151,17 +150,15 @@ cmd /c Set-Content config DiagTrack start= disabled
 if ($confirmationpcdiscover -eq "y")
 { cmd /c net start FDResPub
 	cmd /c Set-Content config FDResPub start= auto
-} ###########################################################################
+}
 # Change Windows PowerScheme to maximum performance
-##########################################################################
 if ($confirmationpowersch -eq "y")
 { $currScheme = powercfg /LIST | Select-String "High performance"
 	$currScheme = $currScheme -split (" ")
 	$currScheme[3]
 	powercfg -SetActive $currScheme[3]
-} ###########################################################################
+}
 # Chocolatey install
-##########################################################################
 if ($confirmationchocoinstall -eq "y")
 { Write-Host "Installing Chocolatey, specified packages, and all VCRedist Visual C++ versions..." -ForegroundColor yellow
 	Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
@@ -169,27 +166,21 @@ if ($confirmationchocoinstall -eq "y")
 	choco feature disable -n=checksumFiles
 	$chocotobeinstalled = "vcredist-all;$($chocolist)".Replace(' ',';').Replace(';;',';')
 	choco install $chocotobeinstalled
-} ###########################################################################
+}
 # Registry changes
-##########################################################################
 Write-Host
 Write-Host " Basic Settings" -ForegroundColor yellow
 Write-Host " ----------------------------------------" -ForegroundColor cyan
 Write-Host
-############
 Write-Host "Disabling the Task View icon on the taskbar..." -ForegroundColor yellow
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowTaskViewButton" -Value 0
-############
 Write-Host "Disabling the toast ads and spam notifications above the system tray..." -ForegroundColor yellow
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -Type DWord -Value 0
-############
 Write-Host "Disabling Lock Screen ads..." -ForegroundColor yellow
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "RotatingLockScreenEnabled" -Type DWord -Value 0
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "RotatingLockScreenOverlayEnabled" -Type DWord -Value 0
-############
 Write-Host "Disabling subscribed ads..." -ForegroundColor yellow
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs" -Type DWord -Value 0
-############
 Write-Host "Restricting Windows Update P2P optimization to local network..." -ForegroundColor yellow
 if ([System.Environment]::OSVersion.Version.Build -eq 10240) {
 	if (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config")) {
@@ -203,7 +194,7 @@ if ([System.Environment]::OSVersion.Version.Build -eq 10240) {
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization" -Name "DODownloadMode" -Type DWord -Value 1
 } else {
 	Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization" -Name "DODownloadMode" -ErrorAction SilentlyContinue
-} ############
+}
 Write-Host "Disabling Windows Update P2P optimization..." -ForegroundColor yellow
 if ([System.Environment]::OSVersion.Version.Build -eq 10240) {
 	if (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config")) {
@@ -215,7 +206,7 @@ if ([System.Environment]::OSVersion.Version.Build -eq 10240) {
 		New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization" | Out-Null
 	}
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization" -Name "DODownloadMode" -Type DWord -Value 100
-} ############
+}
 Write-Host "Disabling Xbox and Windows game features..." -ForegroundColor yellow
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\GameDVR" -Name "AppCaptureEnabled" -Type DWord -Value 0
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSyncProviderNotifications" -Type DWord -Value 0
@@ -224,29 +215,23 @@ Set-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_Enabled" -T
 if (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR")) {
 	New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR" | Out-Null
 } Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR" -Name "AllowGameDVR" -Type DWord -Value 0
-############
 Write-Host "Disabling search for app in store for unknown extensions..." -ForegroundColor yellow
 if (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer")) {
 	New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" | Out-Null
 } Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "NoUseStoreOpenWith" -Type DWord -Value 1
-############
 Write-Host "Hiding People icon..." -ForegroundColor yellow
 if (!(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People")) {
 	New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People" | Out-Null
 } Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People" -Name "PeopleBand" -Type DWord -Value 0
-############
 Write-Host "Stopping and disabling WAP Push Service..." -ForegroundColor yellow
 Stop-Service "dmwappushservice" -WarningAction SilentlyContinue
 Set-Service "dmwappushservice" -StartupType Disabled
-############
 Write-Host "Stopping and disabling Diagnostics Tracking Service..." -ForegroundColor yellow
 Stop-Service "DiagTrack" -WarningAction SilentlyContinue
 Set-Service "DiagTrack" -StartupType Disabled
-############
 Write-Host "Disabling Send Crash Reporting to Microsoft..." -ForegroundColor yellow
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\Windows Error Reporting" -Name "Disabled" -Type DWord -Value 1
 Disable-ScheduledTask -TaskName "Microsoft\Windows\Windows Error Reporting\QueueReporting" | Out-Null
-############
 Write-Host "Disabling Cortana..." -ForegroundColor yellow
 if (!(Test-Path "HKCU:\Software\Microsoft\Personalization\Settings")) {
 	New-Item -Path "HKCU:\Software\Microsoft\Personalization\Settings" -Force | Out-Null
@@ -261,20 +246,16 @@ if (!(Test-Path "HKCU:\Software\Microsoft\InputPersonalization\TrainedDataStore"
 if (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search")) {
 	New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Force | Out-Null
 } Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortana" -Type DWord -Value 0
-############
 Write-Host "Disabling Website Access to Language List..." -ForegroundColor yellow
 Set-ItemProperty -Path "HKCU:\Control Panel\International\User Profile" -Name "HttpAcceptLanguageOptOut" -Type DWord -Value 1
-############
 Write-Host "Disabling Advertising ID..." -ForegroundColor yellow
 if (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AdvertisingInfo")) {
 	New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AdvertisingInfo" | Out-Null
 } Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AdvertisingInfo" -Name "DisabledByGroupPolicy" -Type DWord -Value 1
-############
 Write-Host "Disabling Tailored Experiences..." -ForegroundColor yellow
 if (!(Test-Path "HKCU:\Software\Policies\Microsoft\Windows\CloudContent")) {
 	New-Item -Path "HKCU:\Software\Policies\Microsoft\Windows\CloudContent" -Force | Out-Null
 } Set-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\CloudContent" -Name "DisableTailoredExperiencesWithDiagnosticData" -Type DWord -Value 1
-############
 Write-Host "Disabling Feedback..." -ForegroundColor yellow
 if (!(Test-Path "HKCU:\Software\Microsoft\Siuf\Rules")) {
 	New-Item -Path "HKCU:\Software\Microsoft\Siuf\Rules" -Force | Out-Null
@@ -282,22 +263,19 @@ if (!(Test-Path "HKCU:\Software\Microsoft\Siuf\Rules")) {
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Name "DoNotShowFeedbackNotifications" -Type DWord -Value 1
 Disable-ScheduledTask -TaskName "Microsoft\Windows\Feedback\Siuf\DmClient" -ErrorAction SilentlyContinue | Out-Null
 Disable-ScheduledTask -TaskName "Microsoft\Windows\Feedback\Siuf\DmClientOnScenarioDownload" -ErrorAction SilentlyContinue | Out-Null
-############
 Write-Host "Disabling automatic Maps updates..." -ForegroundColor yellow
 Set-ItemProperty -Path "HKLM:\SYSTEM\Maps" -Name "AutoUpdateEnabled" -Type DWord -Value 0
-############
 Write-Host "Disabling Location Tracking..." -ForegroundColor yellow
 if (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\location")) {
 	New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\location" -Force | Out-Null
 } Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\location" -Name "Value" -Type String -Value "Deny"
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Sensor\Overrides\{BFA794E4-F964-4FDB-90F6-51056BFE4B44}" -Name "SensorPermissionState" -Type DWord -Value 0
 Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\lfsvc\Service\Configuration" -Name "Status" -Type DWord -Value 0
-############
 Write-Host "Disabling Background application access..." -ForegroundColor yellow
 Get-ChildItem -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications" -Exclude "Microsoft.Windows.Cortana*","Microsoft.Windows.ShellExperienceHost*" | ForEach-Object {
 	Set-ItemProperty -Path $_.PSPath -Name "Disabled" -Type DWord -Value 1
 	Set-ItemProperty -Path $_.PSPath -Name "DisabledByUser" -Type DWord -Value 1
-} ############
+}
 Write-Host "Disabling Application suggestions..." -ForegroundColor yellow
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "ContentDeliveryAllowed" -Type DWord -Value 0
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "OemPreInstalledAppsEnabled" -Type DWord -Value 0
@@ -319,7 +297,7 @@ if ([System.Environment]::OSVersion.Version.Build -ge 17134) {
 	$key = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\CloudStore\Store\Cache\DefaultAccount\*windows.data.placeholdertilecollection\Current"
 	Set-ItemProperty -Path $key.PSPath -Name "Data" -Type Binary -Value $key.Data[0..15]
 	Stop-Process -Name "ShellExperienceHost" -Force -ErrorAction SilentlyContinue
-} ############
+}
 Write-Host "Disabling Bing Search in Start Menu..." -ForegroundColor yellow
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "BingSearchEnabled" -Type DWord -Value 0
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "CortanaConsent" -Type DWord -Value 0
@@ -327,14 +305,11 @@ Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" 
 if (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search")) {
 	New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Force | Out-Null
 } Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "DisableWebSearch" -Type DWord -Value 1
-############
 Write-Host "Disabling Windows Ink Space..." -ForegroundColor yellow
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\WindowsInkWorkspace" -Name "AllowWindowsInkWorkspace" -Type DWord -Value 0 -ErrorAction 'silentlycontinue'
-############
 Write-Host "Disabling Online Tips/Ads..." -ForegroundColor yellow
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "AllowOnlineTips" -Type DWord -Value 0
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "ConnectedSearchUseWeb" -Type DWord -Value 0
-############
 Write-Host "Disabling all Windows telemetry..." -ForegroundColor yellow
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0
@@ -348,7 +323,6 @@ Disable-ScheduledTask -TaskName "Microsoft\Windows\Autochk\Proxy" | Out-Null
 Disable-ScheduledTask -TaskName "Microsoft\Windows\Customer Experience Improvement Program\Consolidator" | Out-Null
 Disable-ScheduledTask -TaskName "Microsoft\Windows\Customer Experience Improvement Program\UsbCeip" | Out-Null
 Disable-ScheduledTask -TaskName "Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector" | Out-Null
-############
 Write-Host "Disabling Wi-Fi Sense..." -ForegroundColor yellow
 if (!(Test-Path "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\WiFi\AllowWiFiHotSpotReporting")) {
 	New-Item -Path "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\WiFi\AllowWiFiHotSpotReporting" -Force | Out-Null
@@ -360,17 +334,14 @@ if (!(Test-Path "HKLM:\SOFTWARE\Microsoft\WcmSvc\wifinetworkmanager\config")) {
 	New-Item -Path "HKLM:\SOFTWARE\Microsoft\WcmSvc\wifinetworkmanager\config" -Force | Out-Null
 } Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\WcmSvc\wifinetworkmanager\config" -Name "AutoConnectAllowedOEM" -Type Dword -Value 0
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\WcmSvc\wifinetworkmanager\config" -Name "WiFISenseAllowed" -Type Dword -Value 0
-############
 Write-Host "Disabling SmartScreen Filter..." -ForegroundColor yellow
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System" -Name "EnableSmartScreen" -Type DWord -Value 0
 if (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\PhishingFilter")) {
 	New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\PhishingFilter" -Force | Out-Null
 } Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\PhishingFilter" -Name "EnabledV9" -Type DWord -Value 0
-############
 Write-Host "Disabling 3D Objects folder in File Explorer..." -ForegroundColor yellow
 Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}"
 Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}"
-############
 if ($initialsetting -eq "3")
 { Write-Host
 	Write-Host " Full Advanced Settings" -ForegroundColor yellow
@@ -399,16 +370,14 @@ if ($initialsetting -eq "3")
 	if ($Adapters.count -gt 0) {
 		foreach ($Adapter in $Adapters) { $Adapter.enablewakeonmagicpacketonly = "$True" }
 	} else { $Adapters.enablewakeonmagicpacketonly = "$True" }
-} ###########################################################################
+}
 # Remove all Windows store apps except WindowsStore, Calculator Photos and StickyNotes
-##########################################################################
 if ($confirmationappremoval -eq "y")
 { Write-Host "Removing all Windows store apps except the Windows Store, Calculator, SitckyNotes, and Photos..." -ForegroundColor yellow
 	Get-AppxPackage -AllUsers | Where-Object { $_.Name -notlike "*Microsoft.WindowsStore*" } | Where-Object { $_.Name -notlike "*Microsoft.WindowsCalculator*" } | Where-Object { $_.Name -notlike "*Microsoft.Windows.Photos*" } | Where-Object { $_.Name -notlike "*.NET*" } | Where-Object { $_.Name -notlike "*.VCLibs*" } | Where-Object { $_.Name -notlike "*Sticky*" } | Remove-AppxPackage -ErrorAction 'silentlycontinue'
 	Get-AppxProvisionedPackage -Online | Where-Object { $_.packagename -notlike "*Microsoft.WindowsStore*" } | Where-Object { $_.packagename -notlike "*Microsoft.WindowsCalculator*" } | Where-Object { $_.packagename -notlike "*Microsoft.Windows.Photos*" } | Where-Object { $_.Name -notlike "*.NET*" } | Where-Object { $_.Name -notlike "*.VCLibs*" } | Where-Object { $_.Name -notlike "*Sticky*" } | Remove-AppxProvisionedPackage -Online | Out-Null -ErrorAction 'silentlycontinue'
-} ###########################################################################
+}
 # Pinapp function
-##########################################################################
 if ($confirmationstartmenu = "y")
 { Write-Host "Unpinning all StartMenu apps..." -ForegroundColor yellow
 	function Pin-App
@@ -433,19 +402,14 @@ if ($confirmationstartmenu = "y")
 			Write-Host
 		}
 	}
-} ###########################################################################
+}
 # Unpin everything from the start menu
-##########################################################################
 Get-StartApps | ForEach-Object { Pin-App $_.Name -unpin }
-###########################################################################
 # Turn Off All Windows 10 Telemetry
-##########################################################################
 Write-Host "Turning off all Windows telemetry and ads..." -ForegroundColor yellow
 (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/hahndorf/Set-Privacy/master/Set-Privacy.ps1') | Out-File .\set-privacy.ps1 -Force
 .\set-privacy.ps1 -Strong -admin
-###########################################################################
 # Remove OneDrive
-##########################################################################
 if ($confirmationonedrive -eq "y")
 { Write-Host "Disabling and removing OneDrive..." -ForegroundColor yellow
 	taskkill.exe /F /IM "OneDrive.exe"
@@ -471,16 +435,14 @@ if ($confirmationonedrive -eq "y")
 	Remove-PSDrive "HKCR"
 	Write-Host "Removing OneDrive run option for new users..."
 	reg load "hku\Default" "C:\Users\Default\NTUSER.DAT"
-} ###########################################################################
+}
 # Download MVPS hosts file and backup current hosts file
-##########################################################################
 if ($confirmationonedrive -eq "y")
 { Write-Host "Backing up hosts file to $($env:SystemRoot)\System32\drivers\etc\hosts.bak" -ForegroundColor yellow
 	Copy-Item "$($env:SystemRoot)\System32\drivers\etc\hosts" -Destination "$($env:SystemRoot)\System32\drivers\etc\hosts.bak"
 	(New-Object Net.WebClient).DownloadString('http://winhelp2002.mvps.org/hosts.txt') | Out-File "$($env:SystemRoot)\System32\drivers\etc\hosts" -Force
-} ###########################################################################
+}
 # Finalize
-##########################################################################
 while ($confirmationreboot -ne "n" -and $confirmationreboot -ne "y")
 { $confirmationreboot = Read-Host "Reboot is recommended reboot this PC now? [y/n]"
 } if ($confirmationreboot -eq "y")
