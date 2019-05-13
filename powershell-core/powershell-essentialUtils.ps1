@@ -15,7 +15,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	$newProcess.Verb = "runas";
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
-} $ver = "1.0.6"
+} $ver = "1.0.7"
 $text1 = @'
      _       _ _____ _    ___
     / \   __| |___ /| |_ / _ \
@@ -33,9 +33,10 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object
 choco feature enable -n=allowGlobalConfirmation
 choco feature disable -n=checksumFiles
 choco install bleachbit geekuninstaller autohotkey
-(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/hkeys.ahk') | Out-File "$($env:USERPROFILE)\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\hkeys.ahk" -Force -Encoding default
+(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/hkeys.ahk') | Out-File "$($env:ProgramData)\powershell-bin\hkeys.ahk" -Force -Encoding default
+schtasks /Create /SC ONLOGON /TN hkeys /TR "$($env:ProgramData)\powershell-bin\hkeys.ahk" /RL HIGHEST /F
 $ahkProcess = Get-Process "AutoHotkey" -ErrorAction SilentlyContinue
 if (!$ahkProcess) {
-	. "$($env:USERPROFILE)\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\hkeys.ahk"
+	. "$($env:ProgramData)\powershell-bin\hkeys.ahk"
 } Remove-Item "$($env:USERPROFILE)\Desktop\BleachBit.lnk" > $null 2>&1
 geek
