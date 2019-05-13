@@ -15,18 +15,20 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	$newProcess.Verb = "runas";
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
-} ##############
-$ver = "1.1.3"
-$text = @'
+} $ver = "1.1.4"
+$text1 = @'
      _       _ _____ _    ___
     / \   __| |___ /| |_ / _ \
    / _ \ / _` | |_ \| __| | | |
   / ___ \ (_| |___) | |_| |_| |
  /_/   \_\__,_|____/ \__|\___/
-
-    Belarc Audit Upload
 '@
-Write-Host $text
+$text2 = '       Belarc Audit Upload'
+$text3 = "        Version: "
+Write-Host $text1
+Write-Host $text2 -ForegroundColor Yellow
+Write-Host $text3 -ForegroundColor Gray -NoNewline
+Write-Host $ver -ForegroundColor Green
 $user = Read-Host "Username"
 $pass = Read-Host "Password"
 $folderOrganize = Read-Host "Enter sub-folder name"

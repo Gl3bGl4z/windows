@@ -15,34 +15,33 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	$newProcess.Verb = "runas";
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
-} ##############
-$ver = "2.0.9"
+} $ver = "2.1.0"
 if ((Get-WmiObject win32_operatingsystem).Name -notlike "*Windows 10*")
-{
-	Write-Warning "Operating system is not Windows 10..."
+{ Write-Warning "Operating system is not Windows 10..."
 	Read-Host "The script will now exit..."
 	exit
-} $strComputer = "."
-$colItems = Get-WmiObject -Class "Win32_Processor" -Namespace "root/CIMV2"
+} $systemmodel = wmic computersystem get model /VALUE
+$systemmodel = $systemmodel -replace ('Model=','')
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId" -ErrorAction SilentlyContinue
 $productname = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ProductName" -ErrorAction SilentlyContinue
 function header
-{ $text = @'
+{ $text1 = @'
      _       _ _____ _    ___
     / \   __| |___ /| |_ / _ \
    / _ \ / _` | |_ \| __| | | |
   / ___ \ (_| |___) | |_| |_| |
  /_/   \_\__,_|____/ \__|\___/
-
-    Windows 10 Setup Script
-  
-----------------------------------------
-  
 '@
+	$text2 = '    Windows 10 Setup Script'
+	$text3 = "        Version: "
+	Write-Host $text1
+	Write-Host $text2 -ForegroundColor Yellow
+	Write-Host $text3 -ForegroundColor Gray -NoNewline
+	Write-Host $ver -ForegroundColor Green
 	Write-Host $text
-	Write-Host " CPU Model: " -ForegroundColor yellow -NoNewline
-	Write-Host $colItems.Name -ForegroundColor white
-	Write-Host " System: " -ForegroundColor yellow -NoNewline
+	Write-Host " System Model: " -ForegroundColor yellow -NoNewline
+	Write-Host $systemmodel -ForegroundColor white
+	Write-Host " Operating System: " -ForegroundColor yellow -NoNewline
 	Write-Host $productname.ProductName $currentversion.ReleaseId -ForegroundColor white
 	Write-Host " PC Name: " -ForegroundColor yellow -NoNewline
 	Write-Host $env:COMPUTERNAME -ForegroundColor white
@@ -55,8 +54,7 @@ function header
 New-Item -Path $env:TEMP -Name "powershell-bin" -ItemType "directory" -Force > $null 2>&1
 Set-Location "$($env:TEMP)\powershell-bin"
 if (!(Test-Path -Path "$($env:TEMP)\powershell-bin\chocolist.txt"))
-{
-	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/chocolist.txt') | Out-File "$($env:TEMP)\powershell-bin\chocolist.txt" -Force
+{ (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/chocolist.txt') | Out-File "$($env:TEMP)\powershell-bin\chocolist.txt" -Force
 } while ($initialsetting -ne "1" -and $initialsetting -ne "2")
 { Clear-Host
 	header
@@ -84,8 +82,7 @@ if (!(Test-Path -Path "$($env:TEMP)\powershell-bin\chocolist.txt"))
 } while ($confirmationchocoinstall -ne "n" -and $confirmationchocoinstall -ne "y")
 { $confirmationchocoinstall = Read-Host "Install Chocolatey and choose packages? [y/n]"
 } if ($initialsetting -eq "2")
-{
-	while ($confirmationonedrive -ne "n" -and $confirmationonedrive -ne "y")
+{ while ($confirmationonedrive -ne "n" -and $confirmationonedrive -ne "y")
 	{
 		$confirmationonedrive = Read-Host "Remove all traces of OneDrive? [y/n]"
 	}
@@ -166,8 +163,7 @@ if ($confirmationpowersch -eq "y")
 # Chocolatey install
 ##########################################################################
 if ($confirmationchocoinstall -eq "y")
-{
-	Write-Host "Installing Chocolatey, specified packages, and all VCRedist Visual C++ versions..." -ForegroundColor yellow
+{ Write-Host "Installing Chocolatey, specified packages, and all VCRedist Visual C++ versions..." -ForegroundColor yellow
 	Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 	choco feature enable -n=allowGlobalConfirmation
 	choco feature disable -n=checksumFiles
@@ -414,8 +410,7 @@ if ($confirmationappremoval -eq "y")
 # Pinapp function
 ##########################################################################
 if ($confirmationstartmenu = "y")
-{
-	Write-Host "Unpinning all StartMenu apps..." -ForegroundColor yellow
+{ Write-Host "Unpinning all StartMenu apps..." -ForegroundColor yellow
 	function Pin-App
 	{ param(
 			[string]$appname,
@@ -452,8 +447,7 @@ Write-Host "Turning off all Windows telemetry and ads..." -ForegroundColor yello
 # Remove OneDrive
 ##########################################################################
 if ($confirmationonedrive -eq "y")
-{
-	Write-Host "Disabling and removing OneDrive..." -ForegroundColor yellow
+{ Write-Host "Disabling and removing OneDrive..." -ForegroundColor yellow
 	taskkill.exe /F /IM "OneDrive.exe"
 	Write-Host "Remove OneDrive..."
 	if (Test-Path "$env:systemroot\System32\OneDriveSetup.exe") {
@@ -490,6 +484,5 @@ if ($confirmationonedrive -eq "y")
 while ($confirmationreboot -ne "n" -and $confirmationreboot -ne "y")
 { $confirmationreboot = Read-Host "Reboot is recommended reboot this PC now? [y/n]"
 } if ($confirmationreboot -eq "y")
-{
-	Restart-Computer
+{ Restart-Computer
 }

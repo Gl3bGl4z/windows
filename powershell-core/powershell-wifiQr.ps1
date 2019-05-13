@@ -15,18 +15,20 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	$newProcess.Verb = "runas";
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
-} ##############
-$ver = "1.1.6"
-$text = @'
+}$ver = "1.1.7"
+$text1 = @'
      _       _ _____ _    ___
     / \   __| |___ /| |_ / _ \
    / _ \ / _` | |_ \| __| | | |
   / ___ \ (_| |___) | |_| |_| |
  /_/   \_\__,_|____/ \__|\___/
-
-    WiFi QR Code Generator
 '@
-Write-Host $text
+$text2 = '       WifiQR Script'
+$text3 = "        Version: "
+Write-Host $text1
+Write-Host $text2 -ForegroundColor Yellow
+Write-Host $text3 -ForegroundColor Gray -NoNewline
+Write-Host $ver -ForegroundColor Green
 $data = netsh wlan show interfaces | Select-String SSID
 if (!($data))
 { Write-Host "Not connected to wifi exiting..."

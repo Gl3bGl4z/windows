@@ -1,5 +1,5 @@
 #############################################
-#	Title:      Windows 10 EssentialUtils   #
+#	Title:      Windows EssentialUtils      #
 #	Creator:	Ad3t0	                    #
 #	Date:		11/07/2018             	    #
 #############################################
@@ -15,18 +15,20 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	$newProcess.Verb = "runas";
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
-} ##############
-$ver = "1.0.5"
-$text = @'
+} $ver = "1.0.6"
+$text1 = @'
      _       _ _____ _    ___
     / \   __| |___ /| |_ / _ \
    / _ \ / _` | |_ \| __| | | |
   / ___ \ (_| |___) | |_| |_| |
  /_/   \_\__,_|____/ \__|\___/
-
-    Essential Utilities 
 '@
-Write-Host $text
+$text2 = '    Windows Essential Utilities'
+$text3 = "        Version: "
+Write-Host $text1
+Write-Host $text2 -ForegroundColor Yellow
+Write-Host $text3 -ForegroundColor Gray -NoNewline
+Write-Host $ver -ForegroundColor Green
 Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 choco feature enable -n=allowGlobalConfirmation
 choco feature disable -n=checksumFiles
@@ -35,6 +37,5 @@ choco install bleachbit geekuninstaller autohotkey
 $ahkProcess = Get-Process "AutoHotkey" -ErrorAction SilentlyContinue
 if (!$ahkProcess) {
 	. "$($env:USERPROFILE)\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\hkeys.ahk"
-}
-Remove-Item "$($env:USERPROFILE)\Desktop\BleachBit.lnk" > $null 2>&1
+} Remove-Item "$($env:USERPROFILE)\Desktop\BleachBit.lnk" > $null 2>&1
 geek

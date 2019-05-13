@@ -15,29 +15,33 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	$newProcess.Verb = "runas";
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
-} #####
-$ver = "1.1.0"
+} $ver = "1.1.1"
 $strComputer = "."
 $colItems = Get-WmiObject -Class "Win32_Processor" -Namespace "root/CIMV2"
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId" -ErrorAction SilentlyContinue
 $productname = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ProductName" -ErrorAction SilentlyContinue
+$systemmodel = wmic computersystem get model /VALUE
+$systemmodel = $systemmodel -replace ('Model=','')
+$currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId" -ErrorAction SilentlyContinue
+$productname = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ProductName" -ErrorAction SilentlyContinue
 function header
-{ $text = @'
+{ $text1 = @'
      _       _ _____ _    ___
     / \   __| |___ /| |_ / _ \
    / _ \ / _` | |_ \| __| | | |
   / ___ \ (_| |___) | |_| |_| |
  /_/   \_\__,_|____/ \__|\___/
-
- Active Directory Batch Add User	
-  
-----------------------------------------
-  
 '@
+	$text2 = ' Active Directory Batch Add User'
+	$text3 = "        Version: "
+	Write-Host $text1
+	Write-Host $text2 -ForegroundColor Yellow
+	Write-Host $text3 -ForegroundColor Gray -NoNewline
+	Write-Host $ver -ForegroundColor Green
 	Write-Host $text
-	Write-Host " CPU Model: " -ForegroundColor yellow -NoNewline
-	Write-Host $colItems.Name -ForegroundColor white
-	Write-Host " System: " -ForegroundColor yellow -NoNewline
+	Write-Host " System Model: " -ForegroundColor yellow -NoNewline
+	Write-Host $systemmodel -ForegroundColor white
+	Write-Host " Operating System: " -ForegroundColor yellow -NoNewline
 	Write-Host $productname.ProductName $currentversion.ReleaseId -ForegroundColor white
 	Write-Host " PC Name: " -ForegroundColor yellow -NoNewline
 	Write-Host $env:COMPUTERNAME -ForegroundColor white
@@ -46,9 +50,6 @@ function header
 	Write-Host " Domain: " -ForegroundColor yellow -NoNewline
 	Write-Host $env:USERDNSDOMAIN -ForegroundColor white
 	Write-Host
-	Write-Host "----------------------------------------"
-	
-
 } header
 Write-Host
 Write-Host "Name list format should match:"
@@ -71,8 +72,7 @@ Write-Host
 Write-Host $modPath -ForegroundColor yellow
 Write-Host
 while ($initialPassConfirm -ne "y")
-{
-	$initialPass = Read-Host "Enter initial default password for all users"
+{ $initialPass = Read-Host "Enter initial default password for all users"
 	Write-Host "Initial default password will be:"
 	Write-Host
 	Write-Host $initialPass -ForegroundColor yellow
