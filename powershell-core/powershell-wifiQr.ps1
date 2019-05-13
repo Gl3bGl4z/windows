@@ -15,7 +15,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	$newProcess.Verb = "runas";
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
-}$ver = "1.1.8"
+}$ver = "1.1.9"
 $text1 = @'
      _       _ _____ _    ___
     / \   __| |___ /| |_ / _ \
@@ -45,8 +45,10 @@ $wifikey = $matches2.Value.Split(' ')[0]
 $wifilink = "WIFI:S:$($wifiprofile);T:WPA;P:$($wifikey);;"
 $wifilink = [uri]::EscapeDataString($wifilink)
 $URL = "https://chart.googleapis.com/chart?chs=547x547&cht=qr&chld=H|4&choe=UTF-8&chl=$($wifilink)"
+Write-Host
 Write-Host "SSID: " -ForegroundColor Yellow -NoNewline
 Write-Host $wifiprofile
-Write-Host "Passkey: " -ForegroundColor Yellow -NoNewline
+Write-Host "KEY: " -ForegroundColor Yellow -NoNewline
 Write-Host $wifikey
+Write-Host
 start $URL
