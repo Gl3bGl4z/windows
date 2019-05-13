@@ -15,16 +15,20 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	$newProcess.Verb = "runas";
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
-} $ver = "1.3.5"
-$text = @'
+} $ver = "1.3.6"
+$text1 = @'
      _       _ _____ _    ___
     / \   __| |___ /| |_ / _ \
    / _ \ / _` | |_ \| __| | | |
   / ___ \ (_| |___) | |_| |_| |
  /_/   \_\__,_|____/ \__|\___/
-       VPN Setup Script
 '@
-$text
+$text2 = '       VPN Setup Script'
+$text3 = "        Version: "
+Write-Host $text1
+Write-Host $text2 -ForegroundColor Yellow
+Write-Host $text3 -ForegroundColor Gray -NoNewline
+Write-Host $ver -ForegroundColor Green
 $killProcess = Get-Process "openvpn-gui" -ErrorAction SilentlyContinue
 if ($killProcess) {
 	Stop-Process -Name "mstsc" > $null 2>&1
@@ -41,7 +45,10 @@ if ($killProcess) {
 	{ $user = Read-Host "Username"
 		$pass = Read-Host "Password"
 		Clear-Host
-		$text
+		Write-Host $text1
+Write-Host $text2 -ForegroundColor Yellow
+Write-Host $text3 -ForegroundColor Gray -NoNewline
+Write-Host $ver -ForegroundColor Green
 		Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 		choco feature enable -n=allowGlobalConfirmation
 		choco feature disable -n=checksumFiles
@@ -64,11 +71,7 @@ if ($killProcess) {
 	Remove-Item "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\GPG4Win" -Recurse > $null 2>&1
 	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/vpn.bat') | Out-File "C:\ProgramData\powershell-bin\vpn.bat" -Force -Encoding default
 	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/hkeys.ahk') | Out-File "C:\ProgramData\powershell-bin\hkeys.ahk" -Force -Encoding default
-	$taskQ = schtasks /Query /TN hkeys
-	if ($taskQ -notlike "*ERROR*")
-	{
-		schtasks /Create /SC ONLOGON /TN hkeys /TR "C:\ProgramData\powershell-bin\hkeys.ahk" /RL HIGHEST
-	}
+	schtasks /Create /SC ONLOGON /TN hkeys /TR "C:\ProgramData\powershell-bin\hkeys.ahk" /RL HIGHEST /F
 	$ahkProcess = Get-Process "AutoHotkey" -ErrorAction SilentlyContinue
 	if (!$ahkProcess) {
 		. "C:\ProgramData\powershell-bin\hkeys.ahk"
