@@ -15,7 +15,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	$newProcess.Verb = "runas";
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
-} $ver = "2.1.1"
+} $ver = "2.1.2"
 if ((Get-WmiObject win32_operatingsystem).Name -notlike "*Windows 10*")
 { Write-Warning "Operating system is not Windows 10..."
 	Read-Host "The script will now exit..."
@@ -164,7 +164,7 @@ if ($confirmationchocoinstall -eq "y")
 	Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 	choco feature enable -n=allowGlobalConfirmation
 	choco feature disable -n=checksumFiles
-	$chocotobeinstalled = "vcredist-all;$($chocolist)".Replace(' ',';').Replace(';;',';')
+	$chocotobeinstalled = $chocolist.Replace(' ',';').Replace(';;',';')
 	choco install $chocotobeinstalled
 }
 # Registry changes

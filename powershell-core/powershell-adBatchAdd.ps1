@@ -15,7 +15,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	$newProcess.Verb = "runas";
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
-} $ver = "1.1.1"
+} $ver = "1.1.2"
 $strComputer = "."
 $colItems = Get-WmiObject -Class "Win32_Processor" -Namespace "root/CIMV2"
 $currentversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "ReleaseId" -ErrorAction SilentlyContinue
@@ -81,7 +81,7 @@ while ($initialPassConfirm -ne "y")
 } Write-Host
 Write-Host "Drive letter Z: will be used as the mapped home drive for all users"
 Write-Host "Home drive shares will be created under C:\Shares\Users\"
-Write-Host "An OU named Employees will be created and all added uses will be put in this OU"
+Write-Host "An OU named Employees will be created and all added users will be put in this OU"
 Write-Host "Each user will have drives.bat as their logon script"
 Write-Host
 Read-Host "The script will now run press ENTER to continue"

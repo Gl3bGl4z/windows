@@ -1,1 +1,1 @@
-googlechrome;adobereader;bleachbit;windirstat;geekuninstaller;malwarebytes;procexp
+vcredist-all;directx;dotnet4.7.2;dotnet4.7.1;dotnet4.7;dotnet4.6.2;dotnet4.6.1;dotnet4.6;dotnet4.5.2;dotnet4.5.1;dotnet4.5;dotnet4.0;dotnet3.5;googlechrome;adobereader;geekuninstaller
