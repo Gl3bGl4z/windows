@@ -62,10 +62,10 @@ Jason Bourne
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/powershell-adBatchAdd.ps1'))
 ```
-## powershell-mbCustom
-#### MalwareBytes custom install
+## powershell-customClamAV
+#### Custom ClamAV Settings and Install
 ```powershell
-Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/powershell-mbCustom.ps1'))
+Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/powershell-customClamAV.ps1'))
 ```
 ## powershell-wifiQr
 #### Create a iOS camera readable Wi-Fi connect QR code using information from the currently connected Wi-Fi network
