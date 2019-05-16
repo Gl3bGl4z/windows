@@ -23,7 +23,7 @@ $text1 = @'
   / ___ \ (_| |___) | |_| |_| |
  /_/   \_\__,_|____/ \__|\___/
 '@
-$text2 = "  ClamAV Custom Settings"
+$text2 = "    ClamAV Custom Settings"
 $text3 = "        Version: "
 Write-Host $text1
 Write-Host $text2 -ForegroundColor Yellow

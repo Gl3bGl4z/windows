@@ -140,8 +140,7 @@ while ($confirmationfull -ne "n" -and $confirmationfull -ne "y")
 } if ($confirmationfull -ne "y")
 { Clear-Host
 	exit
-}
-# Disable Windows Store automatic install service
+} # Disable Windows Store automatic install service
 Write-Host "Disabling automatic app reinstall services..." -ForegroundColor yellow
 cmd /c net stop InstallService
 cmd /c Set-Content config InstallService start= disabled
@@ -150,15 +149,13 @@ cmd /c Set-Content config DiagTrack start= disabled
 if ($confirmationpcdiscover -eq "y")
 { cmd /c net start FDResPub
 	cmd /c Set-Content config FDResPub start= auto
-}
-# Change Windows PowerScheme to maximum performance
+} # Change Windows PowerScheme to maximum performance
 if ($confirmationpowersch -eq "y")
 { $currScheme = powercfg /LIST | Select-String "High performance"
 	$currScheme = $currScheme -split (" ")
 	$currScheme[3]
 	powercfg -SetActive $currScheme[3]
-}
-# Chocolatey install
+} # Chocolatey install
 if ($confirmationchocoinstall -eq "y")
 { Write-Host "Installing Chocolatey, specified packages, and all VCRedist Visual C++ versions..." -ForegroundColor yellow
 	Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
@@ -166,8 +163,7 @@ if ($confirmationchocoinstall -eq "y")
 	choco feature disable -n=checksumFiles
 	$chocotobeinstalled = $chocolist.Replace(' ',';').Replace(';;',';')
 	choco install $chocotobeinstalled
-}
-# Registry changes
+} # Registry changes
 Write-Host
 Write-Host " Basic Settings" -ForegroundColor yellow
 Write-Host " ----------------------------------------" -ForegroundColor cyan
@@ -194,8 +190,7 @@ if ([System.Environment]::OSVersion.Version.Build -eq 10240) {
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization" -Name "DODownloadMode" -Type DWord -Value 1
 } else {
 	Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization" -Name "DODownloadMode" -ErrorAction SilentlyContinue
-}
-Write-Host "Disabling Windows Update P2P optimization..." -ForegroundColor yellow
+} Write-Host "Disabling Windows Update P2P optimization..." -ForegroundColor yellow
 if ([System.Environment]::OSVersion.Version.Build -eq 10240) {
 	if (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config")) {
 		New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config" | Out-Null
@@ -206,8 +201,7 @@ if ([System.Environment]::OSVersion.Version.Build -eq 10240) {
 		New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization" | Out-Null
 	}
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization" -Name "DODownloadMode" -Type DWord -Value 100
-}
-Write-Host "Disabling Xbox and Windows game features..." -ForegroundColor yellow
+} Write-Host "Disabling Xbox and Windows game features..." -ForegroundColor yellow
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\GameDVR" -Name "AppCaptureEnabled" -Type DWord -Value 0
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSyncProviderNotifications" -Type DWord -Value 0
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SoftLandingEnabled" -Type DWord -Value 0
@@ -275,8 +269,7 @@ Write-Host "Disabling Background application access..." -ForegroundColor yellow
 Get-ChildItem -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications" -Exclude "Microsoft.Windows.Cortana*","Microsoft.Windows.ShellExperienceHost*" | ForEach-Object {
 	Set-ItemProperty -Path $_.PSPath -Name "Disabled" -Type DWord -Value 1
 	Set-ItemProperty -Path $_.PSPath -Name "DisabledByUser" -Type DWord -Value 1
-}
-Write-Host "Disabling Application suggestions..." -ForegroundColor yellow
+} Write-Host "Disabling Application suggestions..." -ForegroundColor yellow
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "ContentDeliveryAllowed" -Type DWord -Value 0
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "OemPreInstalledAppsEnabled" -Type DWord -Value 0
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "PreInstalledAppsEnabled" -Type DWord -Value 0
@@ -297,8 +290,7 @@ if ([System.Environment]::OSVersion.Version.Build -ge 17134) {
 	$key = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\CloudStore\Store\Cache\DefaultAccount\*windows.data.placeholdertilecollection\Current"
 	Set-ItemProperty -Path $key.PSPath -Name "Data" -Type Binary -Value $key.Data[0..15]
 	Stop-Process -Name "ShellExperienceHost" -Force -ErrorAction SilentlyContinue
-}
-Write-Host "Disabling Bing Search in Start Menu..." -ForegroundColor yellow
+} Write-Host "Disabling Bing Search in Start Menu..." -ForegroundColor yellow
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "BingSearchEnabled" -Type DWord -Value 0
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "CortanaConsent" -Type DWord -Value 0
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "AllowSearchToUseLocation" -Type DWord -Value 0
@@ -370,14 +362,12 @@ if ($initialsetting -eq "3")
 	if ($Adapters.count -gt 0) {
 		foreach ($Adapter in $Adapters) { $Adapter.enablewakeonmagicpacketonly = "$True" }
 	} else { $Adapters.enablewakeonmagicpacketonly = "$True" }
-}
-# Remove all Windows store apps except WindowsStore, Calculator Photos and StickyNotes
+} # Remove all Windows store apps except WindowsStore, Calculator Photos and StickyNotes
 if ($confirmationappremoval -eq "y")
 { Write-Host "Removing all Windows store apps except the Windows Store, Calculator, SitckyNotes, and Photos..." -ForegroundColor yellow
 	Get-AppxPackage -AllUsers | Where-Object { $_.Name -notlike "*Microsoft.WindowsStore*" } | Where-Object { $_.Name -notlike "*Microsoft.WindowsCalculator*" } | Where-Object { $_.Name -notlike "*Microsoft.Windows.Photos*" } | Where-Object { $_.Name -notlike "*.NET*" } | Where-Object { $_.Name -notlike "*.VCLibs*" } | Where-Object { $_.Name -notlike "*Sticky*" } | Remove-AppxPackage -ErrorAction 'silentlycontinue'
 	Get-AppxProvisionedPackage -Online | Where-Object { $_.packagename -notlike "*Microsoft.WindowsStore*" } | Where-Object { $_.packagename -notlike "*Microsoft.WindowsCalculator*" } | Where-Object { $_.packagename -notlike "*Microsoft.Windows.Photos*" } | Where-Object { $_.Name -notlike "*.NET*" } | Where-Object { $_.Name -notlike "*.VCLibs*" } | Where-Object { $_.Name -notlike "*Sticky*" } | Remove-AppxProvisionedPackage -Online | Out-Null -ErrorAction 'silentlycontinue'
-}
-# Pinapp function
+} # Pinapp function
 if ($confirmationstartmenu = "y")
 { Write-Host "Unpinning all StartMenu apps..." -ForegroundColor yellow
 	function Pin-App
@@ -402,8 +392,7 @@ if ($confirmationstartmenu = "y")
 			Write-Host
 		}
 	}
-}
-# Unpin everything from the start menu
+} # Unpin everything from the start menu
 Get-StartApps | ForEach-Object { Pin-App $_.Name -unpin }
 # Turn Off All Windows 10 Telemetry
 Write-Host "Turning off all Windows telemetry and ads..." -ForegroundColor yellow
@@ -435,14 +424,12 @@ if ($confirmationonedrive -eq "y")
 	Remove-PSDrive "HKCR"
 	Write-Host "Removing OneDrive run option for new users..."
 	reg load "hku\Default" "C:\Users\Default\NTUSER.DAT"
-}
-# Download MVPS hosts file and backup current hosts file
+} # Download MVPS hosts file and backup current hosts file
 if ($confirmationonedrive -eq "y")
 { Write-Host "Backing up hosts file to $($env:SystemRoot)\System32\drivers\etc\hosts.bak" -ForegroundColor yellow
 	Copy-Item "$($env:SystemRoot)\System32\drivers\etc\hosts" -Destination "$($env:SystemRoot)\System32\drivers\etc\hosts.bak"
 	(New-Object Net.WebClient).DownloadString('http://winhelp2002.mvps.org/hosts.txt') | Out-File "$($env:SystemRoot)\System32\drivers\etc\hosts" -Force
-}
-# Finalize
+} # Finalize
 while ($confirmationreboot -ne "n" -and $confirmationreboot -ne "y")
 { $confirmationreboot = Read-Host "Reboot is recommended reboot this PC now? [y/n]"
 } if ($confirmationreboot -eq "y")
