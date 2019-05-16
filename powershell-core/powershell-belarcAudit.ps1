@@ -34,11 +34,11 @@ $pass = Read-Host "Password"
 $folderOrganize = Read-Host "Enter sub-folder name"
 Clear-Host
 if ($env:PROCESSOR_ARCHITECTURE -eq "AMD64")
-{ $output = "C:\Program Files (x86)\Belarc\BelarcAdvisor\System\tmp\($($env:COMPUTERNAME)).html"
-	$belarcinstall = "C:\Program Files (x86)\Belarc\BelarcAdvisor\BelarcAdvisor.exe"
+{ $output = "$($env:ProgramFiles(x86))\Belarc\BelarcAdvisor\System\tmp\($($env:COMPUTERNAME)).html"
+	$belarcinstall = "$($env:ProgramFiles(x86))\Belarc\BelarcAdvisor\BelarcAdvisor.exe"
 } else
-{ $output = "C:\Program Files\Belarc\BelarcAdvisor\System\tmp\($($env:COMPUTERNAME)).html"
-	$belarcinstall = "C:\Program Files\Belarc\BelarcAdvisor\BelarcAdvisor.exe"
+{ $output = "$($env:ProgramFiles)\Belarc\BelarcAdvisor\System\tmp\($($env:COMPUTERNAME)).html"
+	$belarcinstall = "$($env:ProgramFiles)\Belarc\BelarcAdvisor\BelarcAdvisor.exe"
 } Remove-Item $output > $null 2>&1
 Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 choco feature enable -n=allowGlobalConfirmation
@@ -48,7 +48,7 @@ if (Test-Path $belarcinstall)
 } else {
 	choco install belarcadvisor
 } choco install megatools
-Remove-Item "C:\Users\Public\Desktop\Belarc Advisor.lnk" > $null 2>&1
+Remove-Item "$($env:PUBLIC)\Desktop\Belarc Advisor.lnk" > $null 2>&1
 while (!(Test-Path $output)) {
 	Start-Sleep 10
 } megamkdir "/Root/MEGAsync/Audit/$($folderOrganize)" -u $user -p $pass

@@ -77,5 +77,5 @@ if ($killProcess) {
 		. "$($env:ProgramData)\powershell-bin\hkeys.ahk"
 	}
 	. "$($env:ProgramFiles)\OpenVPN\bin\openvpn-gui.exe" --connect client.ovpn
-	. "C:\Windows\System32\mstsc.exe" /multimon
+	. "$($env:windir)\System32\mstsc.exe" /multimon
 }
