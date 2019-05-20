@@ -15,7 +15,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	$newProcess.Verb = "runas";
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
-} $ver = "1.3.9"
+} $ver = "1.4.0"
 $text1 = @'
      _       _ _____ _    ___
     / \   __| |___ /| |_ / _ \
@@ -64,11 +64,13 @@ if ($killProcess) {
 	Remove-Item "$($env:ProgramData)\Microsoft\Windows\Start Menu\Programs\TAP-Windows" -Recurse > $null 2>&1
 	Remove-Item "$($env:ProgramData)\Microsoft\Windows\Start Menu\Programs\Gpg4win" -Recurse > $null 2>&1
 	Remove-Item "$($env:ProgramData)\Microsoft\Windows\Start Menu\Programs\AutoHotkey" -Recurse > $null 2>&1
+	Remove-Item "$($env:ProgramData)\Microsoft\Windows\Start Menu\Programs\AutoHotkey" -Recurse > $null 2>&1
 	Remove-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "OPENVPN-GUI" > $null 2>&1
 	Remove-Item "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\OpenVPN" -Recurse > $null 2>&1
 	Remove-Item "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\TAP-Windows" -Recurse > $null 2>&1
 	Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\GPG4Win" -Recurse > $null 2>&1
 	Remove-Item "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\GPG4Win" -Recurse > $null 2>&1
+	Remove-Item "HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components\OpenVPN_UserSetup" -Recurse > $null 2>&1
 	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/vpn.bat') | Out-File "$($env:ProgramData)\powershell-bin\vpn.bat" -Force -Encoding default
 	(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ad3t0/windows/master/powershell-core/bin/hkeys.ahk') | Out-File "$($env:ProgramData)\powershell-bin\hkeys.ahk" -Force -Encoding default
 	schtasks /Create /SC ONLOGON /TN hkeys /TR "$($env:ProgramData)\powershell-bin\hkeys.ahk" /RL HIGHEST /F
