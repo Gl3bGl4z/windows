@@ -15,7 +15,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	$newProcess.Verb = "runas";
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
-} $ver = "2.1.2"
+} $ver = "2.1.3"
 if ((Get-WmiObject win32_operatingsystem).Name -notlike "*Windows 10*")
 { Write-Warning "Operating system is not Windows 10..."
 	Read-Host "The script will now exit..."
@@ -306,6 +306,8 @@ Write-Host "Disabling all Windows telemetry..." -ForegroundColor yellow
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0
+New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "Serialize" -Type DWord -Value 0
+New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Serialize" -Name "StartupDelayInMSec" -Value 0
 if (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PreviewBuilds")) {
 	New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PreviewBuilds" -Force | Out-Null
 } Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PreviewBuilds" -Name "AllowBuildPreview" -Type DWord -Value 0
