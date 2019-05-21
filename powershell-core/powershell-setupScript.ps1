@@ -15,7 +15,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 	$newProcess.Verb = "runas";
 	[System.Diagnostics.Process]::Start($newProcess);
 	exit
-} $ver = "2.1.3"
+} $ver = "2.1.4"
 if ((Get-WmiObject win32_operatingsystem).Name -notlike "*Windows 10*")
 { Write-Warning "Operating system is not Windows 10..."
 	Read-Host "The script will now exit..."
@@ -143,12 +143,12 @@ while ($confirmationfull -ne "n" -and $confirmationfull -ne "y")
 } # Disable Windows Store automatic install service
 Write-Host "Disabling automatic app reinstall services..." -ForegroundColor yellow
 cmd /c net stop InstallService
-cmd /c Set-Content config InstallService start= disabled
+cmd /c sc config InstallService start= disabled
 cmd /c net stop DiagTrack
-cmd /c Set-Content config DiagTrack start= disabled
+cmd /c sc config DiagTrack start= disabled
 if ($confirmationpcdiscover -eq "y")
 { cmd /c net start FDResPub
-	cmd /c Set-Content config FDResPub start= auto
+	cmd /c sc config FDResPub start= auto
 } # Change Windows PowerScheme to maximum performance
 if ($confirmationpowersch -eq "y")
 { $currScheme = powercfg /LIST | Select-String "High performance"
